@@ -127,7 +127,9 @@ function M.capture(command)
   end
   local output = handle:read("*a") or ""
   handle:close()
-  return output:gsub("%s+$", "")
+
+  -- only need first return (string), second one is count
+  return (output:gsub("%s+$", ""))
 end
 
 ---@param command string
