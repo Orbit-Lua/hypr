@@ -1,0 +1,7 @@
+[animation]
+target = "lua/user/animations.lua"
+theme = "config-animations.rasi"
+
+[monitor]
+target = "lua/user/monitors.lua"
+theme = "config-monitors.rasi"

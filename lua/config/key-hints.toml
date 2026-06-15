@@ -1,0 +1,454 @@
+[[row]]
+key = "ESC"
+description = "Close this window"
+command = ""
+
+[[row]]
+key = " = "
+description = "SUPER (Windows key)"
+command = ""
+
+[[row]]
+key = ""
+description = ""
+command = ""
+
+[[row]]
+key = " H"
+description = "This cheat sheet"
+command = ""
+
+[[row]]
+key = " SHIFT K"
+description = "Search keybinds"
+command = "(rofi)"
+
+[[row]]
+key = " SHIFT E"
+description = "Quick settings"
+command = ""
+
+[[row]]
+key = ""
+description = ""
+command = ""
+
+[[row]]
+key = " Return"
+description = "Terminal"
+command = ""
+
+[[row]]
+key = " B"
+description = "Browser"
+command = "(xdg default)"
+
+[[row]]
+key = " A"
+description = "Desktop overview"
+command = ""
+
+[[row]]
+key = " D"
+description = "Application launcher"
+command = "(noctalia-shell)"
+
+[[row]]
+key = " E"
+description = "File manager"
+command = ""
+
+[[row]]
+key = " N"
+description = "Obsidian"
+command = ""
+
+[[row]]
+key = " S"
+description = "Web search"
+command = "(rofi)"
+
+[[row]]
+key = " SHIFT T"
+description = "Apply noctalia Material theme"
+command = ""
+
+[[row]]
+key = " CTRL S"
+description = "Window switcher"
+command = "(rofi)"
+
+[[row]]
+key = " ALT V"
+description = "Clipboard manager"
+command = "(cliphist)"
+
+[[row]]
+key = " SHIFT O"
+description = "Change oh-my-zsh theme"
+command = ""
+
+[[row]]
+key = ""
+description = ""
+command = ""
+
+[[row]]
+key = " Q"
+description = "Close active window"
+command = ""
+
+[[row]]
+key = " SHIFT Q"
+description = "Kill process"
+command = ""
+
+[[row]]
+key = " SHIFT F"
+description = "Fullscreen"
+command = ""
+
+[[row]]
+key = " CTRL F"
+description = "Maximize"
+command = ""
+
+[[row]]
+key = " ALT L"
+description = "Toggle layout"
+command = "Dwindle | Master | Scrolling"
+
+[[row]]
+key = " SPACE"
+description = "Toggle float"
+command = "single window"
+
+[[row]]
+key = " ALT SPACE"
+description = "Float all windows"
+command = ""
+
+[[row]]
+key = " Arrows"
+description = "Focus window"
+command = ""
+
+[[row]]
+key = " SHIFT Arrows"
+description = "Resize window"
+command = "50 px"
+
+[[row]]
+key = " CTRL Arrows"
+description = "Move window"
+command = ""
+
+[[row]]
+key = " ALT Arrows"
+description = "Swap window"
+command = ""
+
+[[row]]
+key = " LMB drag"
+description = "Move floating window"
+command = ""
+
+[[row]]
+key = " RMB drag"
+description = "Resize floating window"
+command = ""
+
+[[row]]
+key = " ALT Scroll"
+description = "Desktop zoom in / out"
+command = ""
+
+[[row]]
+key = "ALT TAB"
+description = "Cycle next window"
+command = ""
+
+[[row]]
+key = ""
+description = ""
+command = ""
+
+[[row]]
+key = " G"
+description = "Toggle group"
+command = ""
+
+[[row]]
+key = " TAB / SHIFT TAB"
+description = "Next / prev in group"
+command = ""
+
+[[row]]
+key = " CTRL TAB"
+description = "Change group active"
+command = ""
+
+[[row]]
+key = " CTRL K"
+description = "Move into group left"
+command = ""
+
+[[row]]
+key = " CTRL L"
+description = "Move into group right"
+command = ""
+
+[[row]]
+key = " CTRL H"
+description = "Move out of group"
+command = ""
+
+[[row]]
+key = ""
+description = ""
+command = ""
+
+[[row]]
+key = " I"
+description = "Add master"
+command = "Master layout"
+
+[[row]]
+key = " CTRL D"
+description = "Remove master"
+command = "Master layout"
+
+[[row]]
+key = " CTRL Return"
+description = "Swap with master"
+command = "Master layout"
+
+[[row]]
+key = " SHIFT I"
+description = "Toggle split"
+command = "Dwindle layout"
+
+[[row]]
+key = " P"
+description = "Toggle pseudo"
+command = "Dwindle layout"
+
+[[row]]
+key = " M"
+description = "Set split ratio 0.3"
+command = ""
+
+[[row]]
+key = ""
+description = ""
+command = ""
+
+[[row]]
+key = " TAB / SHIFT TAB"
+description = "Next / prev workspace"
+command = ""
+
+[[row]]
+key = " 1-0"
+description = "Switch to workspace 1-10"
+command = ""
+
+[[row]]
+key = " SHIFT 1-0"
+description = "Move window to workspace"
+command = "follows window"
+
+[[row]]
+key = " CTRL 1-0"
+description = "Move window silently"
+command = "stays on current"
+
+[[row]]
+key = " SHIFT [ / ]"
+description = "Move to prev / next workspace"
+command = ""
+
+[[row]]
+key = " CTRL [ / ]"
+description = "Move silently to prev / next"
+command = ""
+
+[[row]]
+key = " . / ,"
+description = "Next / prev workspace"
+command = ""
+
+[[row]]
+key = " Scroll"
+description = "Next / prev workspace"
+command = ""
+
+[[row]]
+key = " U"
+description = "Toggle special workspace"
+command = "scratchpad"
+
+[[row]]
+key = " SHIFT U"
+description = "Send window to special workspace"
+command = ""
+
+[[row]]
+key = " CTRL F9-F12"
+description = "Send workspace to monitor"
+command = "l / r / u / d"
+
+[[row]]
+key = ""
+description = ""
+command = ""
+
+[[row]]
+key = " ALT O"
+description = "Toggle blur"
+command = ""
+
+[[row]]
+key = " CTRL O"
+description = "Toggle window opacity"
+command = "active window"
+
+[[row]]
+key = " SHIFT A"
+description = "Profile selector"
+command = "(rofi)"
+
+[[row]]
+key = " CTRL R"
+description = "Rofi theme selector"
+command = ""
+
+[[row]]
+key = " SHIFT G"
+description = "Toggle game mode"
+command = "all animations off"
+
+[[row]]
+key = ""
+description = ""
+command = ""
+
+[[row]]
+key = " Print"
+description = "Screenshot now"
+command = "(grim)"
+
+[[row]]
+key = " SHIFT Print"
+description = "Screenshot area"
+command = "(grim + slurp)"
+
+[[row]]
+key = " SHIFT S"
+description = "Screenshot (swappy)"
+command = "annotate"
+
+[[row]]
+key = " CTRL Print"
+description = "Screenshot in 5s"
+command = "(grim)"
+
+[[row]]
+key = " CTRL SHIFT Print"
+description = "Screenshot in 10s"
+command = "(grim)"
+
+[[row]]
+key = "ALT Print"
+description = "Screenshot active window"
+command = ""
+
+[[row]]
+key = " F6"
+description = "Screenshot now"
+command = "laptop key"
+
+[[row]]
+key = " SHIFT F6"
+description = "Screenshot area"
+command = "laptop key"
+
+[[row]]
+key = " CTRL F6"
+description = "Screenshot in 5s"
+command = "laptop key"
+
+[[row]]
+key = " ALT F6"
+description = "Screenshot in 10s"
+command = "laptop key"
+
+[[row]]
+key = "ALT F6"
+description = "Screenshot active window"
+command = "laptop key"
+
+[[row]]
+key = ""
+description = ""
+command = ""
+
+[[row]]
+key = "CTRL ALT L"
+description = "Session menu"
+command = "lock / logout / etc."
+
+[[row]]
+key = "CTRL ALT Del"
+description = "Exit Hyprland"
+command = "immediate"
+
+[[row]]
+key = ""
+description = ""
+command = ""
+
+[[row]]
+key = "Volume keys"
+description = "Volume down / up / mute"
+command = "(noctalia-shell)"
+
+[[row]]
+key = "Mic mute key"
+description = "Toggle mic mute"
+command = ""
+
+[[row]]
+key = "Brightness keys"
+description = "Brightness down / up"
+command = "(noctalia-shell)"
+
+[[row]]
+key = "Play / Pause / Next / Prev"
+description = "Media controls"
+command = "(noctalia-shell)"
+
+[[row]]
+key = "Sleep key"
+description = "Suspend"
+command = ""
+
+[[row]]
+key = "Touchpad key"
+description = "Toggle touchpad"
+command = ""
+
+[[row]]
+key = "ASUS Fn: Launch1"
+description = "ROG control center"
+command = ""
+
+[[row]]
+key = "ASUS Fn: Launch3"
+description = "LED mode cycle"
+command = ""
+
+[[row]]
+key = "ASUS Fn: Launch4"
+description = "Performance profile cycle"
+command = ""

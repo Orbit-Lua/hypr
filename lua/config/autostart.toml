@@ -1,0 +1,59 @@
+[[command]]
+run = "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
+
+[[command]]
+run = "systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
+
+[[command]]
+run = "uwsm app -- rog-control-center"
+
+[[command]]
+run = "uwsm app -- mcontrolcenter"
+
+[[command]]
+run = "uwsm app -- polychromatic-tray-applet"
+
+[[command]]
+run = "lua $configDir/lua/bin/hypr.lua polkit"
+
+[[command]]
+run = "uwsm app -- nm-applet --indicator"
+
+[[command]]
+run = "uwsm app -- blueman-applet"
+
+[[command]]
+run = "ags"
+
+[[command]]
+run = "qs -c noctalia-shell"
+
+[[command]]
+run = "qs -c overview"
+
+[[command]]
+run = "wl-paste --type text --watch cliphist store"
+
+[[command]]
+run = "wl-paste --type image --watch cliphist store"
+
+[[command]]
+run = "uwsm app -- fcitx5"
+
+[[command]]
+run = "sleep 3; uwsm app -- vesktop --start-minimized --enable-features=UseOzonePlatform --ozone-platform-hint=wayland --enable-wayland-ime"
+
+[[command]]
+run = "uwsm app -- remmina -i"
+
+[[command]]
+run = "uwsm app -- tailscale systray"
+
+[[command]]
+run = "lua $configDir/lua/bin/hypr.lua keybinds-layout-init"
+
+[[command]]
+run = "lua $configDir/lua/bin/hypr.lua change-layout init"
+
+[[command]]
+run = "lua $configDir/lua/bin/hypr.lua rainbow-border"

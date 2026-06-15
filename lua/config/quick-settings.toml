@@ -1,0 +1,100 @@
+[[item]]
+label = "--- CONFIGURATION ---"
+kind = "header"
+
+[[item]]
+label = "Edit Environment & Defaults"
+kind = "edit"
+path = "lua/hyprconf/context.lua"
+
+[[item]]
+label = "Edit Keybinds"
+kind = "edit"
+path = "lua/hyprconf/binds.lua"
+
+[[item]]
+label = "Edit Autostart Apps"
+kind = "edit"
+path = "lua/config/autostart.toml"
+
+[[item]]
+label = "Edit Window Rules"
+kind = "edit"
+path = "lua/hyprconf/rules.lua"
+
+[[item]]
+label = "Edit Appearance"
+kind = "edit"
+path = "lua/hyprconf/options.lua"
+
+[[item]]
+label = "Edit Animations"
+kind = "edit"
+path = "lua/user/animations.lua"
+
+[[item]]
+label = "Edit Input Settings"
+kind = "edit"
+path = "lua/hyprconf/options.lua"
+
+[[item]]
+label = "Edit Laptop Settings"
+kind = "edit"
+path = "lua/hyprconf/context.lua"
+
+[[item]]
+label = "--- UTILITIES ---"
+kind = "header"
+
+[[item]]
+label = "Choose Kitty Terminal Theme"
+kind = "action"
+command = "kitty-themes"
+
+[[item]]
+label = "GTK Settings (nwg-look)"
+kind = "exec"
+command = "nwg-look"
+require = "nwg-look"
+
+[[item]]
+label = "QT Apps Settings (qt6ct)"
+kind = "exec"
+command = "qt6ct"
+require = "qt6ct"
+
+[[item]]
+label = "QT Apps Settings (qt5ct)"
+kind = "exec"
+command = "qt5ct"
+require = "qt5ct"
+
+[[item]]
+label = "Choose Hyprland Animations"
+kind = "action"
+command = "profile-selector animation"
+
+[[item]]
+label = "Choose Monitor Profiles"
+kind = "action"
+command = "profile-selector monitor"
+
+[[item]]
+label = "Choose Rofi Themes"
+kind = "action"
+command = "rofi-theme"
+
+[[item]]
+label = "Search for Keybinds"
+kind = "action"
+command = "keybinds"
+
+[[item]]
+label = "Toggle Game Mode"
+kind = "action"
+command = "game-mode"
+
+[[item]]
+label = "Rainbow Borders Mode"
+kind = "action"
+command = "rainbow-menu"

@@ -1,0 +1,9 @@
+[rainbow]
+default = "gradient_flow"
+modes = ["disabled", "material_random", "rainbow", "gradient_flow"]
+
+[sounds]
+theme = "freedesktop"
+mute = false
+mute_screenshots = false
+mute_volume = false
