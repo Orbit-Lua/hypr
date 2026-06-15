@@ -36,24 +36,14 @@ This is an Arch-oriented config. Validate packages with `pacman -Q <package>` or
 Required core packages:
 
 ```sh
-pacman -Q hyprland lua rofi swappy grim slurp wl-clipboard cliphist xdg-utils xdg-user-dirs libnotify kitty thunar yad uwsm xdg-desktop-portal xdg-desktop-portal-hyprland hyprland-qt-support
+pacman -Q hyprland lua rofi swappy grim slurp wl-clipboard cliphist xdg-utils xdg-user-dirs libnotify kitty thunar yad uwsm xdg-desktop-portal xdg-desktop-portal-hyprland hyprland-qt-support noctalia-qs noctalia-shell
 ```
 
 Version expectations:
 
 - `hyprland >= 0.55`
-- `swappy >= 1.8`
 - `rofi` or `rofi-wayland`
 - `lua` available as the `lua` command
-
-Required for the default Noctalia shell bindings:
-
-```sh
-pacman -Q noctalia-qs
-command -v qs
-```
-
-If Noctalia shell is not used, set `noctalia_shell.enabled = false` in `lua/hyprconf/context.lua` and replace the `qs ...` keybinds/autostart commands.
 
 Required for clipboard and screenshots:
 
