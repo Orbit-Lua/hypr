@@ -1,4 +1,4 @@
-# Hyprland Configuration
+# AGENTS instuctions
 
 This repo is a personal hyprland 0.55+ config in lua.
 
