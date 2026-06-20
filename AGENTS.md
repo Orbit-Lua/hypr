@@ -10,13 +10,8 @@ This repo is a personal hyprland 0.55+ config in lua.
 - `profiles/<category>/*.lua`: reusable profile presets
 - `profiles/.selected/<category>` remembers the selected preset per category
 - lua/bin/hypr.lua: runtime actions and menu commands
-- lua/config/*.toml: runtime data such as autostart commands, menu rows, profile targets, and polkit candidates
+- lua/config/*.toml: runtime data such as autostart commands, menu rows, etc.
 
-## Available Commands
+## Validation
 
-```bash
-make fmt    # formatter
-make lint   # linter
-make test   # validation
-make ready  # fmt + lint + test
-```
+run `make ready`
