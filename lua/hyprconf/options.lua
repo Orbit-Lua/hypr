@@ -10,8 +10,8 @@ function M.setup()
   hl.config({
     general = {
       border_size = 1,
-      gaps_in = 2,
-      gaps_out = 4,
+      gaps_in = 6,
+      gaps_out = 8,
       resize_on_border = true,
       layout = "scrolling",
       col = {

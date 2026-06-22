@@ -304,28 +304,13 @@ local function workspaces()
   bind(mod .. " + ALT + F", hl.dsp.layout("fit visible"), "fit visible columns")
   bind(
     mod .. " + SHIFT + period",
-    hl.dsp.layout("movewindowto r"),
-    "move window to right column"
+    hl.dsp.layout("swapcol r"),
+    "swaps the current column with its neighbor to the right"
   )
   bind(
     mod .. " + SHIFT + comma",
-    hl.dsp.layout("movewindowto l"),
-    "move window to left column"
-  )
-  bind(
-    mod .. " + CTRL + SHIFT + up",
-    hl.dsp.layout("movewindowto u"),
-    "move window up in column"
-  )
-  bind(
-    mod .. " + CTRL + SHIFT + down",
-    hl.dsp.layout("movewindowto d"),
-    "move window down in column"
-  )
-  bind(
-    mod .. " + CTRL + ALT + F",
-    hl.dsp.layout("togglefit"),
-    "toggle fit method"
+    hl.dsp.layout("swapcol l"),
+    "swaps the current column with its neighbor to the left"
   )
   bind(
     mod .. " + SHIFT + U",
