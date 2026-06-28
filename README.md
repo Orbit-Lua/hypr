@@ -1,24 +1,36 @@
 # Hyprland Lua Config
 
-Hyprland 0.55+ configuration written in Lua. `hyprland.lua` is the
-entrypoint, `lua/hyprconf/` contains the configuration modules, and
-`lua/bin/hypr.lua` provides runtime commands used by keybinds, rofi menus, and
+Personal Hyprland 0.55+ configuration written in Lua. `hyprland.lua` is the
+Hyprland entrypoint, `lua/hyprconf/` contains the loaded modules, and
+`lua/bin/hypr.lua` provides runtime actions used by keybinds, rofi menus, and
 autostart hooks.
 
-This is a workstation config rather than a generic distribution. It targets an
-Arch-based Wayland setup with Hyprland, `uwsm`, rofi, kitty, Thunar, Noctalia
-shell support, and a set of personal desktop utilities.
+This is a workstation config, not a generic Hyprland distribution. It targets an
+Arch-based Wayland setup with Hyprland, `uwsm`, rofi, kitty, Thunar, AGS,
+Noctalia shell commands, and several personal desktop utilities.
 
 ## Quick Start
 
-Clone or place this repository at `~/.config/hypr`, then point Hyprland at the
-Lua entrypoint:
+Install or clone this repository at the canonical path:
+
+```sh
+~/.config/hypr
+```
+
+Then start Hyprland with the Lua entrypoint:
 
 ```sh
 hyprland --config ~/.config/hypr/hyprland.lua
 ```
 
-The config loads modules in this order:
+The config assumes this path in several runtime commands and in `make test`.
+For a checkout elsewhere, use an absolute config path when testing:
+
+```sh
+hyprland --verify-config --config /absolute/path/to/hyprland.lua
+```
+
+Modules load in this order:
 
 ```text
 env
@@ -32,48 +44,64 @@ binds
 rules
 ```
 
-Rofi support files are synced automatically when Hyprland loads this config and
-before runtime commands run. Existing files in `~/.config/rofi` are left alone.
+Rofi support files are copied from `deps/rofi/` into
+`${ROFI_CONFIG_DIR:-~/.config/rofi}` when Hyprland loads and before runtime
+commands run. Existing rofi files are not overwritten.
 
 ## Requirements
 
-Core tools expected by the config:
+Required for the normal config path:
 
 - Hyprland 0.55+ with Lua config support
-- Lua or LuaJIT
+- a `lua` executable on `PATH`
 - `uwsm`
 - `rofi`
 - `kitty`
 - `thunar`
-- desktop portals for Hyprland/Wayland
-- Noctalia shell commands used by autostart
+- `notify-send`
+- desktop portals for Hyprland and Wayland
+
+If LuaJIT is used, it still needs to be available as `lua`, because runtime
+commands and autostart entries invoke `lua` directly.
+
+Primary shell and keybind workflows use Noctalia and AGS commands:
+
+- `ags`
+- `qs -c noctalia-shell`
+- `qs -c overview`
 
 Screenshot and clipboard workflows expect:
 
 ```sh
-grim slurp wl-clipboard cliphist swappy
+grim slurp wl-clipboard cliphist swappy xdg-user-dir xdg-open
 ```
 
-Polkit needs one working agent. Candidate paths are configured in
-`lua/config/polkit.toml`, including `hyprpolkitagent`, `polkit-gnome`, and
-`polkit-kde-agent` variants.
+Autostart currently launches additional machine-specific tools from
+`lua/config/autostart.toml`, including:
 
-Optional integrations appear in menus, keybinds, or autostart data. Missing
-optional commands should only affect the related action:
-
-- `network-manager-applet`
-- `blueman`
+- `rog-control-center`
+- `mcontrolcenter`
+- `polychromatic-tray-applet`
+- `nm-applet`
+- `blueman-applet`
 - `fcitx5`
+- `vesktop`
+- `remmina`
+- `tailscale`
+
+One polkit agent must exist at a path listed in `lua/config/polkit.toml`.
+
+Optional menu or keybind integrations include:
+
 - `nwg-look`
 - `qt6ct` and `qt5ct`
-- PipeWire tools
-- Vesktop
-- Remmina
-- Tailscale
-- ASUS and device-specific tools
-- personal theme selectors
+- `yad`
+- PipeWire playback tools such as `pw-play`
+- ASUS tools such as `asusctl`
+- Oh My Zsh theme files
+- kitty theme files under `~/.config/kitty/kitty-themes`
 
-## Usage
+## Runtime Commands
 
 Run runtime actions through the Lua helper:
 
@@ -87,27 +115,29 @@ Useful commands:
 lua ~/.config/hypr/lua/bin/hypr.lua sync-deps
 lua ~/.config/hypr/lua/bin/hypr.lua quick-settings
 lua ~/.config/hypr/lua/bin/hypr.lua keybinds
+lua ~/.config/hypr/lua/bin/hypr.lua key-hints
 lua ~/.config/hypr/lua/bin/hypr.lua profile-selector
 lua ~/.config/hypr/lua/bin/hypr.lua profile-selector animation
 lua ~/.config/hypr/lua/bin/hypr.lua profile-selector monitor
-lua ~/.config/hypr/lua/bin/hypr.lua screenshot
+lua ~/.config/hypr/lua/bin/hypr.lua screenshot --area
 lua ~/.config/hypr/lua/bin/hypr.lua clip-manager
 lua ~/.config/hypr/lua/bin/hypr.lua rainbow-menu
 lua ~/.config/hypr/lua/bin/hypr.lua refresh
 ```
 
-Running the helper without a valid command prints the full command list.
+Running the helper without a valid command prints the complete command list.
+The source of truth for supported command names is `lua/bin/hypr.lua`.
 
 ## Profiles
 
-Profiles keep machine-local choices separate from reusable presets.
+Profiles keep active machine-local choices separate from reusable presets.
 
 - Active profile files live in `lua/user/`
 - Reusable presets live in `profiles/<category>/`
 - Selected preset state is written to `profiles/.selected/<category>`
 - Profile targets and rofi themes are configured in `lua/config/profiles.toml`
 
-The current profile categories are:
+Current profile categories:
 
 - `animation`, targeting `lua/user/animations.lua`
 - `monitor`, targeting `lua/user/monitors.lua`
@@ -123,9 +153,9 @@ lua ~/.config/hypr/lua/bin/hypr.lua profile-selector monitor
 ## Rofi Sync
 
 Some commands use fixed rofi config paths such as
-`~/.config/rofi/config-edit.rasi`. The dependency sync copies missing files from
-`deps/rofi/` into `${ROFI_CONFIG_DIR:-~/.config/rofi}` without overwriting local
-customizations.
+`~/.config/rofi/config-edit.rasi`. Dependency sync copies missing files from
+`deps/rofi/` into `${ROFI_CONFIG_DIR:-~/.config/rofi}` and leaves existing local
+customizations alone.
 
 Run the sync manually with:
 
@@ -158,8 +188,7 @@ Common edits:
 
 ## Environment Overrides
 
-Several paths and notification defaults can be overridden for testing or alternate
-layouts:
+Runtime helpers support these overrides:
 
 - `HYPR_CONFIG_DIR`, defaulting to `~/.config/hypr`
 - `ROFI_CONFIG_DIR`, defaulting to `~/.config/rofi`
@@ -171,13 +200,22 @@ layouts:
 
 ## Development
 
-Run the full local check before treating changes as ready:
+Run the standard local readiness command before treating changes as done:
 
 ```sh
 make ready
 ```
 
-Individual targets are also available:
+`make ready` is not a pure check. It formats every Lua file found under the repo,
+lints those files, and validates the canonical config path:
+
+```sh
+stylua $(find . -path './.git' -prune -o -type f -name '*.lua' -print | sort)
+luacheck $(find . -path './.git' -prune -o -type f -name '*.lua' -print | sort)
+hyprland --verify-config --config ~/.config/hypr/hyprland.lua
+```
+
+Individual targets:
 
 ```sh
 make fmt
@@ -185,11 +223,14 @@ make lint
 make test
 ```
 
-`make ready` formats Lua with `stylua`, lints with `luacheck`, and verifies the
-Hyprland config with:
+`make test` verifies that Hyprland can parse the config. It does not exercise
+runtime helper flows, TOML-driven autostart commands, profile copying, rofi
+menus, or keybind actions. For runtime smoke checks, use targeted helper
+commands such as:
 
 ```sh
-hyprland --verify-config --config ~/.config/hypr/hyprland.lua
+lua ~/.config/hypr/lua/bin/hypr.lua sync-deps
+lua ~/.config/hypr/lua/bin/hypr.lua not-a-command
 ```
 
 ## Credit
