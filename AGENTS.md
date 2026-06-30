@@ -1,8 +1,9 @@
 # AGENTS Instructions
 
-Personal Hyprland 0.55+ Lua config. Treat this as an active workstation
-configuration, not a reusable distribution template. Prefer documenting and
-preserving current behavior over broad generalization.
+Personal Hyprland 0.55+ Lua config for an active workstation. Preserve current
+behavior unless the user explicitly asks for a behavior change. Keep docs and
+code specific to this setup instead of turning it into a generic distribution
+template.
 
 ## Project Map
 
@@ -36,38 +37,39 @@ rules
 
 - Runtime commands: `lua/bin/hypr.lua`
 - Runtime command behavior: `lua/hyprconf/commands/`
-- Defaults and paths: `lua/hyprconf/context.lua`
-- Autostart dependencies: `lua/config/autostart.toml`
+- Defaults, apps, paths, and device names: `lua/hyprconf/context.lua`
+- Autostart entries: `lua/config/autostart.toml`
 - Profile targets: `lua/config/profiles.toml`
 - Polkit agent candidates: `lua/config/polkit.toml`
 - Effect settings: `lua/config/effects.toml`
 
-Do not document command names, dependency lists, defaults, or paths without
-checking the relevant source file.
+Do not change command lists, dependency docs, defaults, paths, or profile
+details without checking the relevant source file first.
 
-## Development Workflow
+## Workflow
 
-Use `rg` or `rg --files` for codebase searches. Keep changes scoped and follow
-the existing Lua style.
+Use `rg` or `rg --files` for searches. Keep Lua style consistent with nearby
+code and prefer existing helpers in `lua/hyprconf/util/`,
+`lua/hyprconf/cli.lua`, and `lua/hyprconf/commands/common.lua`.
 
-Run before treating changes as ready:
+Before treating code changes as ready, run:
 
 ```sh
 make ready
 ```
 
-What it does:
+The target runs:
 
-- `make fmt` formats all repository Lua files with `stylua`
-- `make lint` lints all repository Lua files with `luacheck`
-- `make test` validates `~/.config/hypr/hyprland.lua` with Hyprland
+- `make fmt`: formats repository Lua files with `stylua`
+- `make lint`: lints repository Lua files with `luacheck`
+- `make test`: validates `~/.config/hypr/hyprland.lua` with Hyprland
 
-`make test` only verifies that Hyprland can parse the config. It does not
-exercise rofi menus, profile copying, screenshots, keybind actions, autostart
-commands, desktop portals, or external app integrations. In a live session,
-verification may still trigger reload hooks such as the `refresh` helper.
+`make test` only verifies Hyprland config parsing. It does not exercise rofi
+menus, profile copying, screenshots, keybind actions, autostart commands,
+desktop portals, or external app integrations. In a live session, validation
+may still trigger reload hooks such as `refresh`.
 
-For targeted runtime smoke checks, prefer commands such as:
+Useful non-interactive smoke checks:
 
 ```sh
 lua ~/.config/hypr/lua/bin/hypr.lua sync-deps
@@ -79,63 +81,58 @@ Only run interactive or session-mutating commands when the task requires them.
 ## Behavioral Boundaries
 
 - Preserve user-local profile data in `lua/user/`
-- Do not delete or overwrite `profiles/.selected/` state unless explicitly
-  requested
-- Do not treat `effects/` as hand-authored source; it is generated runtime
-  state
+- Do not delete or overwrite `profiles/.selected/` state unless requested
+- Treat `effects/` as generated runtime state
 - Do not replace existing rofi files in `${ROFI_CONFIG_DIR:-~/.config/rofi}`
   when changing dependency sync behavior
 - Do not run destructive git commands or revert unrelated user changes
-- Do not generalize this into distro-neutral documentation unless requested
+- Keep the expected repo location as `~/.config/hypr` unless documenting an
+  explicit override
 - Do not document LuaJIT alone; runtime helpers invoke `lua` directly
-- Keep this repo expected at `~/.config/hypr` unless a section explicitly
-  documents an override
 
-Be careful with helper commands that intentionally edit files outside the repo:
+Commands with intentional external side effects:
 
 - `rofi-theme` edits `${ROFI_CONFIG_DIR:-~/.config/rofi}/config.rasi`
 - `kitty-themes` edits `~/.config/kitty/kitty.conf`
 - `zsh-theme` edits `~/.zshrc`
 - `portal-hyprland` restarts desktop portal processes
-- `profile-selector` copies presets into `lua/user/` and reloads Hyprland
+- `profile-selector` copies presets into `lua/user/`, writes
+  `profiles/.selected/<category>`, and reloads Hyprland
 - `noctalia-theme` reads Noctalia state under `~/.config/noctalia` and
-  `~/.cache/noctalia`, writes Quickshell and rofi color files under
+  `~/.cache/noctalia`, writes generated Quickshell and rofi color files under
   `~/.config`, writes `effects/colors-hyprland.conf`, writes
   `lua/hyprconf/generated/noctalia.lua`, and may update
   `~/.cache/hypr/effects`
 
 ## Style Rules
 
-- Keep Lua files formatted by `stylua`
-- Keep lint-clean Lua according to `luacheck`
-- Prefer existing helpers in `lua/hyprconf/util/`, `lua/hyprconf/cli.lua`, and
-  `lua/hyprconf/commands/common.lua`
-- Use structured TOML config files for menu rows, autostart entries, polkit
-  paths, profile metadata, and effect settings
-- Keep docs factual and specific to this workstation config
-- Avoid adding abstractions unless they remove real duplication or match an
+- Keep Lua formatted by `stylua`
+- Keep Lua lint-clean according to `luacheck`
+- Use structured TOML for menu rows, autostart entries, polkit paths, profile
+  metadata, and effect settings
+- Keep documentation factual and specific to this workstation config
+- Avoid new abstractions unless they remove real duplication or match an
   existing local pattern
 
 ## Documentation Rules
 
-- README.md is user-facing project documentation
-- AGENTS.md is AI-facing automation guidance
-- Keep the AGENTS.md title exactly `AGENTS Instructions`
-- Check `lua/bin/hypr.lua` before changing command lists
-- Check `lua/config/autostart.toml` before changing dependency docs
-- Check `lua/hyprconf/context.lua` before changing default path, app, or
-  device docs
-- Mention limitations of `make test` when documenting validation
+- `README.md` is user-facing project documentation
+- `AGENTS.md` is AI-facing automation guidance
+- Keep this file title exactly `AGENTS Instructions`
+- Mention the limits of `make test` when documenting validation
+- Re-check `lua/bin/hypr.lua`, `lua/config/autostart.toml`, and
+  `lua/hyprconf/context.lua` before updating command, dependency, default path,
+  app, or device documentation
 
-## Contribution Guidance
+## Change Notes
 
-For code changes, include:
+For code changes, report:
 
-- The behavior changed
+- Behavior changed
 - Files or commands affected
 - `make ready` result
-- Any manual smoke checks for rofi, profiles, screenshots, autostart, keybinds,
-  or session commands
+- Manual smoke checks for any rofi, profile, screenshot, autostart, keybind, or
+  session behavior touched by the change
 
 For bug reports, capture:
 
