@@ -1,12 +1,12 @@
 # Hyprland Lua Config
 
-Personal Hyprland 0.55+ configuration written in Lua. This is the active
-desktop config for one workstation, with small runtime helpers for menus,
-profiles, screenshots, effects, and session tasks.
+Personal Hyprland 0.55+ Lua configuration for one active workstation. It is
+organized as small Lua modules plus a helper CLI for rofi menus, profile
+selection, screenshots, effects, and session tasks.
 
-The repository is useful as a concrete Hyprland Lua setup, but it is not meant
-to be a distro-neutral template. Paths and integrations assume the config lives
-at `~/.config/hypr` unless noted otherwise.
+This is not a generic Hyprland template. Most paths assume the checkout lives at
+`~/.config/hypr`; helper commands can use another location through
+`HYPR_CONFIG_DIR`.
 
 ## Requirements
 
@@ -20,28 +20,32 @@ Core runtime:
 - `thunar`
 - `notify-send`
 - Hyprland and Wayland desktop portals
-- A polkit agent matching one of the paths in `lua/config/polkit.toml`
+- A polkit agent matching a path in `lua/config/polkit.toml`
 
-Autostart and helper commands also reference workstation-specific tools:
+Feature-specific helpers also use local desktop tools:
 
-- AGS and Quickshell: `ags`, `qs -c noctalia-shell`, `qs -c overview`
-- Clipboard tools: `wl-paste`, `wl-copy`, `cliphist`
+- Quickshell and AGS: `qs`, `ags`
+- Clipboard: `wl-paste`, `wl-copy`, `cliphist`
 - Screenshots: `grim`, `slurp`, `swappy`, `xdg-user-dir`, `xdg-open`
-- Tray or app integrations from `lua/config/autostart.toml`: `rog-control-center`,
-  `mcontrolcenter`, `polychromatic-tray-applet`, `nm-applet`,
-  `blueman-applet`, `fcitx5`, `vesktop`, `remmina`, and `tailscale`
+- Theme and media helpers: `magick`, `pw-play` or `paplay` or `aplay`
+- Autostart integrations: `rog-control-center`, `mcontrolcenter`,
+  `polychromatic-tray-applet`, `nm-applet`, `blueman-applet`, `fcitx5`,
+  Vesktop, Remmina, and Tailscale
 
-Runtime helpers invoke `lua` directly. LuaJIT is fine only when it is available
-as the `lua` command.
+Runtime helpers call `lua` directly. LuaJIT is fine only if it provides the
+`lua` command used by the scripts.
 
 ## Layout
 
 ```text
 hyprland.lua                 Hyprland Lua entrypoint
-lua/bin/hypr.lua             Runtime CLI and command inventory
-lua/hyprconf/                Core config modules and helper support
-lua/hyprconf/commands/       Runtime command implementations
-lua/config/*.toml            Autostart, menus, polkit, effects, profiles
+application-style.conf       hyprland-qt-support style settings
+lua/bin/hypr.lua             Runtime helper CLI and command inventory
+lua/hyprconf/init.lua        Core module load order
+lua/hyprconf/                Hyprland config modules and shared helpers
+lua/hyprconf/commands/       Runtime helper implementations
+lua/hyprconf/theme/          Noctalia theme generation
+lua/config/*.toml            Structured autostart, menu, profile, and effect config
 lua/user/*.lua               Active machine-local profile files
 profiles/<category>/*.lua    Reusable profile presets
 profiles/.selected/          Selected profile state
@@ -77,16 +81,10 @@ Start Hyprland with the Lua entrypoint:
 hyprland --config ~/.config/hypr/hyprland.lua
 ```
 
-Validate the config parser with:
+For another checkout location, pass Hyprland the absolute config path and set
+`HYPR_CONFIG_DIR=/path/to/config` for helper commands.
 
-```sh
-hyprland --verify-config --config ~/.config/hypr/hyprland.lua
-```
-
-For another checkout location, pass an absolute config path to Hyprland and use
-`HYPR_CONFIG_DIR=/path/to/config` for runtime helpers.
-
-## Runtime Helper
+## Helper CLI
 
 Run helper commands with:
 
@@ -94,7 +92,7 @@ Run helper commands with:
 lua ~/.config/hypr/lua/bin/hypr.lua <command>
 ```
 
-Useful examples:
+Examples:
 
 ```sh
 lua ~/.config/hypr/lua/bin/hypr.lua sync-deps
@@ -104,7 +102,7 @@ lua ~/.config/hypr/lua/bin/hypr.lua profile-selector
 lua ~/.config/hypr/lua/bin/hypr.lua screenshot --area
 ```
 
-Current command inventory from `lua/bin/hypr.lua`:
+Commands defined by `lua/bin/hypr.lua`:
 
 ```text
 change-blur
@@ -134,119 +132,134 @@ touchpad
 zsh-theme
 ```
 
-Most commands sync missing rofi defaults before running. `sync-deps` copies
-files from `deps/rofi/` into `${ROFI_CONFIG_DIR:-~/.config/rofi}` only when the
-target file is missing.
+Most helper commands sync rofi defaults first. `sync-deps` copies files from
+`deps/rofi/` into `${ROFI_CONFIG_DIR:-~/.config/rofi}` only when the target file
+does not already exist.
+
+## Main Workflows
+
+Profiles:
+
+- `profile-selector` reads categories from `profiles/`.
+- Presets live in `profiles/animation/` and `profiles/monitor/`.
+- Active files live in `lua/user/animations.lua` and `lua/user/monitors.lua`.
+- Selected preset names are stored under `profiles/.selected/`.
+
+Menus:
+
+- `quick-settings` reads `lua/config/quick-settings.toml`.
+- `key-hints` reads `lua/config/key-hints.toml` and opens a `yad` cheat sheet.
+- `keybinds` scans `lua/hyprconf/binds.lua` and opens a searchable rofi list.
+- `clip-manager` wraps `cliphist` with rofi actions for select, delete, and wipe.
+
+Effects and themes:
+
+- `rainbow-menu` writes `effects/rainbow-border-mode`.
+- `rainbow-border` applies runtime border colors from generated effect colors
+  when available.
+- `noctalia-theme` reads Noctalia color and wallpaper state, then writes
+  generated Quickshell, rofi, Hyprland, and cache files.
+
+Screenshots:
+
+- `screenshot --now` captures the full screen.
+- `screenshot --area` uses `slurp` to select a region.
+- `screenshot --swappy` captures a region and opens Swappy.
+- `screenshot --in5` and `screenshot --in10` delay capture.
+- `screenshot --active` captures the active window geometry.
 
 ## Side Effects
 
-Several helper commands intentionally touch files or processes outside this
-repository:
+Several commands intentionally touch files or processes outside this repository:
 
+- `rofi-theme` edits `${ROFI_CONFIG_DIR:-~/.config/rofi}/config.rasi`.
+- `kitty-themes` edits `~/.config/kitty/kitty.conf` and signals running kitty
+  processes to reload.
+- `zsh-theme` edits `~/.zshrc`.
+- `portal-hyprland` restarts desktop portal processes.
 - `profile-selector` copies presets into `lua/user/`, writes
-  `profiles/.selected/<category>`, and reloads Hyprland
-- `rofi-theme` edits `${ROFI_CONFIG_DIR:-~/.config/rofi}/config.rasi`
-- `kitty-themes` edits `~/.config/kitty/kitty.conf`
-- `zsh-theme` edits `~/.zshrc`
-- `screenshot` writes to the Pictures screenshots directory and copies captures
-  to the clipboard
-- `portal-hyprland` restarts desktop portal processes
-- `noctalia-theme` reads Noctalia state under `~/.config/noctalia` and
-  `~/.cache/noctalia`, then writes generated Quickshell, rofi, Hyprland, and
-  effect state files
+  `profiles/.selected/<category>`, and reloads Hyprland.
+- `screenshot` writes PNG files under the Pictures screenshots directory and
+  copies captures to the clipboard.
+- `noctalia-theme` writes generated files under `~/.config/quickshell`,
+  `~/.config/rofi`, `~/.cache/hypr/effects`, `effects/`, and
+  `lua/hyprconf/generated/`.
 
 ## Configuration
 
 Common edit points:
 
-- Defaults, apps, search URL, and touchpad device:
+- Defaults, applications, paths, search URL, and touchpad device:
   `lua/hyprconf/context.lua`
-- Keybinds: `lua/hyprconf/binds.lua`
 - Autostart commands: `lua/config/autostart.toml`
+- Keybinds: `lua/hyprconf/binds.lua`
 - Window and layer rules: `lua/hyprconf/rules.lua`
-- Appearance, input, gestures, and layout: `lua/hyprconf/options.lua`
+- Appearance, input, gestures, layout, cursor, and render options:
+  `lua/hyprconf/options.lua`
 - Quick settings rows: `lua/config/quick-settings.toml`
 - Key hint rows: `lua/config/key-hints.toml`
-- Polkit agent candidates: `lua/config/polkit.toml`
 - Profile targets and rofi themes: `lua/config/profiles.toml`
+- Polkit candidates: `lua/config/polkit.toml`
 - Rainbow border and sound settings: `lua/config/effects.toml`
 
-Profiles keep reusable presets separate from active machine-local files:
+Runtime helper environment overrides:
 
-- Active profile files live in `lua/user/`
-- Presets live in `profiles/<category>/`
-- Selected state is stored in `profiles/.selected/<category>`
-- Profile targets are defined in `lua/config/profiles.toml`
-
-Current profile categories:
-
-- `animation`, targeting `lua/user/animations.lua`
-- `monitor`, targeting `lua/user/monitors.lua`
-
-## Environment
-
-Runtime helpers read these environment variables:
-
-- `HYPR_CONFIG_DIR`, default `~/.config/hypr`
-- `ROFI_CONFIG_DIR`, default `~/.config/rofi`
-- `EFFECTS_DIR`, default `$HYPR_CONFIG_DIR/effects`
-- `RAINBOW_BORDER_MODE_FILE`, default `$EFFECTS_DIR/rainbow-border-mode`
-- `NOTIFY_APP_NAME`, default `Hyprland`
-- `NOTIFY_DEFAULT_TIMEOUT`, default `3000`
-- `NOTIFY_FALLBACK_ICON`, default empty
-- `TOUCHPAD_DEVICE`, default from `lua/hyprconf/context.lua`
-- `TERMINAL`, default `kitty` for quick settings edit actions
-- `EDITOR`, default `nvim` for quick settings edit actions
+```text
+HYPR_CONFIG_DIR              default: ~/.config/hypr
+ROFI_CONFIG_DIR              default: ~/.config/rofi
+EFFECTS_DIR                  default: $HYPR_CONFIG_DIR/effects
+RAINBOW_BORDER_MODE_FILE     default: $EFFECTS_DIR/rainbow-border-mode
+NOTIFY_APP_NAME              default: Hyprland
+NOTIFY_DEFAULT_TIMEOUT       default: 3000
+NOTIFY_FALLBACK_ICON         default: empty
+TOUCHPAD_DEVICE              default: lua/hyprconf/context.lua value
+TERMINAL                     default for quick edit actions: kitty
+EDITOR                       default for quick edit actions: nvim
+```
 
 ## Development
 
-Install the local development tools used by the Makefile:
+Install the tools used by the Makefile:
 
 - `stylua`
 - `luacheck`
 - `hyprland`
 
-Run the standard readiness target from the repo root:
+Run the standard readiness check from the repository root:
 
 ```sh
 make ready
 ```
 
-This formats Lua files, lints Lua files, and runs:
+This runs:
+
+- `make fmt`: formats Lua files with `stylua`
+- `make lint`: lints Lua files with `luacheck`
+- `make test`: verifies Hyprland can parse `~/.config/hypr/hyprland.lua`
+
+`make test` runs:
 
 ```sh
 hyprland --verify-config --config ~/.config/hypr/hyprland.lua
 ```
 
-Individual targets:
+This validates config parsing only. It does not exercise rofi menus, profile
+copying, screenshots, keybind actions, autostart commands, desktop portals, or
+external app integrations. In a live session, validation may still trigger
+reload hooks such as `refresh`.
 
-```sh
-make fmt
-make lint
-make test
-```
-
-`make test` only verifies that Hyprland can parse the config. It does not
-exercise rofi menus, profile copying, screenshots, keybind actions, autostart
-commands, desktop portals, or external app integrations. In a live session,
-verification may still trigger reload hooks such as `refresh`.
-
-For targeted smoke checks:
+Useful non-interactive smoke checks:
 
 ```sh
 lua ~/.config/hypr/lua/bin/hypr.lua sync-deps
 lua ~/.config/hypr/lua/bin/hypr.lua not-a-command
 ```
 
-Run interactive or session-mutating helpers only when you intend to test that
-behavior.
+Treat `effects/` as generated runtime state. Preserve `lua/user/` and
+`profiles/.selected/` unless you are intentionally changing active profile
+state.
 
-## Notes
+## Credit
 
-- Preserve `lua/user/` and `profiles/.selected/` unless you are intentionally
-  changing active profile state.
-- Treat `effects/` as generated runtime state.
-- Check source files before changing documentation for commands, paths,
-  defaults, dependencies, or profile targets.
-- Credit: based in part on
-  [Hyprland-Dots](https://github.com/LinuxBeginnings/Hyprland-Dots/tree/main/config/hypr).
+Based in part on
+[Hyprland-Dots](https://github.com/LinuxBeginnings/Hyprland-Dots/tree/main/config/hypr).
