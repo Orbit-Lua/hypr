@@ -3,6 +3,8 @@ LUA_FILES := $(shell find . -path './.git' -prune -o -type f -name '*.lua' -prin
 
 .PHONY: fmt lint test pr-ready
 
+all: fmt lint test
+
 fmt:
 	@echo "===> Formatting"
 	stylua $(LUA_FILES)
@@ -14,5 +16,3 @@ lint:
 test:
 	@echo "===> Validation"
 	hyprland --verify-config --config ~/.config/hypr/hyprland.lua
-
-ready: fmt lint test
