@@ -4,11 +4,11 @@ run = "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_
 [[command]]
 run = "systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
 
-[[command]]
-run = "uwsm app -- rog-control-center"
+# [[command]]
+# run = "uwsm app -- rog-control-center"
 
-[[command]]
-run = "uwsm app -- mcontrolcenter"
+# [[command]]
+# run = "uwsm app -- mcontrolcenter"
 
 [[command]]
 run = "uwsm app -- polychromatic-tray-applet"
