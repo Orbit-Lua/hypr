@@ -4,6 +4,15 @@ run = "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_
 [[command]]
 run = "systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
 
+[[command]]
+run = "ags"
+
+[[command]]
+run = "noctalia"
+
+[[command]]
+run = "qs -c overview"
+
 # [[command]]
 # run = "uwsm app -- rog-control-center"
 
@@ -11,31 +20,19 @@ run = "systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
 # run = "uwsm app -- mcontrolcenter"
 
 [[command]]
-run = "uwsm app -- polychromatic-tray-applet"
+run = "wl-paste --type text --watch cliphist store"
 
 [[command]]
-run = "lua $configDir/lua/bin/hypr.lua polkit"
+run = "wl-paste --type image --watch cliphist store"
+
+[[command]]
+run = "uwsm app -- polychromatic-tray-applet"
 
 [[command]]
 run = "uwsm app -- nm-applet --indicator"
 
 [[command]]
 run = "uwsm app -- blueman-applet"
-
-[[command]]
-run = "ags"
-
-[[command]]
-run = "qs -c noctalia-shell"
-
-[[command]]
-run = "qs -c overview"
-
-[[command]]
-run = "wl-paste --type text --watch cliphist store"
-
-[[command]]
-run = "wl-paste --type image --watch cliphist store"
 
 [[command]]
 run = "uwsm app -- fcitx5"
@@ -48,6 +45,9 @@ run = "uwsm app -- remmina -i"
 
 [[command]]
 run = "uwsm app -- tailscale systray"
+
+[[command]]
+run = "lua $configDir/lua/bin/hypr.lua polkit"
 
 [[command]]
 run = "lua $configDir/lua/bin/hypr.lua keybinds-layout-init"
