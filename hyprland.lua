@@ -9,3 +9,6 @@ package.path = table.concat({
 }, ";")
 
 require("hyprconf").setup()
+
+-- For Noctalia Color templates
+require("noctalia").apply_theme()

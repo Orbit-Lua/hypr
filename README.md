@@ -282,3 +282,7 @@ lua ~/.config/hypr/lua/bin/hypr.lua not-a-command
 Treat `effects/` as generated runtime state. Preserve `lua/user/` and
 `profiles/.selected/` unless you intentionally want to change the active local
 profile.
+
+## TODO
+
+- [ ] remove legacy noctalia theme generator
