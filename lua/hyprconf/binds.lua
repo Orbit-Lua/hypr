@@ -22,7 +22,7 @@ local function applications()
   bind_exec(
     mod .. " + D",
     "application launcher",
-    "qs -c noctalia-shell ipc call launcher toggle"
+    "noctalia msg panel-toggle launcher"
   )
   bind_exec(mod .. " + B", "open default browser", [[xdg-open "https://"]])
   bind_exec(mod .. " + A", "desktop overview", "$hyprLua overview")
@@ -81,7 +81,7 @@ local function windows()
   bind_exec(
     "CTRL + ALT + L",
     "session menu",
-    "qs -c noctalia-shell ipc call sessionMenu toggle"
+    "noctalia msg panel-toggle session"
   )
 
   bind(mod .. " + CTRL + D", hl.dsp.layout("removemaster"), "remove master")
@@ -340,56 +340,56 @@ local function devices()
   bind_exec(
     "XF86AudioLowerVolume",
     "volume down",
-    "qs -c noctalia-shell ipc call volume decrease",
+    "noctalia msg volume-down",
     { locked = true, repeating = true }
   )
   bind_exec(
     "XF86AudioRaiseVolume",
     "volume up",
-    "qs -c noctalia-shell ipc call volume increase",
+    "noctalia msg volume-up",
     { locked = true, repeating = true }
   )
   bind_exec(
     "XF86AudioMicMute",
     "toggle mic mute",
-    "qs -c noctalia-shell ipc call volume muteInput",
+    "noctalia msg mic-mute",
     { locked = true }
   )
   bind_exec(
     "XF86AudioMute",
     "toggle mute",
-    "qs -c noctalia-shell ipc call volume muteOutput",
+    "noctalia msg volume-mute",
     { locked = true }
   )
   bind_exec("XF86Sleep", "sleep", "systemctl suspend", { locked = true })
   bind_exec(
     "XF86AudioPause",
     "pause",
-    "qs -c noctalia-shell ipc call media playPause",
+    "noctalia msg media pause",
     { locked = true }
   )
   bind_exec(
     "XF86AudioPlay",
     "play",
-    "qs -c noctalia-shell ipc call media playPause",
+    "noctalia msg media play",
     { locked = true }
   )
   bind_exec(
     "XF86AudioNext",
     "next track",
-    "qs -c noctalia-shell ipc call media next",
+    "noctalia msg media next",
     { locked = true }
   )
   bind_exec(
     "XF86AudioPrev",
     "prev track",
-    "qs -c noctalia-shell ipc call media previous",
+    "noctalia msg media previous",
     { locked = true }
   )
   bind_exec(
     "XF86AudioStop",
     "stop",
-    "qs -c noctalia-shell ipc call media stop",
+    "noctalia msg media stop",
     { locked = true }
   )
 
@@ -423,13 +423,13 @@ local function devices()
   bind_exec(
     "XF86MonBrightnessDown",
     nil,
-    "qs -c noctalia-shell ipc call brightness decrease",
+    "noctalia msg brightness-down * 5%",
     { repeating = true }
   )
   bind_exec(
     "XF86MonBrightnessUp",
     nil,
-    "qs -c noctalia-shell ipc call brightness increase",
+    "noctalia msg brightness-up",
     { repeating = true }
   )
   bind_exec("XF86Launch1", nil, "rog-control-center")
