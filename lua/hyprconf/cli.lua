@@ -366,21 +366,6 @@ function M.hypr_config(code)
   return M.hypr_eval("hl.config(" .. code .. ")")
 end
 
----@param keys string
----@return Hyprconf.CommandStatus
-function M.hypr_unbind(keys)
-  return M.hypr_eval("hl.unbind(" .. M.lua_string(keys) .. ")")
-end
-
----@param keys string
----@param dispatcher string
----@return Hyprconf.CommandStatus
-function M.hypr_bind(keys, dispatcher)
-  return M.hypr_eval(
-    "hl.bind(" .. M.lua_string(keys) .. ", " .. dispatcher .. ")"
-  )
-end
-
 ---@param option string
 ---@return Hyprconf.HyprOption
 function M.hypr_option(option)

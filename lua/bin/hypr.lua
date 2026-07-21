@@ -26,7 +26,6 @@ local session = require("hyprconf.commands.session")
 ---| "game-mode"
 ---| "key-hints"
 ---| "keybinds"
----| "keybinds-layout-init"
 ---| "kill-active"
 ---| "kitty-themes"
 ---| "overview"
@@ -53,7 +52,6 @@ local commands = {
   ["game-mode"] = layout.game_mode,
   ["key-hints"] = menus.key_hints,
   ["keybinds"] = menus.keybinds,
-  ["keybinds-layout-init"] = layout.keybinds_layout_init,
   ["kill-active"] = session.kill_active,
   ["kitty-themes"] = menus.kitty_themes,
   ["overview"] = session.overview,

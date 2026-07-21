@@ -126,7 +126,6 @@ clip-manager
 game-mode
 key-hints
 keybinds
-keybinds-layout-init
 kill-active
 kitty-themes
 overview

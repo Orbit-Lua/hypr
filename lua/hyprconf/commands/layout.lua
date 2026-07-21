@@ -1,12 +1,9 @@
 local cli = require("hyprconf.cli")
 local common = require("hyprconf.commands.common")
 
----@alias Hyprconf.LayoutName "dwindle"|"master"|"scrolling"|string
-
 ---@class Hyprconf.Commands.Layout
 ---@field change_blur fun()
----@field keybinds_layout_init fun()
----@field change_layout fun(mode?: "init"|string)
+---@field change_layout fun()
 ---@field game_mode fun()
 local M = {}
 
@@ -22,51 +19,18 @@ function M.change_blur()
   end
 end
 
----@param layout Hyprconf.LayoutName
 ---@return nil
-local function bind_layout(layout)
-  cli.hypr_unbind("SUPER + J")
-  cli.hypr_unbind("SUPER + K")
-  cli.hypr_unbind("SUPER + O")
-
-  if layout == "master" then
-    cli.hypr_bind("SUPER + J", 'hl.dsp.layout("cyclenext")')
-    cli.hypr_bind("SUPER + K", 'hl.dsp.layout("cycleprev")')
-  elseif layout == "scrolling" then
-    cli.hypr_bind("SUPER + J", 'hl.dsp.layout("focus d")')
-    cli.hypr_bind("SUPER + K", 'hl.dsp.layout("focus u")')
-  else
-    cli.hypr_bind("SUPER + J", "hl.dsp.window.cycle_next()")
-    cli.hypr_bind("SUPER + K", "hl.dsp.window.cycle_next({ next = false })")
-    cli.hypr_bind("SUPER + O", 'hl.dsp.layout("togglesplit")')
-  end
-end
-
----@return nil
-function M.keybinds_layout_init()
-  bind_layout("dwindle")
-end
-
----@param mode? "init"|string
----@return nil
-function M.change_layout(mode)
+function M.change_layout()
   local layout = cli.hypr_option("general:layout").str or "dwindle"
-  if mode == "init" then
-    bind_layout(layout)
-    return
-  end
 
   if layout == "dwindle" then
     cli.hypr_config('{ general = { layout = "master" } }')
-    bind_layout("master")
     cli.notify_success("Window Layout", "Master", "window-layout")
   elseif layout == "master" then
     cli.hypr_config('{ general = { layout = "scrolling" } }')
-    bind_layout("scrolling")
     cli.notify_success("Window Layout", "Scrolling", "window-layout")
   else
     cli.hypr_config('{ general = { layout = "dwindle" } }')
-    bind_layout("dwindle")
     cli.notify_success("Window Layout", "Dwindle", "window-layout")
   end
 end

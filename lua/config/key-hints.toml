@@ -144,6 +144,16 @@ description = "Swap window"
 command = ""
 
 [[row]]
+key = " J / K"
+description = "Next / previous window"
+command = "Current layout"
+
+[[row]]
+key = " O"
+description = "Toggle split"
+command = "Dwindle layout"
+
+[[row]]
 key = " LMB drag"
 description = "Move floating window"
 command = ""
@@ -231,7 +241,7 @@ command = "Dwindle layout"
 [[row]]
 key = " M"
 description = "Set split ratio 0.3"
-command = ""
+command = "Dwindle layout"
 
 [[row]]
 key = ""
@@ -270,8 +280,28 @@ command = ""
 
 [[row]]
 key = " . / ,"
-description = "Next / prev workspace"
-command = ""
+description = "Move columns right / left"
+command = "Scrolling layout"
+
+[[row]]
+key = " ALT . / ,"
+description = "Resize column wider / narrower"
+command = "Scrolling layout"
+
+[[row]]
+key = " SHIFT . / ,"
+description = "Swap column right / left"
+command = "Scrolling layout"
+
+[[row]]
+key = " CTRL ."
+description = "Promote window to own column"
+command = "Scrolling layout"
+
+[[row]]
+key = " ALT F"
+description = "Fit visible columns"
+command = "Scrolling layout"
 
 [[row]]
 key = " Scroll"

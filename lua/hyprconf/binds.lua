@@ -10,6 +10,23 @@ local bind = util.bind
 local bind_exec = util.bind_exec
 local raw_dispatch = util.raw_dispatch
 
+---@param dispatchers table<string, Hyprconf.Dispatcher>
+---@return fun()
+local function layout_bind(dispatchers)
+  return function()
+    local workspace = hl.get_active_special_workspace()
+      or hl.get_active_workspace()
+    if not workspace then
+      return
+    end
+
+    local dispatcher = dispatchers[workspace.tiled_layout]
+    if dispatcher then
+      hl.dispatch(dispatcher)
+    end
+  end
+end
+
 -- luacheck: push ignore
 local zoom_in =
   [[hyprctl keyword cursor:zoom_factor "$(hyprctl getoption cursor:zoom_factor | awk 'NR==1 {factor = $2; if (factor < 1) {factor = 1}; print factor * 2.0}')"]]
@@ -78,17 +95,6 @@ local function windows()
     "session menu",
     "noctalia msg panel-toggle session"
   )
-
-  bind(mod .. " + CTRL + D", hl.dsp.layout("removemaster"), "remove master")
-  bind(mod .. " + I", hl.dsp.layout("addmaster"), "add master")
-  bind(
-    mod .. " + CTRL + Return",
-    hl.dsp.layout("swapwithmaster"),
-    "swap with master"
-  )
-  bind(mod .. " + SHIFT + I", hl.dsp.layout("togglesplit"), "toggle split")
-  bind(mod .. " + P", hl.dsp.window.pseudo(), "toggle pseudo")
-  bind(mod .. " + M", raw_dispatch("splitratio", "0.3"), "set split ratio 0.3")
 
   bind("ALT + tab", hl.dsp.window.cycle_next(), "cycle next window")
   bind("ALT + tab", hl.dsp.window.bring_to_top(), "bring active to top")
@@ -191,6 +197,116 @@ local function windows()
 end
 
 ---@return nil
+local function layouts()
+  bind(
+    mod .. " + J",
+    layout_bind({
+      dwindle = hl.dsp.window.cycle_next(),
+      master = hl.dsp.layout("cyclenext"),
+      scrolling = hl.dsp.layout("focus d"),
+    }),
+    "focus next window for current layout"
+  )
+  bind(
+    mod .. " + K",
+    layout_bind({
+      dwindle = hl.dsp.window.cycle_next({ next = false }),
+      master = hl.dsp.layout("cycleprev"),
+      scrolling = hl.dsp.layout("focus u"),
+    }),
+    "focus previous window for current layout"
+  )
+  bind(
+    mod .. " + O",
+    layout_bind({ dwindle = hl.dsp.layout("togglesplit") }),
+    "toggle split in dwindle layout"
+  )
+
+  bind(
+    mod .. " + CTRL + D",
+    layout_bind({ master = hl.dsp.layout("removemaster") }),
+    "remove master in master layout"
+  )
+  bind(
+    mod .. " + I",
+    layout_bind({ master = hl.dsp.layout("addmaster") }),
+    "add master in master layout"
+  )
+  bind(
+    mod .. " + CTRL + Return",
+    layout_bind({ master = hl.dsp.layout("swapwithmaster") }),
+    "swap with master in master layout"
+  )
+
+  bind(
+    mod .. " + SHIFT + I",
+    layout_bind({ dwindle = hl.dsp.layout("togglesplit") }),
+    "toggle split in dwindle layout"
+  )
+  bind(
+    mod .. " + P",
+    layout_bind({ dwindle = hl.dsp.window.pseudo() }),
+    "toggle pseudo in dwindle layout"
+  )
+  bind(
+    mod .. " + M",
+    layout_bind({ dwindle = raw_dispatch("splitratio", "0.3") }),
+    "set split ratio in dwindle layout"
+  )
+
+  bind(
+    mod .. " + period",
+    layout_bind({ scrolling = hl.dsp.layout("move +col") }),
+    "move scrolling columns right"
+  )
+  bind(
+    mod .. " + comma",
+    layout_bind({ scrolling = hl.dsp.layout("move -col") }),
+    "move scrolling columns left"
+  )
+  bind(
+    mod .. " + ALT + period",
+    layout_bind({ scrolling = hl.dsp.layout("colresize +0.1") }),
+    "resize scrolling column wider"
+  )
+  bind(
+    mod .. " + ALT + comma",
+    layout_bind({ scrolling = hl.dsp.layout("colresize -0.1") }),
+    "resize scrolling column narrower"
+  )
+  bind(
+    mod .. " + CTRL + period",
+    layout_bind({ scrolling = hl.dsp.layout("promote") }),
+    "promote window to scrolling column"
+  )
+  bind(
+    mod .. " + CTRL + ALT + period",
+    layout_bind({ scrolling = hl.dsp.layout("swapcol r") }),
+    "swap scrolling column right"
+  )
+  bind(
+    mod .. " + CTRL + ALT + comma",
+    layout_bind({ scrolling = hl.dsp.layout("swapcol l") }),
+    "swap scrolling column left"
+  )
+  bind(
+    mod .. " + ALT + F",
+    layout_bind({ scrolling = hl.dsp.layout("fit visible") }),
+    "fit visible scrolling columns"
+  )
+  bind(
+    mod .. " + SHIFT + period",
+    layout_bind({ scrolling = hl.dsp.layout("swapcol r") }),
+    "swap scrolling column right"
+  )
+  bind(
+    mod .. " + SHIFT + comma",
+    layout_bind({ scrolling = hl.dsp.layout("swapcol l") }),
+    "swap scrolling column left"
+  )
+end
+
+---@return nil
 local function workspaces()
   bind(mod .. " + tab", hl.dsp.focus({ workspace = "m+1" }), "next workspace")
   bind(
@@ -269,44 +385,6 @@ local function workspaces()
     "previous workspace"
   )
 
-  bind(mod .. " + period", hl.dsp.layout("move +col"), "scroll columns right")
-  bind(mod .. " + comma", hl.dsp.layout("move -col"), "scroll columns left")
-  bind(
-    mod .. " + ALT + period",
-    hl.dsp.layout("colresize +0.1"),
-    "resize column wider"
-  )
-  bind(
-    mod .. " + ALT + comma",
-    hl.dsp.layout("colresize -0.1"),
-    "resize column narrower"
-  )
-  bind(
-    mod .. " + CTRL + period",
-    hl.dsp.layout("promote"),
-    "promote window to own column"
-  )
-  bind(
-    mod .. " + CTRL + ALT + period",
-    hl.dsp.layout("swapcol r"),
-    "swap column right"
-  )
-  bind(
-    mod .. " + CTRL + ALT + comma",
-    hl.dsp.layout("swapcol l"),
-    "swap column left"
-  )
-  bind(mod .. " + ALT + F", hl.dsp.layout("fit visible"), "fit visible columns")
-  bind(
-    mod .. " + SHIFT + period",
-    hl.dsp.layout("swapcol r"),
-    "swaps the current column with its neighbor to the right"
-  )
-  bind(
-    mod .. " + SHIFT + comma",
-    hl.dsp.layout("swapcol l"),
-    "swaps the current column with its neighbor to the left"
-  )
   bind(
     mod .. " + SHIFT + U",
     hl.dsp.window.move({ workspace = "special" }),
@@ -442,6 +520,7 @@ end
 function M.setup()
   applications()
   windows()
+  layouts()
   workspaces()
   devices()
 end

@@ -50,10 +50,4 @@ run = "uwsm app -- tailscale systray"
 run = "lua $configDir/lua/bin/hypr.lua polkit"
 
 [[command]]
-run = "lua $configDir/lua/bin/hypr.lua keybinds-layout-init"
-
-[[command]]
-run = "lua $configDir/lua/bin/hypr.lua change-layout init"
-
-[[command]]
 run = "lua $configDir/lua/bin/hypr.lua rainbow-border"
