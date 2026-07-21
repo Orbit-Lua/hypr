@@ -4,7 +4,6 @@ local common = require("hyprconf.commands.common")
 ---@class Hyprconf.Commands.Effects
 ---@field rainbow_border fun()
 ---@field rainbow_menu fun()
----@field noctalia_theme fun()
 local M = {}
 
 ---@return string[]
@@ -14,18 +13,26 @@ local function material_colors()
   local content = cli.read_file(source) or ""
 
   for line in content:gmatch("[^\n]+") do
-    local value = line:match(
-      "0x([0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f])"
-    ) or line:match(
-      "#([0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f])"
-    ) or line:match(
-      "rgb%(([0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f])%)"
-    )
-    if value then
-      if #value == 6 then
-        value = "ff" .. value
+    local name = line:match("^%s*%$([%w_]+)%s*=")
+    local color_index = name and tonumber(name:match("^color(%d+)$"))
+    if
+      name == "background"
+      or name == "foreground"
+      or (color_index and color_index <= 15)
+    then
+      local value = line:match(
+        "0x([0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f])"
+      ) or line:match(
+        "#([0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f])"
+      ) or line:match(
+        "rgb%(([0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f])%)"
+      )
+      if value then
+        if #value == 6 then
+          value = "ff" .. value
+        end
+        colors[#colors + 1] = "0x" .. value
       end
-      colors[#colors + 1] = "0x" .. value
     end
   end
 
@@ -133,12 +140,6 @@ function M.rainbow_menu()
   else
     cli.exec("hyprctl reload >/dev/null 2>&1 || true")
   end
-end
-
----@return nil
-function M.noctalia_theme()
-  local ok = require("hyprconf.theme.noctalia").apply()
-  os.exit(ok and 0 or 1)
 end
 
 return M

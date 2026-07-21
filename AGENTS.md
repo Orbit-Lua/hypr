@@ -54,8 +54,7 @@ Check these files before changing behavior or documentation in the same area:
 - Profile targets and profile menu themes: `lua/config/profiles.toml`
 - Polkit candidates: `lua/config/polkit.toml`
 - Rainbow border and sound settings: `lua/config/effects.toml`
-- Noctalia generated outputs and external paths:
-  `lua/hyprconf/theme/noctalia.lua`
+- Noctalia v5 effect-color template: `deps/noctalia/`
 
 ## Development Workflow
 
@@ -140,11 +139,8 @@ that behavior.
   `profiles/.selected/<category>`, and reloads Hyprland.
 - `screenshot` writes under the Pictures screenshots directory and uses the
   clipboard.
-- `noctalia-theme` reads Noctalia state under `~/.config/noctalia` and
-  `~/.cache/noctalia`, writes generated Quickshell and rofi color files under
-  `~/.config`, writes `effects/colors-hyprland.conf`, writes
-  `lua/hyprconf/generated/noctalia.lua`, and may update
-  `~/.cache/hypr/effects`.
+- Noctalia v5 writes `noctalia.lua`, `~/.config/rofi/noctalia.rasi`, and
+  `effects/colors-hyprland.conf` through its enabled templates.
 
 ## Documentation Rules
 
@@ -154,6 +150,7 @@ that behavior.
 - Re-check `lua/hyprconf/commands/` before documenting helper command behavior.
 - Re-check `lua/config/*.toml` before documenting menu rows, profile targets,
   polkit candidates, autostart entries, sounds, or effects.
+- Re-check `deps/noctalia/` before documenting Noctalia effect palette output.
 - Do not claim interactive flows are covered by `make test`; document manual or
   smoke validation separately.
 - Do not present generated files as hand-edited source files.

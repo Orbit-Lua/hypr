@@ -28,11 +28,6 @@ local function applications()
   bind_exec(mod .. " + A", "desktop overview", "$hyprLua overview")
   bind_exec(mod .. " + Return", "open terminal", "$term")
   bind_exec(mod .. " + E", "file manager", "$files")
-  bind_exec(
-    mod .. " + SHIFT + T",
-    "apply noctalia material theme",
-    "$hyprLua noctalia-theme"
-  )
   bind_exec(mod .. " + H", "cheat sheet", "$hyprLua key-hints")
   bind_exec(mod .. " + SHIFT + E", "quick settings", "$hyprLua quick-settings")
   bind_exec(mod .. " + S", "web search", "$hyprLua rofi-search")

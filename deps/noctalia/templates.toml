@@ -1,0 +1,5 @@
+[theme.templates.user.hypr_effect_colors]
+input_path = "$XDG_CONFIG_HOME/hypr/deps/noctalia/colors-hyprland.conf"
+output_path = "$XDG_CONFIG_HOME/hypr/effects/colors-hyprland.conf"
+post_hook = "hyprctl reload config-only >/dev/null 2>&1 || true"
+index = 100

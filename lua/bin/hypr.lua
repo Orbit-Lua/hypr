@@ -29,7 +29,6 @@ local session = require("hyprconf.commands.session")
 ---| "keybinds-layout-init"
 ---| "kill-active"
 ---| "kitty-themes"
----| "noctalia-theme"
 ---| "overview"
 ---| "polkit"
 ---| "portal-hyprland"
@@ -57,7 +56,6 @@ local commands = {
   ["keybinds-layout-init"] = layout.keybinds_layout_init,
   ["kill-active"] = session.kill_active,
   ["kitty-themes"] = menus.kitty_themes,
-  ["noctalia-theme"] = effects.noctalia_theme,
   ["overview"] = session.overview,
   ["polkit"] = services.polkit,
   ["portal-hyprland"] = services.portal_hyprland,

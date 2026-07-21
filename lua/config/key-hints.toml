@@ -69,11 +69,6 @@ description = "Web search"
 command = "(rofi)"
 
 [[row]]
-key = " SHIFT T"
-description = "Apply noctalia Material theme"
-command = ""
-
-[[row]]
 key = " CTRL S"
 description = "Window switcher"
 command = "(rofi)"

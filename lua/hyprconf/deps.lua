@@ -22,7 +22,6 @@ local rofi_files = {
   "config-theme-selector.rasi",
   "config-zsh-theme.rasi",
   "shared-fonts.rasi",
-  "noctalia/colors.rasi",
   "themes/default.rasi",
 }
 

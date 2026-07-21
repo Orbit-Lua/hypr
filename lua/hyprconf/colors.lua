@@ -24,14 +24,6 @@ end
 
 load(ctx.config_dir .. "/effects/colors-hyprland.conf")
 
-local ok, noctalia = pcall(require, "hyprconf.generated.noctalia")
-if ok then
-  ---@cast noctalia table<string, Hyprconf.RgbColor|string>
-  for name, value in pairs(noctalia) do
-    values[name] = value
-  end
-end
-
 ---@param name string
 ---@param fallback? Hyprconf.RgbColor|string
 ---@return Hyprconf.RgbColor|string|nil

@@ -16,16 +16,17 @@ configuration {
  me-accept-entry: "MousePrimary";
 }
 
-/* ---- Load Noctalia colors ---- */
-@theme "~/.config/rofi/noctalia/colors.rasi"
+/* ---- Load Noctalia v5 theme ---- */
+@theme "~/.config/rofi/noctalia.rasi"
 
 /*****----- Global Properties -----*****/
 * {
- background-alt: @color0;
- /* selected uses color12, active uses color11 (match other working styles) */
- selected: @color12;
- active: @color11;
- urgent: @color13;
+ background: @bg;
+ foreground: @fg;
+ background-alt: @bg-alt;
+ selected: @accent;
+ active: @accent;
+ urgent: @accent;
 
  border-color: @active;
  handle-color: @selected;
@@ -306,7 +307,7 @@ textbox {
  border: 0px solid;
  border-radius: 8px;
  border-color: @border-color;
- background-color: @color0;
+ background-color: @background;
  text-color: @foreground-color;
  vertical-align: 0.5;
  horizontal-align: 0.5;
