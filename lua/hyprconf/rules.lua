@@ -429,6 +429,21 @@ local rules = {
     workspace = "9",
     float = true,
   },
+  {
+    name = "steam",
+    match = { class = "steam" },
+    workspace = "9",
+  },
+  {
+    name = "steam-stalker",
+    match = { class = "steam_app_3183997697" },
+    workspace = "10",
+  },
+  {
+    name = "stalker",
+    match = { title = "^(STALKER.*)$" },
+    workspace = "10",
+  },
 }
 
 ---@type Hyprconf.LayerRule[]
@@ -438,19 +453,6 @@ local layer_rules = {
     name = "notifications",
     match = { namespace = "notifications" },
     blur = true,
-  },
-  {
-    name = "quickshell-overview",
-    match = { namespace = "quickshell:overview" },
-    blur = true,
-    ignore_alpha = 0.5,
-  },
-  {
-    name = "noctalia",
-    match = { namespace = "noctalia-background-.*$" },
-    ignore_alpha = 0.5,
-    blur = true,
-    blur_popups = true,
   },
 }
 
