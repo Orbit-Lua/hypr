@@ -433,16 +433,19 @@ local rules = {
     name = "steam",
     match = { class = "steam" },
     workspace = "9",
+    no_initial_focus = true,
   },
   {
     name = "steam-stalker",
-    match = { class = "steam_app_3183997697" },
+    match = { class = "^(steam_app.*)$" },
     workspace = "10",
+    no_initial_focus = true,
   },
   {
     name = "stalker",
     match = { title = "^(STALKER.*)$" },
     workspace = "10",
+    no_initial_focus = true,
   },
 }
 
