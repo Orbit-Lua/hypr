@@ -147,7 +147,7 @@ local tagged_windows = {
 }
 
 ---@type Hyprconf.WindowRule[]
-local rules = {
+local window_rules = {
   {
     name = "multimedia-video-no-blur",
     match = { tag = "multimedia_video" },
@@ -436,7 +436,7 @@ local rules = {
     no_initial_focus = true,
   },
   {
-    name = "steam-stalker",
+    name = "steam-app",
     match = { class = "^(steam_app.*)$" },
     workspace = "10",
     no_initial_focus = true,
@@ -457,6 +457,29 @@ local layer_rules = {
     match = { namespace = "notifications" },
     blur = true,
   },
+  {
+    name = "noctalia-bar",
+    match = { namespace = "noctalia-bar-.*$" },
+
+    -- other namespace:
+    -- noctalia-panel
+    -- noctalia-attached-panel
+    -- noctalia-dock
+    -- noctalia-notification
+    -- noctalia-osd
+    -- noctalia-launcher-overlay
+    -- noctalia-desktop-widget-<type>-<id>
+
+    -- regex example:
+    -- ^noctalia-(bar-.+|notification|dock|panel|attached-panel|osd|window-switcher)$
+
+    ignore_alpha = 0,
+  },
+  {
+    name = "noctalia-panel",
+    match = { namespace = "noctalia-attached-panel" },
+    ignore_alpha = 0,
+  },
 }
 
 ---@return nil
@@ -465,7 +488,7 @@ function M.setup()
     tag(item[1], item[2])
   end
 
-  for _, rule in ipairs(rules) do
+  for _, rule in ipairs(window_rules) do
     wr(rule)
   end
 

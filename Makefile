@@ -1,7 +1,7 @@
 LUA ?= luajit
-LUA_FILES := $(shell find . -path './.git' -prune -o -type f -name '*.lua' -print | sort)
+LUA_FILES := $(shell find . -path './.git' -prune -o -type f -name '*.lua' ! -name 'noctalia.lua' -print | sort)
 
-.PHONY: fmt lint test pr-ready
+.PHONY: fmt lint test all
 
 all: fmt lint test
 
