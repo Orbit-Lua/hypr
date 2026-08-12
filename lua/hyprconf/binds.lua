@@ -492,18 +492,17 @@ local function devices()
     "screenshot (swappy)",
     "$hyprLua screenshot --swappy"
   )
-
-  bind_exec(
-    "XF86MonBrightnessDown",
-    nil,
-    "noctalia msg brightness-down * 5%",
-    { repeating = true }
-  )
   bind_exec(
     "XF86MonBrightnessUp",
-    nil,
+    "brightness up",
     "noctalia msg brightness-up",
-    { repeating = true }
+    { locked = true, repeating = true }
+  )
+  bind_exec(
+    "XF86MonBrightnessDown",
+    "brightness down",
+    "noctalia msg brightness-down",
+    { locked = true, repeating = true }
   )
   bind_exec("XF86Launch1", nil, "rog-control-center")
   bind_exec("XF86Launch3", nil, "asusctl led-mode -n")
