@@ -436,11 +436,10 @@ local window_rules = {
     no_initial_focus = true,
   },
   {
-    name = "steam-app",
-    match = { class = "^(steam_app.*)$" },
+    name = "gamescope",
+    match = { class = "^(gamescope)$" },
     workspace = "10",
     no_initial_focus = true,
-    confine_pointer = false,
   },
 }
 
