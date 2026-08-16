@@ -10,8 +10,8 @@ function M.setup()
   hl.config({
     general = {
       border_size = 1,
-      gaps_in = 6,
-      gaps_out = 8,
+      gaps_in = 10,
+      gaps_out = 16,
       resize_on_border = true,
       layout = "scrolling",
       col = {
@@ -104,7 +104,7 @@ function M.setup()
         drag_lock = false,
       },
       touchdevice = { enabled = true },
-      tablet = { transform = 0, left_handed = 0 },
+      tablet = { transform = 0, left_handed = false },
     },
 
     gestures = {
@@ -123,7 +123,7 @@ function M.setup()
 
     master = {
       new_status = "master",
-      new_on_top = 1,
+      new_on_top = true,
       mfact = 0.5,
     },
 
