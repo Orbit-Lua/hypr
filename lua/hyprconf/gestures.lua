@@ -1,4 +1,3 @@
-local ctx = require("hyprconf.context")
 local util = require("hyprconf.util")
 
 ---@class Hyprconf.Gestures
@@ -14,7 +13,8 @@ local zoom_out =
 
 ---@return nil
 function M.setup()
-  hl.gesture({ fingers = 3, direction = "horizontal", action = "workspace" })
+  hl.gesture({ fingers = 3, direction = "vertical", action = "workspace" })
+  hl.gesture({ fingers = 3, direction = "horizontal", action = "scroll_move" })
   hl.gesture({
     fingers = 4,
     direction = "up",
@@ -24,11 +24,6 @@ function M.setup()
     fingers = 4,
     direction = "down",
     action = util.dispatch_exec(zoom_out),
-  })
-  hl.gesture({
-    fingers = 3,
-    direction = "up",
-    action = util.dispatch_exec(ctx.hypr_lua .. " overview"),
   })
 end
 

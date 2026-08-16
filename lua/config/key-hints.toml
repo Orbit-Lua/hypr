@@ -14,12 +14,12 @@ description = ""
 command = ""
 
 [[row]]
-key = " H"
+key = " /"
 description = "This cheat sheet"
 command = ""
 
 [[row]]
-key = " SHIFT K"
+key = " SHIFT /"
 description = "Search keybinds"
 command = "(rofi)"
 
@@ -144,9 +144,14 @@ description = "Swap window"
 command = ""
 
 [[row]]
-key = " J / K"
-description = "Next / previous window"
-command = "Current layout"
+key = " H / L"
+description = "Focus column left / right"
+command = "Scrolling layout"
+
+[[row]]
+key = " ALT J / K"
+description = "Next / previous window in column"
+command = "Scrolling layout"
 
 [[row]]
 key = " O"
@@ -249,9 +254,14 @@ description = ""
 command = ""
 
 [[row]]
-key = " TAB / SHIFT TAB"
-description = "Next / prev workspace"
+key = " J / K"
+description = "Next / previous workspace"
 command = ""
+
+[[row]]
+key = " SHIFT J / K"
+description = "Move window to next / previous workspace"
+command = "follows window"
 
 [[row]]
 key = " 1-0"
@@ -269,28 +279,13 @@ description = "Move window silently"
 command = "stays on current"
 
 [[row]]
-key = " SHIFT [ / ]"
-description = "Move to prev / next workspace"
-command = ""
-
-[[row]]
-key = " CTRL [ / ]"
-description = "Move silently to prev / next"
-command = ""
-
-[[row]]
-key = " . / ,"
-description = "Move columns right / left"
-command = "Scrolling layout"
-
-[[row]]
 key = " ALT . / ,"
 description = "Resize column wider / narrower"
 command = "Scrolling layout"
 
 [[row]]
-key = " SHIFT . / ,"
-description = "Swap column right / left"
+key = " SHIFT H / L"
+description = "Swap column left / right"
 command = "Scrolling layout"
 
 [[row]]

@@ -133,6 +133,8 @@ function M.setup()
       explicit_column_widths = "0.333, 0.5, 0.667, 1.0",
       follow_focus = false,
       focus_fit_method = 1,
+      wrap_focus = false,
+      wrap_swapcol = false,
     },
 
     misc = {
@@ -152,8 +154,9 @@ function M.setup()
     },
 
     binds = {
-      workspace_back_and_forth = true,
-      allow_workspace_cycles = true,
+      workspace_back_and_forth = false,
+      allow_workspace_cycles = false,
+      hide_special_on_workspace_change = true,
       pass_mouse_when_bound = false,
     },
 
@@ -172,7 +175,7 @@ function M.setup()
       no_warps = true,
     },
 
-    animations = { enabled = true },
+    animations = { enabled = true, workspace_wraparound = false },
   })
 
   hl.device({ name = ctx.touchpad_device, enabled = true })

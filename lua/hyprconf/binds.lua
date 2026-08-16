@@ -9,6 +9,8 @@ local mod = ctx.main_mod
 local bind = util.bind
 local bind_exec = util.bind_exec
 local raw_dispatch = util.raw_dispatch
+local min_workspace = 1
+local max_workspace = 10
 
 ---@param dispatchers table<string, Hyprconf.Dispatcher>
 ---@return fun()
@@ -23,6 +25,29 @@ local function layout_bind(dispatchers)
     local dispatcher = dispatchers[workspace.tiled_layout]
     if dispatcher then
       hl.dispatch(dispatcher)
+    end
+  end
+end
+
+---@param offset integer
+---@param move_window? boolean
+---@return fun()
+local function workspace_step(offset, move_window)
+  return function()
+    local workspace = hl.get_active_workspace()
+    if not workspace then
+      return
+    end
+
+    local target = workspace.id + offset
+    if target < min_workspace or target > max_workspace then
+      return
+    end
+
+    if move_window then
+      hl.dispatch(hl.dsp.window.move({ workspace = target }))
+    else
+      hl.dispatch(hl.dsp.focus({ workspace = target }))
     end
   end
 end
@@ -45,7 +70,7 @@ local function applications()
   bind_exec(mod .. " + A", "desktop overview", "$hyprLua overview")
   bind_exec(mod .. " + Return", "open terminal", "$term")
   bind_exec(mod .. " + E", "file manager", "$files")
-  bind_exec(mod .. " + H", "cheat sheet", "$hyprLua key-hints")
+  bind_exec(mod .. " + slash", "cheat sheet", "$hyprLua key-hints")
   bind_exec(mod .. " + SHIFT + E", "quick settings", "$hyprLua quick-settings")
   bind_exec(mod .. " + S", "web search", "$hyprLua rofi-search")
   bind_exec(mod .. " + CTRL + S", "window switcher", "rofi -show window")
@@ -60,7 +85,7 @@ local function applications()
     raw_dispatch("setprop", "active opaque toggle"),
     "toggle active window opacity"
   )
-  bind_exec(mod .. " + SHIFT + K", "search keybinds", "$hyprLua keybinds")
+  bind_exec(mod .. " + SHIFT + slash", "search keybinds", "$hyprLua keybinds")
   bind_exec(
     mod .. " + SHIFT + A",
     "profile selector",
@@ -199,22 +224,34 @@ end
 ---@return nil
 local function layouts()
   bind(
-    mod .. " + J",
-    layout_bind({
-      dwindle = hl.dsp.window.cycle_next(),
-      master = hl.dsp.layout("cyclenext"),
-      scrolling = hl.dsp.layout("focus d"),
-    }),
-    "focus next window for current layout"
+    mod .. " + H",
+    layout_bind({ scrolling = hl.dsp.layout("focus l") }),
+    "focus scrolling column left"
   )
   bind(
-    mod .. " + K",
-    layout_bind({
-      dwindle = hl.dsp.window.cycle_next({ next = false }),
-      master = hl.dsp.layout("cycleprev"),
-      scrolling = hl.dsp.layout("focus u"),
-    }),
-    "focus previous window for current layout"
+    mod .. " + L",
+    layout_bind({ scrolling = hl.dsp.layout("focus r") }),
+    "focus scrolling column right"
+  )
+  bind(
+    mod .. " + SHIFT + H",
+    layout_bind({ scrolling = hl.dsp.layout("swapcol l") }),
+    "swap scrolling column left"
+  )
+  bind(
+    mod .. " + SHIFT + L",
+    layout_bind({ scrolling = hl.dsp.layout("swapcol r") }),
+    "swap scrolling column right"
+  )
+  bind(
+    mod .. " + ALT + J",
+    layout_bind({ scrolling = hl.dsp.layout("focus d") }),
+    "focus next window in scrolling column"
+  )
+  bind(
+    mod .. " + ALT + K",
+    layout_bind({ scrolling = hl.dsp.layout("focus u") }),
+    "focus previous window in scrolling column"
   )
   bind(
     mod .. " + O",
@@ -255,16 +292,6 @@ local function layouts()
   )
 
   bind(
-    mod .. " + period",
-    layout_bind({ scrolling = hl.dsp.layout("move +col") }),
-    "move scrolling columns right"
-  )
-  bind(
-    mod .. " + comma",
-    layout_bind({ scrolling = hl.dsp.layout("move -col") }),
-    "move scrolling columns left"
-  )
-  bind(
     mod .. " + ALT + period",
     layout_bind({ scrolling = hl.dsp.layout("colresize +0.1") }),
     "resize scrolling column wider"
@@ -280,39 +307,25 @@ local function layouts()
     "promote window to scrolling column"
   )
   bind(
-    mod .. " + CTRL + ALT + period",
-    layout_bind({ scrolling = hl.dsp.layout("swapcol r") }),
-    "swap scrolling column right"
-  )
-  bind(
-    mod .. " + CTRL + ALT + comma",
-    layout_bind({ scrolling = hl.dsp.layout("swapcol l") }),
-    "swap scrolling column left"
-  )
-  bind(
     mod .. " + ALT + F",
     layout_bind({ scrolling = hl.dsp.layout("fit visible") }),
     "fit visible scrolling columns"
-  )
-  bind(
-    mod .. " + SHIFT + period",
-    layout_bind({ scrolling = hl.dsp.layout("swapcol r") }),
-    "swap scrolling column right"
-  )
-  bind(
-    mod .. " + SHIFT + comma",
-    layout_bind({ scrolling = hl.dsp.layout("swapcol l") }),
-    "swap scrolling column left"
   )
 end
 
 ---@return nil
 local function workspaces()
-  bind(mod .. " + tab", hl.dsp.focus({ workspace = "m+1" }), "next workspace")
+  bind(mod .. " + J", workspace_step(1), "next workspace")
+  bind(mod .. " + K", workspace_step(-1), "previous workspace")
   bind(
-    mod .. " + SHIFT + tab",
-    hl.dsp.focus({ workspace = "m-1" }),
-    "previous workspace"
+    mod .. " + SHIFT + J",
+    workspace_step(1, true),
+    "move window to next workspace"
+  )
+  bind(
+    mod .. " + SHIFT + K",
+    workspace_step(-1, true),
+    "move window to previous workspace"
   )
 
   for i = 1, 10 do
@@ -335,26 +348,6 @@ local function workspaces()
   end
 
   bind(
-    mod .. " + SHIFT + bracketleft",
-    hl.dsp.window.move({ workspace = "-1" }),
-    "move to prev workspace"
-  )
-  bind(
-    mod .. " + SHIFT + bracketright",
-    hl.dsp.window.move({ workspace = "+1" }),
-    "move to next workspace"
-  )
-  bind(
-    mod .. " + CTRL + bracketleft",
-    raw_dispatch("movetoworkspacesilent", "-1"),
-    "move silently to prev workspace"
-  )
-  bind(
-    mod .. " + CTRL + bracketright",
-    raw_dispatch("movetoworkspacesilent", "+1"),
-    "move silently to next workspace"
-  )
-  bind(
     mod .. " + CTRL + F9",
     raw_dispatch("movecurrentworkspacetomonitor", "l"),
     "workspace to left monitor"
@@ -374,16 +367,8 @@ local function workspaces()
     raw_dispatch("movecurrentworkspacetomonitor", "d"),
     "workspace to lower monitor"
   )
-  bind(
-    mod .. " + mouse_down",
-    hl.dsp.focus({ workspace = "e+1" }),
-    "next workspace"
-  )
-  bind(
-    mod .. " + mouse_up",
-    hl.dsp.focus({ workspace = "e-1" }),
-    "previous workspace"
-  )
+  bind(mod .. " + mouse_down", workspace_step(1), "next workspace")
+  bind(mod .. " + mouse_up", workspace_step(-1), "previous workspace")
 
   bind(
     mod .. " + SHIFT + U",
