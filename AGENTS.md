@@ -48,8 +48,10 @@ Check these files before changing behavior or documentation in the same area:
   `lua/hyprconf/context.lua`
 - Environment variables exported to Hyprland: `lua/hyprconf/env.lua`
 - Compositor-owned autostart commands: `lua/config/autostart.toml`
-- Graphical-session service inventory and unit files: the parent dotfiles repo
-  and `~/.local/lib/homebase/internal/platform/archlinux/setup.go`
+- Graphical-session inventory: the parent dotfiles repo at
+  `~/.config/homebase/platforms/archlinux/desktop-session.toml`
+- Graphical-session reconciliation policy:
+  `~/.local/lib/homebase/internal/platform/archlinux/setup.go`
 - Keybinds: `lua/hyprconf/binds.lua`
 - Window and layer rules: `lua/hyprconf/rules.lua`
 - Hyprland appearance, input, gestures, layout, cursor, and render options:
@@ -165,8 +167,8 @@ that behavior.
   autostart entries, sounds, or effects.
 - Re-check `lua/hyprconf/colors.lua` before documenting Noctalia palette or
   effect cache behavior.
-- Re-check the parent dotfiles README and Homebase Arch setup code before
-  documenting graphical-session service ownership or enablement.
+- Re-check the parent dotfiles desktop-session config and Homebase Arch setup
+  code before documenting graphical-session service ownership or enablement.
 - Do not claim interactive flows are covered by `make test`; document manual or
   smoke validation separately.
 - Do not present generated files as hand-edited source files.

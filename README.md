@@ -90,8 +90,8 @@ Long-running session applications are owned outside this submodule:
 | Parent dotfiles units | Run Noctalia, Overview, tray apps, and Vesktop |
 | System XDG autostart | Runs NetworkManager, Blueman, and fcitx5 applets |
 
-Homebase repairs the user-unit enablement without adding duplicate Hyprland
-autostart commands:
+Homebase reconciles the parent dotfiles repository's declarative user-service
+inventory without adding duplicate Hyprland autostart commands:
 
 ```sh
 hb setup --hook desktop-session --yes
