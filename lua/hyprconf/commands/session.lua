@@ -8,29 +8,18 @@ local M = {}
 
 ---@return nil
 function M.overview()
-  if cli.command_exists("qs") then
-    cli.exec_bg("env -u GBM_BACKEND qs -c overview")
-    if
-      os.execute("qs ipc -c overview call overview toggle >/dev/null 2>&1")
-    then
-      os.exit(0)
-    end
-  end
-
-  if cli.command_exists("ags") then
-    if os.execute("ags -t overview >/dev/null 2>&1") then
-      os.exit(0)
-    end
-    cli.exec_bg("ags")
-    os.execute("sleep 0.6")
-    if os.execute("ags -t overview >/dev/null 2>&1") then
-      os.exit(0)
-    end
+  if
+    cli.command_exists("qs")
+    and os.execute(
+      "qs ipc --newest --any-display -c overview call overview toggle >/dev/null 2>&1"
+    )
+  then
+    os.exit(0)
   end
 
   cli.notify_error(
     "Overview",
-    "Neither Quickshell nor AGS is available.",
+    "Quickshell overview is unavailable. Check quickshell-overview.service.",
     "overview"
   )
   os.exit(1)

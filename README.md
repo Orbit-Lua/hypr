@@ -173,7 +173,7 @@ zsh-theme
 - `SUPER + ALT + V`: open Vicinae clipboard history.
 - `SUPER + F`: open Vicinae file search.
 - `SUPER + .`: open the Vicinae emoji picker.
-- `SUPER + A`: toggle overview through Quickshell, falling back to AGS.
+- `SUPER + A`: toggle the systemd-managed Quickshell overview.
 - `SUPER + ALT + L`: cycle layouts: Dwindle, Master, Scrolling.
 - `SUPER + SHIFT + A`: open the profile selector.
 - `SUPER + Print`: screenshot now.
