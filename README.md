@@ -34,7 +34,7 @@ Core runtime:
 - Hyprland 0.55+ with Lua config support.
 - `lua` on `PATH`; runtime helpers invoke `lua` directly.
 - `uwsm`, `vicinae`, `kitty`, `thunar`, `notify-send`.
-- Running Vicinae and hyprpolkitagent systemd user services. Their enablement
+- Enabled Vicinae and hyprpolkitagent systemd user services. Their enablement
   is managed by the parent dotfiles repository through Homebase.
 - A desktop portal stack.
 
@@ -73,6 +73,28 @@ Core modules load in this order:
 
 ```text
 env -> monitors -> autostart -> options -> gestures -> animations -> binds -> rules
+```
+
+## Startup Ownership
+
+Hyprland autostart is intentionally limited to compositor-owned runtime work.
+`lua/config/autostart.toml` currently starts only the rainbow border helper,
+which also prepares the generated color cache when needed.
+
+Long-running session applications are owned outside this submodule:
+
+| Owner | Startup responsibility |
+| --- | --- |
+| UWSM | Starts the Hyprland graphical session and its systemd target |
+| Package user units | Run `vicinae.service` and `hyprpolkitagent.service` |
+| Parent dotfiles units | Run Noctalia, Overview, tray apps, and Vesktop |
+| System XDG autostart | Runs NetworkManager, Blueman, and fcitx5 applets |
+
+Homebase repairs the user-unit enablement without adding duplicate Hyprland
+autostart commands:
+
+```sh
+hb setup --hook desktop-session --yes
 ```
 
 ## Quick Start
@@ -203,13 +225,13 @@ clipboard where applicable.
 
 | What to change | Source file |
 | --- | --- |
-| Defaults, apps, paths, search URL, touchpad device | `lua/hyprconf/context.lua` |
+| Defaults, apps, paths, search URL, touchpad | `lua/hyprconf/context.lua` |
 | Autostart commands | `lua/config/autostart.toml` |
 | Keybinds | `lua/hyprconf/binds.lua` |
 | Key hint rows | `lua/config/key-hints.toml` |
 | Quick settings rows | `lua/config/quick-settings.toml` |
 | Window and layer rules | `lua/hyprconf/rules.lua` |
-| Hyprland options, input, gestures, layout, cursor | `lua/hyprconf/options.lua` |
+| Options, input, gestures, layout, cursor | `lua/hyprconf/options.lua` |
 | Profile targets | `lua/config/profiles.toml` |
 | Rainbow and sound settings | `lua/config/effects.toml` |
 | Noctalia palette derivation and cache | `lua/hyprconf/colors.lua` |
@@ -246,8 +268,8 @@ This runs:
 > [!NOTE]
 > `make test` validates config parsing only. It does not exercise Vicinae menus,
 > profile copying, screenshots, keybind actions, autostart commands, desktop
-> portals, or external app integrations. In a live session, validation may still
-> trigger reload hooks such as `refresh`.
+> portals, systemd user-unit lifecycle, or external app integrations. In a live
+> session, validation may still trigger reload hooks such as `refresh`.
 
 Useful non-interactive smoke checks:
 
