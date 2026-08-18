@@ -87,7 +87,7 @@ Long-running session applications are owned outside this submodule:
 | --- | --- |
 | UWSM | Starts the Hyprland graphical session and its systemd target |
 | Package user units | Run `vicinae.service` and `hyprpolkitagent.service` |
-| Parent dotfiles units | Run Noctalia, Overview, tray apps, and Vesktop |
+| Parent dotfiles units | Run KeePassXC, shells, tray apps, and Vesktop |
 | System XDG autostart | Runs NetworkManager, Blueman, and fcitx5 applets |
 
 Homebase reconciles the parent dotfiles repository's declarative user-service
