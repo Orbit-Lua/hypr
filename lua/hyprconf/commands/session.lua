@@ -18,7 +18,6 @@ function M.overview()
   end
 
   if cli.command_exists("ags") then
-    cli.rofi_close()
     if os.execute("ags -t overview >/dev/null 2>&1") then
       os.exit(0)
     end

@@ -21,7 +21,7 @@ command = ""
 [[row]]
 key = " SHIFT /"
 description = "Search keybinds"
-command = "(rofi)"
+command = "(vicinae)"
 
 [[row]]
 key = " SHIFT E"
@@ -51,7 +51,7 @@ command = ""
 [[row]]
 key = " D"
 description = "Application launcher"
-command = "(noctalia-shell)"
+command = "(vicinae)"
 
 [[row]]
 key = " E"
@@ -66,17 +66,27 @@ command = ""
 [[row]]
 key = " S"
 description = "Web search"
-command = "(rofi)"
+command = "(vicinae)"
 
 [[row]]
 key = " CTRL S"
 description = "Window switcher"
-command = "(rofi)"
+command = "(vicinae)"
+
+[[row]]
+key = " F"
+description = "File search"
+command = "(vicinae)"
+
+[[row]]
+key = " ."
+description = "Emoji picker"
+command = "(vicinae)"
 
 [[row]]
 key = " ALT V"
-description = "Clipboard manager"
-command = "(cliphist)"
+description = "Clipboard history"
+command = "(vicinae)"
 
 [[row]]
 key = " SHIFT O"
@@ -336,12 +346,7 @@ command = "active window"
 [[row]]
 key = " SHIFT A"
 description = "Profile selector"
-command = "(rofi)"
-
-[[row]]
-key = " CTRL R"
-description = "Rofi theme selector"
-command = ""
+command = "(vicinae)"
 
 [[row]]
 key = " SHIFT G"

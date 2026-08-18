@@ -1,9 +1,8 @@
 # Hyprland Lua Workstation Config
 
 Personal Hyprland 0.55+ configuration written in Lua for one active workstation.
-It wires together Hyprland options, monitor and animation profiles, rofi menus,
-Noctalia v5 themes, screenshots, clipboard tools, desktop portals, and a small
-helper CLI.
+It wires together Hyprland options, monitor and animation profiles, Vicinae
+menus, Noctalia v5 themes, screenshots, desktop portals, and a small helper CLI.
 
 This repository is intentionally specific to this machine. It assumes the normal
 checkout path is `~/.config/hypr`, default apps are `kitty` and `thunar`, the
@@ -18,11 +17,11 @@ tools.
 
 - Lua entrypoint for Hyprland with a fixed module load order.
 - Runtime helper CLI at `lua/bin/hypr.lua`.
-- Rofi menus for quick settings, keybind search, clipboard history, web search,
-  theme selection, and profile selection.
+- Vicinae as the application launcher, window switcher, clipboard history,
+  file search, emoji picker, and dmenu frontend for custom Hyprland menus.
 - Profile presets for animations and monitors, with active local profiles under
   `lua/user/`.
-- Noctalia v5 integration for Hyprland, rofi, and palette-driven border effects.
+- Noctalia v5 integration for Hyprland and palette-driven border effects.
 - Screenshot helpers for full screen, region, delayed, active window, and
   Swappy annotation flows.
 - Structured TOML config for autostart, menu rows, profile metadata, polkit
@@ -34,15 +33,17 @@ Core runtime:
 
 - Hyprland 0.55+ with Lua config support.
 - `lua` on `PATH`; runtime helpers invoke `lua` directly.
-- `uwsm`, `rofi`, `kitty`, `thunar`, `notify-send`.
+- `uwsm`, `vicinae`, `kitty`, `thunar`, `notify-send`.
+- A running Vicinae server. Its systemd user service is managed outside this
+  repository.
 - A desktop portal stack and a polkit agent matching
   `lua/config/polkit.toml`.
 
 Feature-specific tools:
 
 - Shells and panels: `qs`, `ags`.
-- Clipboard: `wl-paste`, `wl-copy`, `cliphist`.
-- Screenshots: `grim`, `slurp`, `swappy`, `xdg-user-dir`, `xdg-open`.
+- Screenshots: `grim`, `slurp`, `swappy`, `wl-copy`, `xdg-user-dir`,
+  `xdg-open`.
 - Sounds: `pw-play` or `paplay` or `aplay`.
 - Autostart integrations: `rog-control-center`, `mcontrolcenter`,
   `polychromatic-tray-applet`, `nm-applet`, `blueman-applet`, `fcitx5`,
@@ -67,15 +68,13 @@ lua/config/*.toml            structured runtime data
 lua/user/*.lua               active machine-local profiles
 profiles/<category>/*.lua    reusable profile presets
 profiles/.selected/          selected profile state
-deps/rofi/                   rofi defaults copied only when missing
-deps/noctalia/               Noctalia v5 template for effect colors
-effects/                     generated runtime effect state
+effects/                     rainbow state and generated color cache
 ```
 
 Core modules load in this order:
 
 ```text
-env -> deps -> monitors -> autostart -> options -> gestures -> animations -> binds -> rules
+env -> monitors -> autostart -> options -> gestures -> animations -> binds -> rules
 ```
 
 ## Quick Start
@@ -96,7 +95,7 @@ If you use a different checkout path, start Hyprland with the absolute path and
 set `HYPR_CONFIG_DIR` for helper commands:
 
 ```sh
-HYPR_CONFIG_DIR=/path/to/hypr lua /path/to/hypr/lua/bin/hypr.lua sync-deps
+HYPR_CONFIG_DIR=/path/to/hypr lua /path/to/hypr/lua/bin/hypr.lua keybinds
 ```
 
 ## Helper CLI
@@ -110,7 +109,6 @@ lua ~/.config/hypr/lua/bin/hypr.lua <command>
 Common examples:
 
 ```sh
-lua ~/.config/hypr/lua/bin/hypr.lua sync-deps
 lua ~/.config/hypr/lua/bin/hypr.lua quick-settings
 lua ~/.config/hypr/lua/bin/hypr.lua keybinds
 lua ~/.config/hypr/lua/bin/hypr.lua profile-selector
@@ -122,7 +120,6 @@ Available commands are defined in `lua/bin/hypr.lua`:
 ```text
 change-blur
 change-layout
-clip-manager
 game-mode
 key-hints
 keybinds
@@ -136,28 +133,27 @@ quick-settings
 rainbow-border
 rainbow-menu
 refresh
-rofi-search
-rofi-theme
 screenshot
 sound
-sync-deps
 touchpad
+web-search
 zsh-theme
 ```
-
-Most helper commands sync rofi defaults before running. `sync-deps` copies files
-from `deps/rofi/` to `${ROFI_CONFIG_DIR:-~/.config/rofi}` only when the target
-file does not already exist.
 
 ## Daily Workflows
 
 ### Keybinds
 
-- `SUPER + H`: open the cheat sheet from `lua/config/key-hints.toml`.
-- `SUPER + SHIFT + K`: search keybind definitions from
+- `SUPER + /`: open the cheat sheet from `lua/config/key-hints.toml`.
+- `SUPER + SHIFT + /`: search keybind definitions from
   `lua/hyprconf/binds.lua`.
 - `SUPER + SHIFT + E`: open quick settings.
-- `SUPER + D`: toggle the Noctalia launcher.
+- `SUPER + D`: toggle the Vicinae launcher.
+- `SUPER + S`: enter a web search through Vicinae dmenu.
+- `SUPER + CTRL + S`: open the Vicinae window switcher.
+- `SUPER + ALT + V`: open Vicinae clipboard history.
+- `SUPER + F`: open Vicinae file search.
+- `SUPER + .`: open the Vicinae emoji picker.
 - `SUPER + A`: toggle overview through Quickshell, falling back to AGS.
 - `SUPER + ALT + L`: cycle layouts: Dwindle, Master, Scrolling.
 - `SUPER + SHIFT + A`: open the profile selector.
@@ -180,15 +176,17 @@ write to `lua/user/monitors.lua`. Selected preset names are stored under
 
 ### Themes And Effects
 
-- Noctalia v5 generates `noctalia.lua` for Hyprland and
-  `~/.config/rofi/noctalia.rasi` for rofi when their templates are enabled.
-- `~/.config/noctalia/templates.toml` links to the tracked effect-color
-  template config under `deps/noctalia/`.
+- Noctalia v5 generates `noctalia.lua`; the entrypoint applies its Hyprland
+  theme without modifying the generated file.
+- `lua/hyprconf/colors.lua` reads the four semantic Noctalia colors and derives
+  the material and 16-color palettes used by Hyprland.
+- Derived colors are cached in ignored `effects/colors-cache.lua`. The cache is
+  rewritten only when `noctalia.lua` changes or the cache is invalid.
 - `rainbow-menu` chooses the rainbow border mode and writes
   `effects/rainbow-border-mode`.
-- `rainbow-border` applies runtime border colors using the palette generated by
-  the Noctalia v5 effect-color template.
-- `rofi-theme`, `kitty-themes`, and `zsh-theme` edit external user config files.
+- `rainbow-border` applies runtime border colors through the shared color
+  module.
+- `kitty-themes` and `zsh-theme` edit external user config files.
 
 ### Screenshots
 
@@ -215,16 +213,15 @@ clipboard where applicable.
 | Quick settings rows | `lua/config/quick-settings.toml` |
 | Window and layer rules | `lua/hyprconf/rules.lua` |
 | Hyprland options, input, gestures, layout, cursor | `lua/hyprconf/options.lua` |
-| Profile targets and menu themes | `lua/config/profiles.toml` |
+| Profile targets | `lua/config/profiles.toml` |
 | Polkit candidates | `lua/config/polkit.toml` |
 | Rainbow and sound settings | `lua/config/effects.toml` |
-| Noctalia effect-color template | `deps/noctalia/` |
+| Noctalia palette derivation and cache | `lua/hyprconf/colors.lua` |
 
 Useful runtime overrides:
 
 ```text
 HYPR_CONFIG_DIR              default: ~/.config/hypr
-ROFI_CONFIG_DIR              default: ~/.config/rofi
 EFFECTS_DIR                  default: $HYPR_CONFIG_DIR/effects
 RAINBOW_BORDER_MODE_FILE     default: $EFFECTS_DIR/rainbow-border-mode
 NOTIFY_APP_NAME              default: Hyprland
@@ -240,7 +237,7 @@ EDITOR                       default for quick edit actions: nvim
 Run the standard readiness check from the repository root:
 
 ```sh
-make ready
+make all
 ```
 
 This runs:
@@ -251,7 +248,7 @@ This runs:
   `~/.config/hypr/hyprland.lua`.
 
 > [!NOTE]
-> `make test` validates config parsing only. It does not exercise rofi menus,
+> `make test` validates config parsing only. It does not exercise Vicinae menus,
 > profile copying, screenshots, keybind actions, autostart commands, desktop
 > portals, or external app integrations. In a live session, validation may still
 > trigger reload hooks such as `refresh`.
@@ -259,13 +256,13 @@ This runs:
 Useful non-interactive smoke checks:
 
 ```sh
-lua ~/.config/hypr/lua/bin/hypr.lua sync-deps
+vicinae ping
+vicinae cmd ls
 lua ~/.config/hypr/lua/bin/hypr.lua not-a-command
 ```
 
 ## Side Effects To Know
 
-- `rofi-theme` edits `${ROFI_CONFIG_DIR:-~/.config/rofi}/config.rasi`.
 - `kitty-themes` edits `~/.config/kitty/kitty.conf` and reloads kitty.
 - `zsh-theme` edits `~/.zshrc`.
 - `portal-hyprland` restarts desktop portal processes.

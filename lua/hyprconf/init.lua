@@ -8,7 +8,6 @@ local M = {}
 ---@type string[]
 local modules = {
   "hyprconf.env",
-  "hyprconf.deps",
   "hyprconf.monitors",
   "hyprconf.autostart",
   "hyprconf.options",

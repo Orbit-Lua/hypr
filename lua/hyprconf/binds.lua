@@ -64,7 +64,7 @@ local function applications()
   bind_exec(
     mod .. " + D",
     "application launcher",
-    "noctalia msg panel-toggle launcher"
+    "$vicinae 'vicinae://toggle'"
   )
   bind_exec(mod .. " + B", "open default browser", [[xdg-open "https://"]])
   bind_exec(mod .. " + A", "desktop overview", "$hyprLua overview")
@@ -72,13 +72,30 @@ local function applications()
   bind_exec(mod .. " + E", "file manager", "$files")
   bind_exec(mod .. " + slash", "cheat sheet", "$hyprLua key-hints")
   bind_exec(mod .. " + SHIFT + E", "quick settings", "$hyprLua quick-settings")
-  bind_exec(mod .. " + S", "web search", "$hyprLua rofi-search")
-  bind_exec(mod .. " + CTRL + S", "window switcher", "rofi -show window")
+  bind_exec(mod .. " + S", "web search", "$hyprLua web-search")
+  bind_exec(
+    mod .. " + CTRL + S",
+    "window switcher",
+    "$vicinae 'vicinae://launch/wm/switch-windows?toggle=true'"
+  )
+  bind_exec(
+    mod .. " + F",
+    "file search",
+    "$vicinae 'vicinae://launch/files/search?toggle=true'"
+  )
+  bind_exec(
+    mod .. " + period",
+    "emoji picker",
+    "$vicinae 'vicinae://launch/core/search-emojis?toggle=true'"
+  )
   bind_exec(mod .. " + ALT + O", "toggle blur", "$hyprLua change-blur")
   bind_exec(mod .. " + SHIFT + G", "toggle game mode", "$hyprLua game-mode")
   bind_exec(mod .. " + ALT + L", "toggle layout", "$hyprLua change-layout")
-  bind_exec(mod .. " + ALT + V", "clipboard manager", "$hyprLua clip-manager")
-  bind_exec(mod .. " + CTRL + R", "rofi theme selector", "$hyprLua rofi-theme")
+  bind_exec(
+    mod .. " + ALT + V",
+    "clipboard history",
+    "$vicinae 'vicinae://launch/clipboard/history?toggle=true'"
+  )
   bind_exec(mod .. " + N", "open obsidian", "obsidian")
   bind(
     mod .. " + CTRL + O",

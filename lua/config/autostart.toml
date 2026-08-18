@@ -20,12 +20,6 @@ run = "qs -c overview"
 # run = "uwsm app -- mcontrolcenter"
 
 [[command]]
-run = "wl-paste --type text --watch cliphist store"
-
-[[command]]
-run = "wl-paste --type image --watch cliphist store"
-
-[[command]]
 run = "uwsm app -- polychromatic-tray-applet"
 
 [[command]]

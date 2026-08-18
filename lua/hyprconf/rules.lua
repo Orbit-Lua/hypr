@@ -31,6 +31,7 @@
 ---@field blur? boolean
 ---@field ignore_alpha? number
 ---@field blur_popups? boolean
+---@field no_anim? boolean
 
 ---@alias Hyprconf.TaggedWindow [string, Hyprconf.WindowMatch]
 
@@ -445,7 +446,13 @@ local window_rules = {
 
 ---@type Hyprconf.LayerRule[]
 local layer_rules = {
-  { name = "rofi", match = { namespace = "rofi" }, blur = true },
+  {
+    name = "vicinae",
+    match = { namespace = "vicinae" },
+    blur = true,
+    ignore_alpha = 0,
+    no_anim = true,
+  },
   {
     name = "notifications",
     match = { namespace = "notifications" },

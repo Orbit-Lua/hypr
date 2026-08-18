@@ -58,8 +58,6 @@ end
 
 ---@return nil
 function M.refresh()
-  cli.kill_by_name("rofi")
-  os.execute("sleep 1")
   if cli.rainbow_border_mode() ~= "disabled" then
     cli.exec_bg(common.lua_cmd("rainbow-border"))
   end

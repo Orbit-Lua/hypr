@@ -3,7 +3,6 @@ local cli = require("hyprconf.cli")
 ---@class Hyprconf.Commands.Common
 ---@field bin_path string
 ---@field config fun(name: string): string
----@field split_lines fun(value?: string): string[]
 ---@field basename fun(path: string): string
 ---@field without_suffix fun(value: string, suffix: string): string
 ---@field lua_cmd fun(args: string): string
@@ -15,18 +14,6 @@ M.bin_path = cli.config_dir .. "/lua/bin/hypr.lua"
 ---@return string
 function M.config(name)
   return cli.config_dir .. "/lua/config/" .. name .. ".toml"
-end
-
----@param value? string
----@return string[]
-function M.split_lines(value)
-  local lines = {}
-  for line in ((value or "") .. "\n"):gmatch("([^\n]*)\n") do
-    if line ~= "" then
-      lines[#lines + 1] = line
-    end
-  end
-  return lines
 end
 
 ---@param path string

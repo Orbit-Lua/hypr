@@ -4,19 +4,20 @@ local json = require("hyprconf.util.json")
 ---@alias Hyprconf.NotifyUrgency "low"|"normal"|"critical"
 ---@alias Hyprconf.RainbowBorderMode "disabled"|"gradient_flow"|"material_random"|"rainbow"
 
----@class Hyprconf.RofiCustomBinding
----@field [1] string Rofi option name.
----@field [2] string Keybinding value.
+---@class Hyprconf.VicinaeDmenuOptions
+---@field navigation_title? string Window navigation title.
+---@field section_title? string Main section title.
+---@field placeholder? string Search field placeholder.
+---@field query? string Initial search query.
+---@field format? "data"|"index" Output the selected entry or its zero-based index.
+---@field width? integer Window width in pixels.
+---@field height? integer Window height in pixels.
+---@field no_section? boolean Hide the main section heading.
+---@field no_quick_look? boolean Disable file quick look.
+---@field no_metadata? boolean Hide quick-look metadata.
+---@field no_footer? boolean Hide the status bar footer.
 
----@class Hyprconf.RofiDmenuOptions
----@field config? string Rofi config path.
----@field message? string Rofi message.
----@field prompt? string Rofi prompt.
----@field format? string Rofi output format.
----@field selected_row? integer Zero-based selected row.
----@field custom? Hyprconf.RofiCustomBinding[] Extra option/value pairs.
-
----@class Hyprconf.RofiMarkedOptions: Hyprconf.RofiDmenuOptions
+---@class Hyprconf.VicinaeMarkedOptions: Hyprconf.VicinaeDmenuOptions
 ---@field marker? string Prefix for the active row.
 ---@field current? string Active label.
 
@@ -35,7 +36,6 @@ local json = require("hyprconf.util.json")
 ---@class Hyprconf.Cli
 ---@field home string
 ---@field config_dir string
----@field rofi_config_dir string
 ---@field effects_dir string
 ---@field rainbow_mode_file string
 ---@field notify_app_name string
@@ -45,7 +45,6 @@ local M = {}
 
 M.home = os.getenv("HOME") or ""
 M.config_dir = os.getenv("HYPR_CONFIG_DIR") or (M.home .. "/.config/hypr")
-M.rofi_config_dir = os.getenv("ROFI_CONFIG_DIR") or (M.home .. "/.config/rofi")
 M.effects_dir = os.getenv("EFFECTS_DIR") or (M.config_dir .. "/effects")
 M.rainbow_mode_file = os.getenv("RAINBOW_BORDER_MODE_FILE")
   or (M.effects_dir .. "/rainbow-border-mode")
@@ -262,11 +261,6 @@ function M.kill_by_name(...)
   end
 end
 
----@return nil
-function M.rofi_close()
-  M.kill_by_name("rofi")
-end
-
 ---@param lines string[]
 ---@return string
 local function temp_input(lines)
@@ -276,36 +270,56 @@ local function temp_input(lines)
 end
 
 ---@param lines string[]?
----@param opts? Hyprconf.RofiDmenuOptions
+---@param opts? Hyprconf.VicinaeDmenuOptions
 ---@return string output
 ---@return integer status
-function M.rofi_dmenu(lines, opts)
+function M.vicinae_dmenu(lines, opts)
   opts = opts or {}
+  if not M.require_command("vicinae", "Install Vicinae first.") then
+    return "", 1
+  end
+
   local path = temp_input(lines or { "" })
-  local args = { "rofi", "-i", "-dmenu" }
-  if opts.config and opts.config ~= "" then
-    args[#args + 1] = "-config"
-    args[#args + 1] = M.shell_quote(opts.config)
+  local args = { "vicinae", "dmenu" }
+  if opts.navigation_title and opts.navigation_title ~= "" then
+    args[#args + 1] = "--navigation-title"
+    args[#args + 1] = M.shell_quote(opts.navigation_title)
   end
-  if opts.message and opts.message ~= "" then
-    args[#args + 1] = "-mesg"
-    args[#args + 1] = M.shell_quote(opts.message)
+  if opts.section_title and opts.section_title ~= "" then
+    args[#args + 1] = "--section-title"
+    args[#args + 1] = M.shell_quote(opts.section_title)
   end
-  if opts.prompt then
-    args[#args + 1] = "-p"
-    args[#args + 1] = M.shell_quote(opts.prompt)
+  if opts.placeholder and opts.placeholder ~= "" then
+    args[#args + 1] = "--placeholder"
+    args[#args + 1] = M.shell_quote(opts.placeholder)
+  end
+  if opts.query and opts.query ~= "" then
+    args[#args + 1] = "--query"
+    args[#args + 1] = M.shell_quote(opts.query)
   end
   if opts.format then
-    args[#args + 1] = "-format"
+    args[#args + 1] = "--format"
     args[#args + 1] = M.shell_quote(opts.format)
   end
-  if opts.selected_row then
-    args[#args + 1] = "-selected-row"
-    args[#args + 1] = tostring(opts.selected_row)
+  if opts.width then
+    args[#args + 1] = "--width"
+    args[#args + 1] = tostring(opts.width)
   end
-  for _, custom in ipairs(opts.custom or {}) do
-    args[#args + 1] = custom[1]
-    args[#args + 1] = M.shell_quote(custom[2])
+  if opts.height then
+    args[#args + 1] = "--height"
+    args[#args + 1] = tostring(opts.height)
+  end
+  if opts.no_section then
+    args[#args + 1] = "--no-section"
+  end
+  if opts.no_quick_look then
+    args[#args + 1] = "--no-quick-look"
+  end
+  if opts.no_metadata then
+    args[#args + 1] = "--no-metadata"
+  end
+  if opts.no_footer then
+    args[#args + 1] = "--no-footer"
   end
 
   local status_file = os.tmpname()
@@ -322,29 +336,35 @@ function M.rofi_dmenu(lines, opts)
 end
 
 ---@param labels string[]
----@param opts? Hyprconf.RofiMarkedOptions
+---@param opts? Hyprconf.VicinaeMarkedOptions
 ---@return string? choice
 ---@return integer status
-function M.rofi_select_marked(labels, opts)
+function M.vicinae_select_marked(labels, opts)
   opts = opts or {}
   local marker = opts.marker or ">"
   local current = opts.current or ""
-  local selected_row = 0
   local rows = {}
 
   for index, label in ipairs(labels) do
     if label == current then
       rows[index] = marker .. " " .. label
-      selected_row = index - 1
     else
       rows[index] = label
     end
   end
 
-  local choice, status = M.rofi_dmenu(rows, {
-    config = opts.config,
-    message = opts.message,
-    selected_row = selected_row,
+  local choice, status = M.vicinae_dmenu(rows, {
+    navigation_title = opts.navigation_title,
+    section_title = opts.section_title,
+    placeholder = opts.placeholder,
+    query = opts.query,
+    format = opts.format,
+    width = opts.width,
+    height = opts.height,
+    no_section = opts.no_section,
+    no_quick_look = opts.no_quick_look,
+    no_metadata = opts.no_metadata,
+    no_footer = opts.no_footer,
   })
   if status ~= 0 or choice == "" then
     return nil, status

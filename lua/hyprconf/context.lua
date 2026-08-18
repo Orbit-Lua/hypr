@@ -3,6 +3,7 @@
 ---@field config_dir string Hyprland configuration root.
 ---@field hypr_lua string Shell command that runs the Hypr Lua CLI.
 ---@field main_mod string Primary Hyprland modifier.
+---@field vicinae string Vicinae launcher command.
 ---@field term string Default terminal command.
 ---@field files string Default file-manager command.
 ---@field search_engine string Search URL prefix used by runtime helpers.
@@ -19,6 +20,7 @@ M.home = os.getenv("HOME") or ""
 M.config_dir = os.getenv("HYPR_CONFIG_DIR") or (M.home .. "/.config/hypr")
 M.hypr_lua = "lua " .. shell_quote(M.config_dir .. "/lua/bin/hypr.lua")
 M.main_mod = "SUPER"
+M.vicinae = "vicinae"
 M.term = "kitty"
 M.files = "thunar"
 M.search_engine = "https://www.google.com/search?q="

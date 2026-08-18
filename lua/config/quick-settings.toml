@@ -80,11 +80,6 @@ kind = "action"
 command = "profile-selector monitor"
 
 [[item]]
-label = "Choose Rofi Themes"
-kind = "action"
-command = "rofi-theme"
-
-[[item]]
 label = "Search for Keybinds"
 kind = "action"
 command = "keybinds"

@@ -55,6 +55,7 @@ function M.expand(command)
     HOME = ctx.home,
     configDir = ctx.config_dir,
     hyprLua = ctx.hypr_lua,
+    vicinae = ctx.vicinae,
     term = ctx.term,
     files = ctx.files,
     Search_Engine = ctx.search_engine,

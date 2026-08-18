@@ -4,7 +4,6 @@ local toml = require("hyprconf.util.toml")
 
 ---@class Hyprconf.ProfileTargetSpec
 ---@field target? string Active profile target path relative to config root.
----@field theme? string Rofi theme path relative to rofi config root.
 
 ---@alias Hyprconf.ProfilesConfig table<string, Hyprconf.ProfileTargetSpec>
 
@@ -29,15 +28,6 @@ local function profile_target(category)
   return cli.config_dir
     .. "/"
     .. (spec.target or ("lua/user/" .. category .. ".lua"))
-end
-
----@param category Hyprconf.ProfileCategory
----@return string
-local function profile_theme(category)
-  ---@type Hyprconf.ProfilesConfig
-  local data = toml.read(common.config("profiles"))
-  local spec = data[category] or {}
-  return cli.rofi_config_dir .. "/" .. (spec.theme or "config-edit.rasi")
 end
 
 ---@param category Hyprconf.ProfileCategory
@@ -71,17 +61,14 @@ end
 ---@param category? Hyprconf.ProfileCategory
 ---@return nil
 function M.profile_selector(category)
-  if not cli.require_command("rofi", "Install rofi first.") then
-    return
-  end
-  cli.rofi_close()
-
   local root = cli.config_dir .. "/profiles"
   if not category or category == "" then
-    category = cli.rofi_select_marked(cli.list_dirs(root), {
-      config = cli.rofi_config_dir .. "/config-edit.rasi",
-      message = "Choose profile category",
+    category = cli.vicinae_select_marked(cli.list_dirs(root), {
+      navigation_title = "Hyprland Profiles",
+      section_title = "Categories ({count})",
+      placeholder = "Choose a profile category...",
       marker = ">",
+      no_quick_look = true,
     })
     if not category then
       return
@@ -109,11 +96,14 @@ function M.profile_selector(category)
     end
   end
 
-  local selected = cli.rofi_select_marked(labels, {
-    config = profile_theme(category),
-    message = "Choose " .. category:gsub("^%l", string.upper) .. " profile",
+  local title = category:gsub("^%l", string.upper) .. " Profile"
+  local selected = cli.vicinae_select_marked(labels, {
+    navigation_title = title,
+    section_title = "Profiles ({count})",
+    placeholder = "Choose a " .. category .. " profile...",
     current = current_label,
     marker = ">",
+    no_quick_look = true,
   })
   if not selected then
     return
