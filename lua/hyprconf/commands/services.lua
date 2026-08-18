@@ -1,28 +1,10 @@
 local cli = require("hyprconf.cli")
 local common = require("hyprconf.commands.common")
-local toml = require("hyprconf.util.toml")
-
----@class Hyprconf.PolkitConfig
----@field paths? string[]
 
 ---@class Hyprconf.Commands.Services
----@field polkit fun()
 ---@field portal_hyprland fun()
 ---@field refresh fun()
 local M = {}
-
----@return nil
-function M.polkit()
-  ---@type Hyprconf.PolkitConfig
-  local data = toml.read(common.config("polkit"))
-  for _, path in ipairs(data.paths or {}) do
-    if cli.file_exists(path) then
-      os.execute(cli.shell_quote(path))
-      return
-    end
-  end
-  io.stderr:write("No valid Polkit agent found. Please install one.\n")
-end
 
 ---@return nil
 function M.portal_hyprland()

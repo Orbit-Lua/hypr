@@ -24,8 +24,8 @@ tools.
 - Noctalia v5 integration for Hyprland and palette-driven border effects.
 - Screenshot helpers for full screen, region, delayed, active window, and
   Swappy annotation flows.
-- Structured TOML config for autostart, menu rows, profile metadata, polkit
-  candidates, quick settings, key hints, and effects.
+- Structured TOML config for autostart, menu rows, profile metadata, quick
+  settings, key hints, and effects.
 
 ## Requirements
 
@@ -34,20 +34,18 @@ Core runtime:
 - Hyprland 0.55+ with Lua config support.
 - `lua` on `PATH`; runtime helpers invoke `lua` directly.
 - `uwsm`, `vicinae`, `kitty`, `thunar`, `notify-send`.
-- A running Vicinae server. Its systemd user service is managed outside this
-  repository.
-- A desktop portal stack and a polkit agent matching
-  `lua/config/polkit.toml`.
+- Running Vicinae and hyprpolkitagent systemd user services. Their enablement
+  is managed by the parent dotfiles repository through Homebase.
+- A desktop portal stack.
 
 Feature-specific tools:
 
-- Shells and panels: `qs`, `ags`.
+- Shell overview: `qs`.
 - Screenshots: `grim`, `slurp`, `swappy`, `wl-copy`, `xdg-user-dir`,
   `xdg-open`.
 - Sounds: `pw-play` or `paplay` or `aplay`.
-- Autostart integrations: `rog-control-center`, `mcontrolcenter`,
-  `polychromatic-tray-applet`, `nm-applet`, `blueman-applet`, `fcitx5`,
-  Vesktop, Remmina, and Tailscale.
+- Session applications are managed by systemd and XDG autostart in the parent
+  dotfiles repository.
 
 Development tools:
 
@@ -126,7 +124,6 @@ keybinds
 kill-active
 kitty-themes
 overview
-polkit
 portal-hyprland
 profile-selector
 quick-settings
@@ -214,7 +211,6 @@ clipboard where applicable.
 | Window and layer rules | `lua/hyprconf/rules.lua` |
 | Hyprland options, input, gestures, layout, cursor | `lua/hyprconf/options.lua` |
 | Profile targets | `lua/config/profiles.toml` |
-| Polkit candidates | `lua/config/polkit.toml` |
 | Rainbow and sound settings | `lua/config/effects.toml` |
 | Noctalia palette derivation and cache | `lua/hyprconf/colors.lua` |
 

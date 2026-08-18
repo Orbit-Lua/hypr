@@ -27,7 +27,6 @@ local session = require("hyprconf.commands.session")
 ---| "kill-active"
 ---| "kitty-themes"
 ---| "overview"
----| "polkit"
 ---| "portal-hyprland"
 ---| "profile-selector"
 ---| "quick-settings"
@@ -50,7 +49,6 @@ local commands = {
   ["kill-active"] = session.kill_active,
   ["kitty-themes"] = menus.kitty_themes,
   ["overview"] = session.overview,
-  ["polkit"] = services.polkit,
   ["portal-hyprland"] = services.portal_hyprland,
   ["profile-selector"] = profiles.profile_selector,
   ["quick-settings"] = menus.quick_settings,
