@@ -1,5 +1,10 @@
 # Hyprland Lua Workstation Config
 
+[![Hyprland](https://img.shields.io/badge/Hyprland-0.55%2B-58E1FF?style=flat-square&logo=hyprland&logoColor=white)](https://hyprland.org/)
+[![Lua](https://img.shields.io/badge/Lua-config-2C2D72?style=flat-square&logo=lua&logoColor=white)](https://www.lua.org/)
+[![Platform](https://img.shields.io/badge/platform-Arch%20Linux-1793D1?style=flat-square&logo=archlinux&logoColor=white)](https://archlinux.org/)
+[![Launcher](https://img.shields.io/badge/launcher-Vicinae-blue?style=flat-square)](https://docs.vicinae.com/)
+
 Personal Hyprland 0.55+ configuration written in Lua for one active workstation.
 It wires together Hyprland options, monitor and animation profiles, Vicinae
 menus, Noctalia v5 themes, screenshots, desktop portals, and a small helper CLI.
