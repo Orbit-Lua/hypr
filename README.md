@@ -35,7 +35,7 @@ Core runtime:
 - `lua` on `PATH`; runtime helpers invoke `lua` directly.
 - `uwsm`, `vicinae`, `kitty`, `thunar`, `notify-send`.
 - Enabled Vicinae and hyprpolkitagent systemd user services. Their enablement
-  is managed by the parent dotfiles repository through Homebase.
+  is managed by the workstation Nix configuration (`~/.config/nix`).
 - A desktop portal stack.
 
 Feature-specific tools:
@@ -44,8 +44,8 @@ Feature-specific tools:
 - Screenshots: `grim`, `slurp`, `swappy`, `wl-copy`, `xdg-user-dir`,
   `xdg-open`.
 - Sounds: `pw-play` or `paplay` or `aplay`.
-- Session applications are managed by systemd and XDG autostart in the parent
-  dotfiles repository.
+- Session applications are managed by systemd and XDG autostart in the
+  workstation Nix configuration (`~/.config/nix`).
 
 Development tools:
 
@@ -81,21 +81,25 @@ Hyprland autostart is intentionally limited to compositor-owned runtime work.
 `lua/config/autostart.toml` currently starts only the rainbow border helper,
 which also prepares the generated color cache when needed.
 
-Long-running session applications are owned outside this submodule:
+Long-running session applications are owned outside this repository by the
+workstation Nix configuration (`~/.config/nix`):
 
 | Owner | Startup responsibility |
 | --- | --- |
 | UWSM | Starts the Hyprland graphical session and its systemd target |
-| Package user units | Run `vicinae.service` and `hyprpolkitagent.service` |
-| Parent dotfiles units | Run KeePassXC, shells, tray apps, and Vesktop |
+| Home Manager user units | Run `hyprpolkitagent`, `vicinae`, desktop shells (`noctalia`, `quickshell-overview`), tray apps, and `vesktop` |
 | System XDG autostart | Runs NetworkManager, Blueman, and fcitx5 applets |
 
-Homebase reconciles the parent dotfiles repository's declarative user-service
-inventory without adding duplicate Hyprland autostart commands:
+Workstation deployment applies declarative user services via Home Manager in
+`~/.config/nix`:
 
 ```sh
-hb setup --hook desktop-session --yes
+# In ~/.config/nix:
+just arch-workstation
 ```
+
+See `~/.config/nix/docs/desktop-session.md` for session ordering,
+StatusNotifier watcher readiness, and ownership boundaries.
 
 ## Quick Start
 
@@ -175,6 +179,7 @@ zsh-theme
 - `SUPER + .`: open the Vicinae emoji picker.
 - `SUPER + A`: toggle the systemd-managed Quickshell overview.
 - `SUPER + ALT + L`: cycle layouts: Dwindle, Master, Scrolling.
+- `SUPER + H / L`: focus scrolling column left / right in Scrolling layout.
 - `SUPER + SHIFT + A`: open the profile selector.
 - `SUPER + Print`: screenshot now.
 - `SUPER + SHIFT + Print`: screenshot area.
