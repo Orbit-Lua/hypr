@@ -27,6 +27,8 @@ tools.
 - Profile presets for animations and monitors, with active local profiles under
   `lua/user/`.
 - Noctalia v5 integration for Hyprland and palette-driven border effects.
+- Moonlit window spacing and rounding, blurred Noctalia surfaces, and persistent
+  workspaces 1–5 on the active output.
 - Screenshot helpers for full screen, region, delayed, active window, and
   Swappy annotation flows.
 - Structured TOML config for autostart, menu rows, profile metadata, quick
@@ -176,6 +178,7 @@ zsh-theme
 - `SUPER + SHIFT + /`: search keybind definitions from
   `lua/hyprconf/binds.lua`.
 - `SUPER + SHIFT + E`: open quick settings.
+- `SUPER + SHIFT + P`: toggle the Noctalia Control Center.
 - `SUPER + D`: toggle the Vicinae launcher.
 - `SUPER + S`: enter a web search through Vicinae dmenu.
 - `SUPER + CTRL + S`: open the Vicinae window switcher.
@@ -207,6 +210,11 @@ write to `lua/user/monitors.lua`. Selected preset names are stored under
 
 - Noctalia v5 generates `noctalia.lua`; the entrypoint applies its Hyprland
   theme without modifying the generated file.
+- Hyprland uses 6 px inner gaps, 12 px outer gaps, 16 px rounding, and a soft
+  shadow and blur. The Noctalia bar, panels, notifications, and OSD receive
+  compositor blur.
+- Workspaces 1–5 stay present on the output where they are used. Workspaces
+  6–10 remain available for the existing app and gaming rules.
 - `lua/hyprconf/colors.lua` reads the four semantic Noctalia colors and derives
   the material and 16-color palettes used by Hyprland.
 - Derived colors are cached in ignored `effects/colors-cache.lua`. The cache is

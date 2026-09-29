@@ -10,8 +10,8 @@ function M.setup()
   hl.config({
     general = {
       border_size = 1,
-      gaps_in = 10,
-      gaps_out = 16,
+      gaps_in = 6,
+      gaps_out = 12,
       resize_on_border = true,
       layout = "scrolling",
       col = {
@@ -27,7 +27,7 @@ function M.setup()
     },
 
     decoration = {
-      rounding = 2,
+      rounding = 16,
       rounding_power = 2,
       active_opacity = 1.0,
       inactive_opacity = 0.9,
@@ -37,14 +37,14 @@ function M.setup()
       dim_special = 0.8,
       shadow = {
         enabled = true,
-        range = 4,
-        render_power = 3,
+        range = 5,
+        render_power = 2,
         color = colors.get("color12", "rgb(B39D89)"),
         color_inactive = colors.get("color10", "rgb(72695D)"),
       },
       blur = {
         enabled = true,
-        size = 3,
+        size = 5,
         passes = 2,
         ignore_opacity = true,
         new_optimizations = true,

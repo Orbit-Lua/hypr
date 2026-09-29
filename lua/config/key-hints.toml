@@ -29,6 +29,11 @@ description = "Quick settings"
 command = ""
 
 [[row]]
+key = " SHIFT P"
+description = "Noctalia control center"
+command = ""
+
+[[row]]
 key = ""
 description = ""
 command = ""

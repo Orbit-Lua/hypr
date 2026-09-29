@@ -72,6 +72,11 @@ local function applications()
   bind_exec(mod .. " + E", "file manager", "$files")
   bind_exec(mod .. " + slash", "cheat sheet", "$hyprLua key-hints")
   bind_exec(mod .. " + SHIFT + E", "quick settings", "$hyprLua quick-settings")
+  bind_exec(
+    mod .. " + SHIFT + P",
+    "Noctalia control center",
+    "noctalia msg panel-toggle control-center"
+  )
   bind_exec(mod .. " + S", "web search", "$hyprLua web-search")
   bind_exec(
     mod .. " + CTRL + S",

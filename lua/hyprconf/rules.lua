@@ -51,6 +51,12 @@ local function lr(spec)
   return hl.layer_rule(spec)
 end
 
+---@param spec HL.WorkspaceRuleSpec
+---@return any
+local function ws(spec)
+  return hl.workspace_rule(spec)
+end
+
 local tag_rule_index = 0
 ---@param name string
 ---@param match Hyprconf.WindowMatch
@@ -459,28 +465,24 @@ local layer_rules = {
     blur = true,
   },
   {
-    name = "noctalia-bar",
-    match = { namespace = "noctalia-bar-.*$" },
-
-    -- other namespace:
-    -- noctalia-panel
-    -- noctalia-attached-panel
-    -- noctalia-dock
-    -- noctalia-notification
-    -- noctalia-osd
-    -- noctalia-launcher-overlay
-    -- noctalia-desktop-widget-<type>-<id>
-
-    -- regex example:
-    -- ^noctalia-(bar-.+|notification|dock|panel|attached-panel|osd|window-switcher)$
-
+    name = "noctalia-surfaces",
+    match = {
+      namespace = "^noctalia-(bar-.+|panel|attached-panel|notification|osd)$",
+    },
+    blur = true,
+    blur_popups = true,
+    no_anim = true,
     ignore_alpha = 0,
   },
-  {
-    name = "noctalia-panel",
-    match = { namespace = "noctalia-attached-panel" },
-    ignore_alpha = 0,
-  },
+}
+
+---@type HL.WorkspaceRuleSpec[]
+local persistent_workspaces = {
+  { workspace = "1", persistent = true },
+  { workspace = "2", persistent = true },
+  { workspace = "3", persistent = true },
+  { workspace = "4", persistent = true },
+  { workspace = "5", persistent = true },
 }
 
 ---@return nil
@@ -495,6 +497,10 @@ function M.setup()
 
   for _, rule in ipairs(layer_rules) do
     lr(rule)
+  end
+
+  for _, rule in ipairs(persistent_workspaces) do
+    ws(rule)
   end
 end
 
