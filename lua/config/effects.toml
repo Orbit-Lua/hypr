@@ -1,5 +1,5 @@
 [rainbow]
-default = "gradient_flow"
+default = "material_random"
 modes = ["disabled", "material_random", "rainbow", "gradient_flow"]
 
 [sounds]

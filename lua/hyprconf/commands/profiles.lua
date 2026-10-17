@@ -1,11 +1,6 @@
 local cli = require("hyprconf.cli")
 local common = require("hyprconf.commands.common")
-local toml = require("hyprconf.util.toml")
-
----@class Hyprconf.ProfileTargetSpec
----@field target? string Active profile target path relative to config root.
-
----@alias Hyprconf.ProfilesConfig table<string, Hyprconf.ProfileTargetSpec>
+local profile = require("hyprconf.profile")
 
 ---@class Hyprconf.Commands.Profiles
 ---@field profile_selector fun(category?: Hyprconf.ProfileCategory)
@@ -20,22 +15,11 @@ local function profile_label(path)
 end
 
 ---@param category Hyprconf.ProfileCategory
----@return string
-local function profile_target(category)
-  ---@type Hyprconf.ProfilesConfig
-  local data = toml.read(common.config("profiles"))
-  local spec = data[category] or {}
-  return cli.config_dir
-    .. "/"
-    .. (spec.target or ("lua/user/" .. category .. ".lua"))
-end
-
----@param category Hyprconf.ProfileCategory
 ---@param profile_dir string
----@param active_profile string
+---@param active_profile string?
 ---@return string?
 local function current_profile_key(category, profile_dir, active_profile)
-  local state = cli.config_dir .. "/profiles/.selected/" .. category
+  local state = cli.state_dir .. "/profiles/selected/" .. category
   local selected = cli.read_file(state)
   if selected then
     selected = selected:match("^%s*(%S+)")
@@ -46,7 +30,7 @@ local function current_profile_key(category, profile_dir, active_profile)
     end
   end
 
-  local active = cli.read_file(active_profile)
+  local active = active_profile and cli.read_file(active_profile)
   if not active then
     return nil
   end
@@ -87,7 +71,7 @@ function M.profile_selector(category)
 
   local labels = {}
   local current =
-    current_profile_key(category, profile_dir, profile_target(category))
+    current_profile_key(category, profile_dir, profile.active_path(category))
   local current_label = ""
   for index, file in ipairs(profiles) do
     labels[index] = profile_label(file)
@@ -112,9 +96,9 @@ function M.profile_selector(category)
   for index, label in ipairs(labels) do
     if label == selected then
       local source = profiles[index]
-      cli.copy_file(source, profile_target(category))
+      cli.copy_file(source, profile.selected_path(category))
       cli.write_file(
-        root .. "/.selected/" .. category,
+        cli.state_dir .. "/profiles/selected/" .. category,
         common.without_suffix(common.basename(source), ".lua") .. "\n"
       )
       cli.notify_success(

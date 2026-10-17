@@ -1,5 +1,0 @@
-[animation]
-target = "lua/user/animations.lua"
-
-[monitor]
-target = "lua/user/monitors.lua"

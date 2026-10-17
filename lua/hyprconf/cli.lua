@@ -1,3 +1,4 @@
+local ctx = require("hyprconf.context")
 local json = require("hyprconf.util.json")
 
 ---@alias Hyprconf.CommandStatus boolean|integer|nil
@@ -36,6 +37,7 @@ local json = require("hyprconf.util.json")
 ---@class Hyprconf.Cli
 ---@field home string
 ---@field config_dir string
+---@field state_dir string
 ---@field effects_dir string
 ---@field rainbow_mode_file string
 ---@field notify_app_name string
@@ -43,9 +45,10 @@ local json = require("hyprconf.util.json")
 ---@field fallback_icon string
 local M = {}
 
-M.home = os.getenv("HOME") or ""
-M.config_dir = os.getenv("HYPR_CONFIG_DIR") or (M.home .. "/.config/hypr")
-M.effects_dir = os.getenv("EFFECTS_DIR") or (M.config_dir .. "/effects")
+M.home = ctx.home
+M.config_dir = ctx.config_dir
+M.state_dir = ctx.state_dir
+M.effects_dir = ctx.effects_dir
 M.rainbow_mode_file = os.getenv("RAINBOW_BORDER_MODE_FILE")
   or (M.effects_dir .. "/rainbow-border-mode")
 M.notify_app_name = os.getenv("NOTIFY_APP_NAME") or "Hyprland"
@@ -459,6 +462,11 @@ end
 ---@return Hyprconf.RainbowBorderMode
 function M.rainbow_border_mode()
   local mode = M.read_file(M.rainbow_mode_file)
+  if not mode then
+    local toml = require("hyprconf.util.toml")
+    local path = M.config_dir .. "/lua/config/effects.toml"
+    mode = (toml.read(path).rainbow or {}).default
+  end
   mode = mode and mode:match("^%s*(%S+)") or "disabled"
   if
     mode == "gradient_flow"

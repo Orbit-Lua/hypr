@@ -4,7 +4,7 @@ local util = require("hyprconf.util")
 ---@alias Hyprconf.ProfileCategory "animation"|"monitor"|string
 
 ---@class Hyprconf.ProfileCategoryConfig
----@field user_file string User-local profile filename under lua/user.
+---@field user_file string Active profile filename, under the state directory or lua/user.
 ---@field fallback string Default profile path.
 
 ---@class Hyprconf.ProfileLoadOptions
@@ -29,6 +29,8 @@ local util = require("hyprconf.util")
 
 ---@class Hyprconf.Profile
 ---@field load fun(category: Hyprconf.ProfileCategory, opts?: Hyprconf.ProfileLoadOptions): boolean
+---@field selected_path fun(category: Hyprconf.ProfileCategory): string
+---@field active_path fun(category: Hyprconf.ProfileCategory): string?
 ---@field apply_animation fun(spec: Hyprconf.AnimationProfile)
 local M = {}
 
@@ -60,6 +62,27 @@ local function category_config(category)
     }
 end
 
+-- The profile selector writes here; the repository's lua/user copy is the
+-- default until a profile is selected.
+---@param category Hyprconf.ProfileCategory
+---@return string
+function M.selected_path(category)
+  return ctx.state_dir .. "/profiles/" .. category_config(category).user_file
+end
+
+---@param category Hyprconf.ProfileCategory
+---@return string?
+function M.active_path(category)
+  for _, path in ipairs({
+    M.selected_path(category),
+    ctx.config_dir .. "/lua/user/" .. category_config(category).user_file,
+  }) do
+    if util.file_exists(path) then
+      return path
+    end
+  end
+end
+
 ---@param path string
 ---@param label string
 ---@return boolean
@@ -80,10 +103,9 @@ function M.load(category, opts)
   opts = opts or {}
 
   local config = category_config(category)
-  local user_path = ctx.config_dir .. "/lua/user/" .. config.user_file
-
-  if util.file_exists(user_path) then
-    return load_file(user_path, "user " .. category .. " profile")
+  local active = M.active_path(category)
+  if active then
+    return load_file(active, "user " .. category .. " profile")
   end
 
   local fallback = opts.fallback or config.fallback

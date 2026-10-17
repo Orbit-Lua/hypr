@@ -36,7 +36,7 @@ local ctx = require("hyprconf.context")
 ---@field border_gradient fun(mode: Hyprconf.RainbowBorderMode, count?: integer): string[]
 local M = {}
 
-local effects_dir = os.getenv("EFFECTS_DIR") or (ctx.config_dir .. "/effects")
+local effects_dir = ctx.effects_dir
 local cache_path = effects_dir .. "/colors-cache.lua"
 local source_path = ctx.config_dir .. "/noctalia.lua"
 local cache_version = 1
