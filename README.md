@@ -6,7 +6,7 @@
 
 Hyprland 0.55+ configuration in Lua for one Arch Linux workstation, with Vicinae menus, Noctalia theming, profile presets and a small helper CLI. It is specific to this machine, not a starter template.
 
-The [workstation Nix configuration](https://github.com/gin31259461/nix-config) deploys it to `~/.config/hypr` and owns every long-running session application. Hyprland autostart here only runs the rainbow border helper.
+[Nacre](https://github.com/gin31259461/nacre) deploys it to `~/.config/hypr` and owns every long-running session application. Hyprland autostart here only runs the rainbow border helper.
 
 ## Layout
 
