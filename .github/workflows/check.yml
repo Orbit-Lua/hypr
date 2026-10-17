@@ -21,6 +21,10 @@ jobs:
     container: archlinux:latest
     steps:
       - name: Install tools
-        run: pacman -Syu --noconfirm --needed git make lua stylua luacheck hyprland
+        run: pacman -Syu --noconfirm --needed diffutils git make lua stylua luacheck hyprland
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - run: make fmt-check lint keymap test
+      # Hyprland refuses to run as root, so check as a user owning the checkout.
+      - run: |
+          useradd --create-home ci
+          chown -R ci "$GITHUB_WORKSPACE"
+          runuser -u ci -- make fmt-check lint keymap test
