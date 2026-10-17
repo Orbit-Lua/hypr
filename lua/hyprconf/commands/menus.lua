@@ -1,6 +1,7 @@
 local cli = require("hyprconf.cli")
 local common = require("hyprconf.commands.common")
 local ctx = require("hyprconf.context")
+local keymap = require("hyprconf.keymap")
 local toml = require("hyprconf.util.toml")
 
 ---@class Hyprconf.KeyHintRow
@@ -65,10 +66,10 @@ function M.keybinds()
   cli.kill_by_name("yad")
 
   local lines = {}
-  local path = cli.config_dir .. "/lua/hyprconf/binds.lua"
-  for line in io.lines(path) do
-    if line:match("^%s*bind[_%w]*%(") then
-      lines[#lines + 1] = line:gsub("^%s+", ""):gsub("%s+$", "")
+  for _, entry in ipairs(keymap.collect()) do
+    if entry.description then
+      lines[#lines + 1] =
+        string.format("%-32s %s", entry.keys, entry.description)
     end
   end
 

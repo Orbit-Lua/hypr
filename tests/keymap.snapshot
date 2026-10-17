@@ -1,0 +1,144 @@
+SUPER + D	application launcher	dsp.exec_raw{"vicinae 'vicinae://toggle'"}	{}
+SUPER + B	open default browser	dsp.exec_raw{"xdg-open \"https://\""}	{}
+SUPER + A	desktop overview	dsp.exec_raw{"lua '/config/hypr/lua/bin/hypr.lua' overview"}	{}
+SUPER + Return	open terminal	dsp.exec_raw{"kitty"}	{}
+SUPER + E	file manager	dsp.exec_raw{"thunar"}	{}
+SUPER + slash	cheat sheet	dsp.exec_raw{"lua '/config/hypr/lua/bin/hypr.lua' key-hints"}	{}
+SUPER + SHIFT + E	quick settings	dsp.exec_raw{"lua '/config/hypr/lua/bin/hypr.lua' quick-settings"}	{}
+SUPER + SHIFT + P	Noctalia control center	dsp.exec_raw{"noctalia msg panel-toggle control-center"}	{}
+SUPER + S	web search	dsp.exec_raw{"lua '/config/hypr/lua/bin/hypr.lua' web-search"}	{}
+SUPER + CTRL + S	window switcher	dsp.exec_raw{"vicinae 'vicinae://launch/wm/switch-windows?toggle=true'"}	{}
+SUPER + F	file search	dsp.exec_raw{"vicinae 'vicinae://launch/files/search?toggle=true'"}	{}
+SUPER + period	emoji picker	dsp.exec_raw{"vicinae 'vicinae://launch/core/search-emojis?toggle=true'"}	{}
+SUPER + ALT + O	toggle blur	dsp.exec_raw{"lua '/config/hypr/lua/bin/hypr.lua' change-blur"}	{}
+SUPER + SHIFT + G	toggle game mode	dsp.exec_raw{"lua '/config/hypr/lua/bin/hypr.lua' game-mode"}	{}
+SUPER + ALT + L	toggle layout	dsp.exec_raw{"lua '/config/hypr/lua/bin/hypr.lua' change-layout"}	{}
+SUPER + ALT + V	clipboard history	dsp.exec_raw{"vicinae 'vicinae://launch/clipboard/history?toggle=true'"}	{}
+SUPER + N	open obsidian	dsp.exec_raw{"obsidian"}	{}
+SUPER + CTRL + O	toggle active window opacity	dsp.exec_raw{"hyprctl dispatch setprop active opaque toggle"}	{}
+SUPER + SHIFT + slash	search keybinds	dsp.exec_raw{"lua '/config/hypr/lua/bin/hypr.lua' keybinds"}	{}
+SUPER + SHIFT + A	profile selector	dsp.exec_raw{"lua '/config/hypr/lua/bin/hypr.lua' profile-selector"}	{}
+SUPER + SHIFT + O	change oh-my-zsh theme	dsp.exec_raw{"lua '/config/hypr/lua/bin/hypr.lua' zsh-theme"}	{}
+SUPER + SHIFT + F	fullscreen	dsp.window.fullscreen{}	{}
+SUPER + CTRL + F	maximize window	dsp.exec_raw{"hyprctl dispatch fullscreen 1"}	{}
+SUPER + SPACE	toggle floating	dsp.window.float{{action="toggle"}}	{}
+SUPER + ALT + SPACE	float all windows	dsp.exec_raw{"hyprctl dispatch workspaceopt allfloat"}	{}
+CTRL + ALT + Delete	exit hyprland	dsp.exit{}	{}
+SUPER + Q	close window	dsp.window.close{}	{}
+SUPER + SHIFT + Q	kill process	dsp.exec_raw{"lua '/config/hypr/lua/bin/hypr.lua' kill-active"}	{}
+CTRL + ALT + L	session menu	dsp.exec_raw{"noctalia msg panel-toggle session"}	{}
+ALT + tab	cycle next window	dsp.window.cycle_next{}	{}
+ALT + tab	bring active to top	dsp.window.bring_to_top{}	{}
+SUPER + left	focus left	dsp.focus{{direction="left"}}	{}
+SUPER + right	focus right	dsp.focus{{direction="right"}}	{}
+SUPER + up	focus up	dsp.focus{{direction="up"}}	{}
+SUPER + down	focus down	dsp.focus{{direction="down"}}	{}
+SUPER + SHIFT + left	resize left	dsp.window.resize{{relative=true,x=-50,y=0}}	{repeating=true}
+SUPER + SHIFT + right	resize right	dsp.window.resize{{relative=true,x=50,y=0}}	{repeating=true}
+SUPER + SHIFT + up	resize up	dsp.window.resize{{relative=true,x=0,y=-50}}	{repeating=true}
+SUPER + SHIFT + down	resize down	dsp.window.resize{{relative=true,x=0,y=50}}	{repeating=true}
+SUPER + CTRL + left	move left	dsp.window.move{{direction="left"}}	{}
+SUPER + CTRL + right	move right	dsp.window.move{{direction="right"}}	{}
+SUPER + CTRL + up	move up	dsp.window.move{{direction="up"}}	{}
+SUPER + CTRL + down	move down	dsp.window.move{{direction="down"}}	{}
+SUPER + ALT + left	swap left	dsp.window.swap{{direction="left"}}	{}
+SUPER + ALT + right	swap right	dsp.window.swap{{direction="right"}}	{}
+SUPER + ALT + up	swap up	dsp.window.swap{{direction="up"}}	{}
+SUPER + ALT + down	swap down	dsp.window.swap{{direction="down"}}	{}
+SUPER + G	toggle group	dsp.group.toggle{}	{}
+SUPER + Tab	next in group	dsp.exec_raw{"hyprctl dispatch changegroupactive f"}	{}
+SUPER + CTRL + tab	change group active	dsp.exec_raw{"hyprctl dispatch changegroupactive"}	{}
+SUPER + SHIFT + Tab	prev in group	dsp.exec_raw{"hyprctl dispatch changegroupactive b"}	{}
+SUPER + CTRL + K	move into group left	dsp.group.move_window{"l"}	{}
+SUPER + CTRL + L	move into group right	dsp.group.move_window{"r"}	{}
+SUPER + CTRL + H	move out of group	dsp.exec_raw{"hyprctl dispatch moveoutofgroup"}	{}
+SUPER + H	focus scrolling column left	fn[1/dwindle: 5/master: 5/scrolling:dsp.layout{"focus l"} 10/dwindle:]	{}
+SUPER + L	focus scrolling column right	fn[1/dwindle: 5/master: 5/scrolling:dsp.layout{"focus r"} 10/dwindle:]	{}
+SUPER + SHIFT + H	swap scrolling column left	fn[1/dwindle: 5/master: 5/scrolling:dsp.layout{"swapcol l"} 10/dwindle:]	{}
+SUPER + SHIFT + L	swap scrolling column right	fn[1/dwindle: 5/master: 5/scrolling:dsp.layout{"swapcol r"} 10/dwindle:]	{}
+SUPER + ALT + J	focus next window in scrolling column	fn[1/dwindle: 5/master: 5/scrolling:dsp.layout{"focus d"} 10/dwindle:]	{}
+SUPER + ALT + K	focus previous window in scrolling column	fn[1/dwindle: 5/master: 5/scrolling:dsp.layout{"focus u"} 10/dwindle:]	{}
+SUPER + O	toggle split in dwindle layout	fn[1/dwindle:dsp.layout{"togglesplit"} 5/master: 5/scrolling: 10/dwindle:dsp.layout{"togglesplit"}]	{}
+SUPER + CTRL + D	remove master in master layout	fn[1/dwindle: 5/master:dsp.layout{"removemaster"} 5/scrolling: 10/dwindle:]	{}
+SUPER + I	add master in master layout	fn[1/dwindle: 5/master:dsp.layout{"addmaster"} 5/scrolling: 10/dwindle:]	{}
+SUPER + CTRL + Return	swap with master in master layout	fn[1/dwindle: 5/master:dsp.layout{"swapwithmaster"} 5/scrolling: 10/dwindle:]	{}
+SUPER + SHIFT + I	toggle split in dwindle layout	fn[1/dwindle:dsp.layout{"togglesplit"} 5/master: 5/scrolling: 10/dwindle:dsp.layout{"togglesplit"}]	{}
+SUPER + P	toggle pseudo in dwindle layout	fn[1/dwindle:dsp.window.pseudo{} 5/master: 5/scrolling: 10/dwindle:dsp.window.pseudo{}]	{}
+SUPER + M	set split ratio in dwindle layout	fn[1/dwindle:dsp.exec_raw{"hyprctl dispatch splitratio 0.3"} 5/master: 5/scrolling: 10/dwindle:dsp.exec_raw{"hyprctl dispatch splitratio 0.3"}]	{}
+SUPER + ALT + period	resize scrolling column wider	fn[1/dwindle: 5/master: 5/scrolling:dsp.layout{"colresize +0.1"} 10/dwindle:]	{}
+SUPER + ALT + comma	resize scrolling column narrower	fn[1/dwindle: 5/master: 5/scrolling:dsp.layout{"colresize -0.1"} 10/dwindle:]	{}
+SUPER + CTRL + period	promote window to scrolling column	fn[1/dwindle: 5/master: 5/scrolling:dsp.layout{"promote"} 10/dwindle:]	{}
+SUPER + ALT + F	fit visible scrolling columns	fn[1/dwindle: 5/master: 5/scrolling:dsp.layout{"fit visible"} 10/dwindle:]	{}
+SUPER + J	next workspace	fn[1/dwindle:dsp.focus{{workspace=2}} 5/master:dsp.focus{{workspace=6}} 5/scrolling:dsp.focus{{workspace=6}} 10/dwindle:]	{}
+SUPER + K	previous workspace	fn[1/dwindle: 5/master:dsp.focus{{workspace=4}} 5/scrolling:dsp.focus{{workspace=4}} 10/dwindle:dsp.focus{{workspace=9}}]	{}
+SUPER + SHIFT + J	move window to next workspace	fn[1/dwindle:dsp.window.move{{workspace=2}} 5/master:dsp.window.move{{workspace=6}} 5/scrolling:dsp.window.move{{workspace=6}} 10/dwindle:]	{}
+SUPER + SHIFT + K	move window to previous workspace	fn[1/dwindle: 5/master:dsp.window.move{{workspace=4}} 5/scrolling:dsp.window.move{{workspace=4}} 10/dwindle:dsp.window.move{{workspace=9}}]	{}
+SUPER + code:10	workspace 1	dsp.focus{{workspace=1}}	{}
+SUPER + SHIFT + code:10	move to workspace 1	dsp.window.move{{workspace=1}}	{}
+SUPER + CTRL + code:10	move silently to workspace 1	dsp.exec_raw{"hyprctl dispatch movetoworkspacesilent 1"}	{}
+SUPER + code:11	workspace 2	dsp.focus{{workspace=2}}	{}
+SUPER + SHIFT + code:11	move to workspace 2	dsp.window.move{{workspace=2}}	{}
+SUPER + CTRL + code:11	move silently to workspace 2	dsp.exec_raw{"hyprctl dispatch movetoworkspacesilent 2"}	{}
+SUPER + code:12	workspace 3	dsp.focus{{workspace=3}}	{}
+SUPER + SHIFT + code:12	move to workspace 3	dsp.window.move{{workspace=3}}	{}
+SUPER + CTRL + code:12	move silently to workspace 3	dsp.exec_raw{"hyprctl dispatch movetoworkspacesilent 3"}	{}
+SUPER + code:13	workspace 4	dsp.focus{{workspace=4}}	{}
+SUPER + SHIFT + code:13	move to workspace 4	dsp.window.move{{workspace=4}}	{}
+SUPER + CTRL + code:13	move silently to workspace 4	dsp.exec_raw{"hyprctl dispatch movetoworkspacesilent 4"}	{}
+SUPER + code:14	workspace 5	dsp.focus{{workspace=5}}	{}
+SUPER + SHIFT + code:14	move to workspace 5	dsp.window.move{{workspace=5}}	{}
+SUPER + CTRL + code:14	move silently to workspace 5	dsp.exec_raw{"hyprctl dispatch movetoworkspacesilent 5"}	{}
+SUPER + code:15	workspace 6	dsp.focus{{workspace=6}}	{}
+SUPER + SHIFT + code:15	move to workspace 6	dsp.window.move{{workspace=6}}	{}
+SUPER + CTRL + code:15	move silently to workspace 6	dsp.exec_raw{"hyprctl dispatch movetoworkspacesilent 6"}	{}
+SUPER + code:16	workspace 7	dsp.focus{{workspace=7}}	{}
+SUPER + SHIFT + code:16	move to workspace 7	dsp.window.move{{workspace=7}}	{}
+SUPER + CTRL + code:16	move silently to workspace 7	dsp.exec_raw{"hyprctl dispatch movetoworkspacesilent 7"}	{}
+SUPER + code:17	workspace 8	dsp.focus{{workspace=8}}	{}
+SUPER + SHIFT + code:17	move to workspace 8	dsp.window.move{{workspace=8}}	{}
+SUPER + CTRL + code:17	move silently to workspace 8	dsp.exec_raw{"hyprctl dispatch movetoworkspacesilent 8"}	{}
+SUPER + code:18	workspace 9	dsp.focus{{workspace=9}}	{}
+SUPER + SHIFT + code:18	move to workspace 9	dsp.window.move{{workspace=9}}	{}
+SUPER + CTRL + code:18	move silently to workspace 9	dsp.exec_raw{"hyprctl dispatch movetoworkspacesilent 9"}	{}
+SUPER + code:19	workspace 10	dsp.focus{{workspace=10}}	{}
+SUPER + SHIFT + code:19	move to workspace 10	dsp.window.move{{workspace=10}}	{}
+SUPER + CTRL + code:19	move silently to workspace 10	dsp.exec_raw{"hyprctl dispatch movetoworkspacesilent 10"}	{}
+SUPER + CTRL + F9	workspace to left monitor	dsp.exec_raw{"hyprctl dispatch movecurrentworkspacetomonitor l"}	{}
+SUPER + CTRL + F10	workspace to right monitor	dsp.exec_raw{"hyprctl dispatch movecurrentworkspacetomonitor r"}	{}
+SUPER + CTRL + F11	workspace to upper monitor	dsp.exec_raw{"hyprctl dispatch movecurrentworkspacetomonitor u"}	{}
+SUPER + CTRL + F12	workspace to lower monitor	dsp.exec_raw{"hyprctl dispatch movecurrentworkspacetomonitor d"}	{}
+SUPER + mouse_down	next workspace	fn[1/dwindle:dsp.focus{{workspace=2}} 5/master:dsp.focus{{workspace=6}} 5/scrolling:dsp.focus{{workspace=6}} 10/dwindle:]	{}
+SUPER + mouse_up	previous workspace	fn[1/dwindle: 5/master:dsp.focus{{workspace=4}} 5/scrolling:dsp.focus{{workspace=4}} 10/dwindle:dsp.focus{{workspace=9}}]	{}
+SUPER + SHIFT + U	move to special	dsp.window.move{{workspace="special"}}	{}
+SUPER + U	toggle special	dsp.workspace.toggle_special{}	{}
+SUPER + mouse:272	move window	dsp.window.drag{}	{mouse=true}
+SUPER + mouse:273	resize window	dsp.window.resize{}	{mouse=true}
+SUPER + ALT + mouse_down	zoom in	dsp.exec_raw{"hyprctl keyword cursor:zoom_factor \"$(hyprctl getoption cursor:zoom_factor | awk 'NR==1 {factor = $2; if (factor < 1) {factor = 1}; print factor * 2.0}')\""}	{}
+SUPER + ALT + mouse_up	zoom out	dsp.exec_raw{"hyprctl keyword cursor:zoom_factor \"$(hyprctl getoption cursor:zoom_factor | awk 'NR==1 {factor = $2; if (factor < 1) {factor = 1}; print factor / 2.0}')\""}	{}
+XF86AudioLowerVolume	volume down	dsp.exec_raw{"noctalia msg volume-down"}	{locked=true,repeating=true}
+XF86AudioRaiseVolume	volume up	dsp.exec_raw{"noctalia msg volume-up"}	{locked=true,repeating=true}
+XF86AudioMicMute	toggle mic mute	dsp.exec_raw{"noctalia msg mic-mute"}	{locked=true}
+XF86AudioMute	toggle mute	dsp.exec_raw{"noctalia msg volume-mute"}	{locked=true}
+XF86Sleep	sleep	dsp.exec_raw{"systemctl suspend"}	{locked=true}
+XF86AudioPause	pause	dsp.exec_raw{"noctalia msg media pause"}	{locked=true}
+XF86AudioPlay	play	dsp.exec_raw{"noctalia msg media play"}	{locked=true}
+XF86AudioNext	next track	dsp.exec_raw{"noctalia msg media next"}	{locked=true}
+XF86AudioPrev	prev track	dsp.exec_raw{"noctalia msg media previous"}	{locked=true}
+XF86AudioStop	stop	dsp.exec_raw{"noctalia msg media stop"}	{locked=true}
+SUPER + Print	screenshot now	dsp.exec_raw{"lua '/config/hypr/lua/bin/hypr.lua' screenshot --now"}	{}
+SUPER + SHIFT + Print	screenshot area	dsp.exec_raw{"lua '/config/hypr/lua/bin/hypr.lua' screenshot --area"}	{}
+SUPER + CTRL + Print	screenshot in 5s	dsp.exec_raw{"lua '/config/hypr/lua/bin/hypr.lua' screenshot --in5"}	{}
+SUPER + CTRL + SHIFT + Print	screenshot in 10s	dsp.exec_raw{"lua '/config/hypr/lua/bin/hypr.lua' screenshot --in10"}	{}
+ALT + Print	screenshot active window	dsp.exec_raw{"lua '/config/hypr/lua/bin/hypr.lua' screenshot --active"}	{}
+SUPER + SHIFT + S	screenshot (swappy)	dsp.exec_raw{"lua '/config/hypr/lua/bin/hypr.lua' screenshot --swappy"}	{}
+XF86MonBrightnessUp	brightness up	dsp.exec_raw{"noctalia msg brightness-up"}	{locked=true,repeating=true}
+XF86MonBrightnessDown	brightness down	dsp.exec_raw{"noctalia msg brightness-down"}	{locked=true,repeating=true}
+XF86Launch1	-	dsp.exec_raw{"rog-control-center"}	{}
+XF86Launch3	-	dsp.exec_raw{"asusctl led-mode -n"}	{}
+XF86Launch4	-	dsp.exec_raw{"asusctl profile -n"}	{}
+XF86TouchpadToggle	-	dsp.exec_raw{"lua '/config/hypr/lua/bin/hypr.lua' touchpad"}	{}
+SUPER + F6	-	dsp.exec_raw{"lua '/config/hypr/lua/bin/hypr.lua' screenshot --now"}	{}
+SUPER + SHIFT + F6	-	dsp.exec_raw{"lua '/config/hypr/lua/bin/hypr.lua' screenshot --area"}	{}
+SUPER + CTRL + F6	-	dsp.exec_raw{"lua '/config/hypr/lua/bin/hypr.lua' screenshot --in5"}	{}
+SUPER + ALT + F6	-	dsp.exec_raw{"lua '/config/hypr/lua/bin/hypr.lua' screenshot --in10"}	{}
+ALT + F6	-	dsp.exec_raw{"lua '/config/hypr/lua/bin/hypr.lua' screenshot --active"}	{}

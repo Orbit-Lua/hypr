@@ -1,18 +1,28 @@
-LUA ?= luajit
-LUA_FILES := $(shell find . -path './.git' -prune -o -type f -name '*.lua' ! -name 'noctalia.lua' ! -path './effects/colors-cache.lua' -print | sort)
+LUA ?= lua
+LUA_FILES := $(shell git ls-files --cached --others --exclude-standard '*.lua' | grep -vx noctalia.lua)
 
-.PHONY: fmt lint test all
+.PHONY: all fmt fmt-check lint keymap test
 
-all: fmt lint test
+all: fmt lint keymap test
 
 fmt:
-	@echo "===> Formatting"
 	stylua $(LUA_FILES)
 
+fmt-check:
+	stylua --check $(LUA_FILES)
+
 lint:
-	@echo "===> Linting"
 	luacheck $(LUA_FILES)
 
+# Every bind must match tests/keymap.snapshot. After an intended keymap change:
+#   $(LUA) tests/keymap.lua > tests/keymap.snapshot
+keymap:
+	$(LUA) tests/keymap.lua | diff -u tests/keymap.snapshot -
+
+# Parses this checkout with a throwaway home and runtime directory, so it never
+# reads or reloads the live session.
 test:
-	@echo "===> Validation"
-	hyprland --verify-config --config ~/.config/hypr/hyprland.lua
+	@home=$$(mktemp -d) runtime=$$(mktemp -d); \
+	env -i HOME="$$home" PATH="$$PATH" XDG_RUNTIME_DIR="$$runtime" \
+	  hyprland --verify-config --config "$(CURDIR)/hyprland.lua"; \
+	status=$$?; rm -rf "$$home" "$$runtime"; exit $$status
