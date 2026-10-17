@@ -94,11 +94,6 @@ description = "Clipboard history"
 command = "(vicinae)"
 
 [[row]]
-key = " SHIFT O"
-description = "Change oh-my-zsh theme"
-command = ""
-
-[[row]]
 key = ""
 description = ""
 command = ""

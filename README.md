@@ -55,7 +55,6 @@ Commands are listed in `lua/bin/hypr.lua`. Ones with side effects outside this c
 
 - `screenshot` saves under the Pictures screenshots directory and copies to the clipboard.
 - `portal-hyprland` restarts the desktop portals.
-- `kitty-themes` and `zsh-theme` edit `kitty.conf` and `~/.zshrc`, which fails while Home Manager owns those files.
 
 ## Validation
 

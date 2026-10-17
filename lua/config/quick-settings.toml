@@ -47,11 +47,6 @@ label = "--- UTILITIES ---"
 kind = "header"
 
 [[item]]
-label = "Choose Kitty Terminal Theme"
-kind = "action"
-command = "kitty-themes"
-
-[[item]]
 label = "GTK Settings (nwg-look)"
 kind = "exec"
 command = "nwg-look"

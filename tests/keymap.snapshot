@@ -18,7 +18,6 @@ SUPER + N	open obsidian	dsp.exec_raw{"obsidian"}	{}
 SUPER + CTRL + O	toggle active window opacity	dsp.exec_raw{"hyprctl dispatch setprop active opaque toggle"}	{}
 SUPER + SHIFT + slash	search keybinds	dsp.exec_raw{"lua '/config/hypr/lua/bin/hypr.lua' keybinds"}	{}
 SUPER + SHIFT + A	profile selector	dsp.exec_raw{"lua '/config/hypr/lua/bin/hypr.lua' profile-selector"}	{}
-SUPER + SHIFT + O	change oh-my-zsh theme	dsp.exec_raw{"lua '/config/hypr/lua/bin/hypr.lua' zsh-theme"}	{}
 SUPER + SHIFT + F	fullscreen	dsp.window.fullscreen{}	{}
 SUPER + CTRL + F	maximize window	dsp.exec_raw{"hyprctl dispatch fullscreen 1"}	{}
 SUPER + SPACE	toggle floating	dsp.window.float{{action="toggle"}}	{}

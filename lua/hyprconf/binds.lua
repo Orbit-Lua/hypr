@@ -113,11 +113,6 @@ local function applications()
     "profile selector",
     "$hyprLua profile-selector"
   )
-  bind_exec(
-    mod .. " + SHIFT + O",
-    "change oh-my-zsh theme",
-    "$hyprLua zsh-theme"
-  )
 end
 
 ---@return nil

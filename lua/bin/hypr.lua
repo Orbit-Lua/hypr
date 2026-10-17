@@ -25,7 +25,6 @@ local session = require("hyprconf.commands.session")
 ---| "key-hints"
 ---| "keybinds"
 ---| "kill-active"
----| "kitty-themes"
 ---| "overview"
 ---| "portal-hyprland"
 ---| "profile-selector"
@@ -37,7 +36,6 @@ local session = require("hyprconf.commands.session")
 ---| "sound"
 ---| "touchpad"
 ---| "web-search"
----| "zsh-theme"
 
 ---@type table<string, fun(...: string)>
 local commands = {
@@ -47,7 +45,6 @@ local commands = {
   ["key-hints"] = menus.key_hints,
   ["keybinds"] = menus.keybinds,
   ["kill-active"] = session.kill_active,
-  ["kitty-themes"] = menus.kitty_themes,
   ["overview"] = session.overview,
   ["portal-hyprland"] = services.portal_hyprland,
   ["profile-selector"] = profiles.profile_selector,
@@ -59,7 +56,6 @@ local commands = {
   ["sound"] = capture.sound,
   ["touchpad"] = session.touchpad,
   ["web-search"] = menus.web_search,
-  ["zsh-theme"] = menus.zsh_theme,
 }
 
 ---@return Hyprconf.CommandName[]
