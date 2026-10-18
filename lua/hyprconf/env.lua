@@ -47,8 +47,13 @@ local variables = {
 
 ---@return nil
 function M.setup()
-  for name, value in pairs(variables) do
-    hl.env(name, value)
+  local names = {}
+  for name in pairs(variables) do
+    names[#names + 1] = name
+  end
+  table.sort(names)
+  for _, name in ipairs(names) do
+    hl.env(name, variables[name])
   end
 end
 

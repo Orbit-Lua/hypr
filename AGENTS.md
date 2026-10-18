@@ -10,6 +10,7 @@ Read [README.md](README.md) for layout and runtime state.
 ## Rules
 
 - Keep the keymap unchanged unless the user asks: `make keymap` must pass. When a requested change alters binds, regenerate `tests/keymap.snapshot` and show the diff.
+- Preserve current behavior the same way: `make config` must pass. When a requested change alters options, rules, animations, monitors or the environment, regenerate `tests/config.snapshot` and show the diff.
 - The deployed config is a read-only Nix store path. Runtime writes go under `ctx.state_dir` (`$XDG_STATE_HOME/hypr`), never `ctx.config_dir`.
 - Long-running session applications belong to the workstation configuration, Nacre (`~/.config/nacre`); `lua/config/autostart.toml` only holds compositor-owned work.
 - Structured data (autostart, menu rows, cheat sheet, effects) stays in `lua/config/*.toml`.
@@ -19,7 +20,7 @@ Read [README.md](README.md) for layout and runtime state.
 
 ## Validation
 
-Run `make all` before treating a change as ready. It formats, lints, checks the keymap snapshot and parses the config with a throwaway home. It does not cover menus, screenshots, portals or session behavior: smoke-test those by hand when touched.
+Run `make all` before treating a change as ready. It formats, lints, checks the keymap and config snapshots and parses the config with a throwaway home. It does not cover menus, screenshots, portals or session behavior: smoke-test those by hand when touched.
 
 ## Code Style
 

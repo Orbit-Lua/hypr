@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   check:
-    name: Format, lint, keymap and config parse
+    name: Format, lint, snapshots and config parse
     runs-on: ubuntu-latest
     timeout-minutes: 20
     container: archlinux:latest
@@ -27,4 +27,4 @@ jobs:
       - run: |
           useradd --create-home ci
           chown -R ci "$GITHUB_WORKSPACE"
-          runuser -u ci -- make fmt-check lint keymap test
+          runuser -u ci -- make fmt-check lint keymap config test

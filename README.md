@@ -59,7 +59,7 @@ Commands are listed in `lua/bin/hypr.lua`. Ones with side effects outside this c
 ## Validation
 
 ```sh
-make all   # stylua, luacheck, keymap snapshot, hyprland --verify-config
+make all   # stylua, luacheck, keymap and config snapshots, hyprland --verify-config
 ```
 
-`make keymap` compares every bind (keys, description, dispatcher, flags) with `tests/keymap.snapshot`, so refactors cannot change the keymap silently. After an intended change, regenerate it with `lua tests/keymap.lua > tests/keymap.snapshot` and review the diff. `make test` parses this checkout with a throwaway home; it does not run menus, screenshots or session behavior.
+`make keymap` compares every bind (keys, description, dispatcher, flags) with `tests/keymap.snapshot`, so refactors cannot change the keymap silently. After an intended change, regenerate it with `lua tests/keymap.lua > tests/keymap.snapshot` and review the diff. `make config` does the same for everything else the configuration sends to Hyprland (options, rules, animations, monitors, environment, event handlers) against `tests/config.snapshot`, with a fixed theme from `tests/fixtures/noctalia.lua`; regenerate it with `lua tests/config.lua "$(mktemp -d)" > tests/config.snapshot`. `make test` parses this checkout with a throwaway home; it does not run menus, screenshots or session behavior.
