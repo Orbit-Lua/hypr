@@ -174,7 +174,7 @@ hl.config({
     middle_click_paste = false,
     mouse_move_enables_dpms = true,
     on_focus_under_fullscreen = 1,
-    swallow_regex = "^(kitty)$",
+    swallow_regex = "^(com\\.mitchellh\\.ghostty)$",
     vrr = 2,
   },
   render = {
@@ -494,7 +494,7 @@ hl.window_rule({
 })
 hl.window_rule({
   match = {
-    class = "^(Alacritty|kitty|kitty-dropterm)$",
+    class = "^(com\\.mitchellh\\.ghostty|Alacritty|kitty)$",
   },
   name = "tag-012-terminal",
   tag = "+terminal",

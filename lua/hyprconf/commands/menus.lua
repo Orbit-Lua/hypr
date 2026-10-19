@@ -121,7 +121,7 @@ function M.quick_settings()
   end
 
   if item.kind == "edit" then
-    local term = os.getenv("TERMINAL") or "kitty"
+    local term = os.getenv("TERMINAL") or "ghostty"
     local editor = os.getenv("EDITOR") or "nvim"
     cli.exec_bg(
       term

@@ -26,7 +26,7 @@ M.effects_dir = os.getenv("EFFECTS_DIR") or (M.state_dir .. "/effects")
 M.hypr_lua = "lua " .. shell_quote(M.config_dir .. "/lua/bin/hypr.lua")
 M.main_mod = "SUPER"
 M.vicinae = "vicinae"
-M.term = "kitty"
+M.term = "ghostty"
 M.files = "thunar"
 M.search_engine = "https://www.google.com/search?q="
 M.touchpad_device = "asue1209:00-04f3:319f-touchpad"

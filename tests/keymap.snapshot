@@ -1,7 +1,7 @@
 SUPER + D	application launcher	dsp.exec_raw{"vicinae 'vicinae://toggle'"}	{}
 SUPER + B	open default browser	dsp.exec_raw{"xdg-open \"https://\""}	{}
 SUPER + A	desktop overview	dsp.exec_raw{"lua '/config/hypr/lua/bin/hypr.lua' overview"}	{}
-SUPER + Return	open terminal	dsp.exec_raw{"kitty"}	{}
+SUPER + Return	open terminal	dsp.exec_raw{"ghostty"}	{}
 SUPER + E	file manager	dsp.exec_raw{"thunar"}	{}
 SUPER + slash	cheat sheet	dsp.exec_raw{"lua '/config/hypr/lua/bin/hypr.lua' key-hints"}	{}
 SUPER + SHIFT + E	quick settings	dsp.exec_raw{"lua '/config/hypr/lua/bin/hypr.lua' quick-settings"}	{}

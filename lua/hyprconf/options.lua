@@ -143,7 +143,7 @@ function M.setup()
       vrr = 2,
       mouse_move_enables_dpms = true,
       enable_swallow = false,
-      swallow_regex = "^(kitty)$",
+      swallow_regex = "^(com\\.mitchellh\\.ghostty)$",
       focus_on_activate = false,
       initial_workspace_tracking = 0,
       middle_click_paste = false,
