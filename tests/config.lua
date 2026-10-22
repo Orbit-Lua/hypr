@@ -15,6 +15,7 @@ local state_dir = assert(arg[1], "usage: lua tests/config.lua <state-dir>")
 local theme = root .. "/tests/fixtures/noctalia.lua"
 
 local getenv = os.getenv
+---@diagnostic disable: duplicate-set-field
 -- luacheck: push ignore 122 143
 os.getenv = function(name)
   local fixed = {

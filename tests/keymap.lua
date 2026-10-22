@@ -9,6 +9,7 @@ package.path = table.concat({
 }, ";")
 
 local getenv = os.getenv
+---@diagnostic disable: duplicate-set-field
 -- luacheck: push ignore 122
 os.getenv = function(name)
   local fixed = { HOME = "/home/test", HYPR_CONFIG_DIR = "/config/hypr" }

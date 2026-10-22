@@ -1,9 +1,13 @@
 LUA ?= lua
+LUALS ?= $(or $(shell command -v lua-language-server),$(wildcard $(HOME)/.local/share/nvim/mason/bin/lua-language-server),lua-language-server)
 LUA_FILES := $(shell git ls-files --cached --others --exclude-standard '*.lua' | grep -vx noctalia.lua)
 
-.PHONY: all fmt fmt-check lint keymap config test
+.PHONY: all check fmt fmt-check lint typecheck keymap config test
 
-all: fmt lint keymap config test
+all: fmt check
+
+# What CI runs; `all` formats first instead of only checking the format.
+check: fmt-check lint typecheck keymap config test
 
 fmt:
 	stylua $(LUA_FILES)
@@ -13,6 +17,13 @@ fmt-check:
 
 lint:
 	luacheck $(LUA_FILES)
+
+# Checks annotations against Hyprland's stubs (.luarc.json).
+typecheck:
+	@log=$$(mktemp -d); \
+	$(LUALS) --check=. --checklevel=Warning --logpath="$$log" >"$$log/out" 2>&1; \
+	status=$$?; [ $$status -eq 0 ] || cat "$$log/out"; \
+	rm -rf "$$log"; exit $$status
 
 # Every bind must match tests/keymap.snapshot. After an intended keymap change:
 #   $(LUA) tests/keymap.lua > tests/keymap.snapshot
