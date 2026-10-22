@@ -41,19 +41,19 @@ local M = {}
 
 ---@param spec Hyprconf.WindowRule
 ---@return any
-local function wr(spec)
+local function window_rule(spec)
   return hl.window_rule(spec)
 end
 
 ---@param spec Hyprconf.LayerRule
 ---@return any
-local function lr(spec)
+local function layer_rule(spec)
   return hl.layer_rule(spec)
 end
 
 ---@param spec HL.WorkspaceRuleSpec
 ---@return any
-local function ws(spec)
+local function workspace_rule(spec)
   return hl.workspace_rule(spec)
 end
 
@@ -63,7 +63,7 @@ local tag_rule_index = 0
 ---@return any
 local function tag(name, match)
   tag_rule_index = tag_rule_index + 1
-  return wr({
+  return window_rule({
     name = string.format("tag-%03d-%s", tag_rule_index, name),
     match = match,
     tag = "+" .. name,
@@ -72,98 +72,31 @@ end
 
 ---@type Hyprconf.TaggedWindow[]
 local tagged_windows = {
-  {
-    "browser",
-    {
-      class = "^([Ff]irefox|org.mozilla.firefox|[Ff]irefox-esr|[Ff]irefox-bin)$",
-    },
-  },
-  { "browser", { class = "^([Gg]oogle-chrome(-beta|-dev|-unstable)?)$" } },
-  { "browser", { class = "^(chrome-.+-Default)$" } },
-  { "browser", { class = "^([Cc]hromium)$" } },
-  {
-    "browser",
-    { class = "^([Mm]icrosoft-edge(-stable|-beta|-dev|-unstable))$" },
-  },
-  { "browser", { class = "^(Brave-browser(-beta|-dev|-unstable)?)$" } },
-  { "browser", { class = "^([Tt]horium-browser|[Cc]achy-browser)$" } },
-  { "browser", { class = "^(zen-alpha|zen)$" } },
+  { "browser", { class = "^(zen|zen-alpha)$" } },
   { "quick-cheat", { title = "^(Quick Cheat Sheet)$" } },
-  { "quick-settings", { title = "^(Quick Settings)$" } },
   { "nwg-settings", { class = "^(nwg-displays|nwg-look)$" } },
-  { "terminal", { class = "^(com\\.mitchellh\\.ghostty|Alacritty|kitty)$" } },
-  { "email", { class = "^([Tt]hunderbird|org.mozilla.Thunderbird)$" } },
-  { "email", { class = "^(eu.betterbird.Betterbird)$" } },
-  { "email", { class = "^(org.gnome.Evolution)$" } },
-  { "projects", { class = "^(codium|codium-url-handler|VSCodium)$" } },
-  { "projects", { class = "^(VSCode|code|code-url-handler)$" } },
-  { "projects", { class = "^(jetbrains-.+)$" } },
-  { "projects", { class = "^(dev.zed.Zed|antigravity)$" } },
-  { "screenshare", { class = "^(com.obsproject.Studio)$" } },
-  { "im", { class = "^([Dd]iscord|[Ww]ebCord|[Vv]esktop)$" } },
-  { "im", { class = "^([Ff]erdium)$" } },
-  { "im", { class = "^([Ww]hatsapp-for-linux)$" } },
-  {
-    "im",
-    { class = "^(org.telegram.desktop|io.github.tdesktop_x64.TDesktop)$" },
-  },
-  { "im", { class = "^(teams-for-linux)$" } },
-  { "im", { class = "^(im.riot.Riot|Element)$" } },
+  { "terminal", { class = "^(com\\.mitchellh\\.ghostty|kitty)$" } },
+  { "im", { class = "^([Vv]esktop)$" } },
   { "games", { class = "^(gamescope)$" } },
   { "games", { class = "^(steam_app_\\d+)$" } },
-  { "gamestore", { class = "^([Ss]team)$" } },
-  { "gamestore", { title = "^([Ll]utris)$" } },
-  { "gamestore", { class = "^(com.heroicgameslauncher.hgl)$" } },
-  {
-    "file-manager",
-    { class = "^([Tt]hunar|org.gnome.Nautilus|[Pp]cmmanfm-qt)$" },
-  },
-  { "file-manager", { class = "^(app.drey.Warp)$" } },
-  { "multimedia", { class = "^([Aa]udacious)$" } },
-  { "multimedia_video", { class = "^([Mm]pv|vlc)$" } },
-  { "settings", { title = "^(ROG Control)$" } },
-  { "settings", { class = "^(wihotspot(-gui)?)$" } },
-  { "settings", { class = "^([Bb]aobab|org.gnome.[Bb]aobab)$" } },
-  { "settings", { class = "^(gnome-disks|wihotspot(-gui)?)$" } },
-  { "settings", { title = "(Kvantum Manager)" } },
-  { "settings", { class = "^(file-roller|org.gnome.FileRoller)$" } },
+  { "file-manager", { class = "^([Tt]hunar)$" } },
+  { "multimedia-video", { class = "^(mpv|vlc)$" } },
+  { "settings", { class = "^(org\\.gnome\\.[Bb]aobab|[Bb]aobab)$" } },
   {
     "settings",
     { class = "^(nm-applet|nm-connection-editor|blueman-manager)$" },
   },
-  {
-    "settings",
-    {
-      class = "^(pavucontrol|org.pulseaudio.pavucontrol|com.saivert.pwvucontrol)$",
-    },
-  },
+  { "settings", { class = "^(pavucontrol|org\\.pulseaudio\\.pavucontrol)$" } },
   { "settings", { class = "^(qt5ct|qt6ct)$" } },
   { "settings", { class = "(xdg-desktop-portal-gtk)" } },
-  { "settings", { class = "^(org.kde.polkit-kde-authentication-agent-1)$" } },
-  { "settings", { class = "^([Rr]ofi)$" } },
-  { "settings", { class = "^(btrfs-assistant)$" } },
-  { "settings", { class = "^(timeshift-gtk)$" } },
-  {
-    "viewer",
-    {
-      class = "^(gnome-system-monitor|org.gnome.SystemMonitor|io.missioncenter.MissionCenter)$",
-    },
-  },
-  { "viewer", { class = "^(evince)$" } },
-  { "viewer", { class = "^(eog|org.gnome.Loupe)$" } },
+  { "viewer", { class = "^(org\\.gnome\\.Loupe)$" } },
 }
 
 ---@type Hyprconf.WindowRule[]
 local window_rules = {
   {
     name = "multimedia-video-no-blur",
-    match = { tag = "multimedia_video" },
-    no_blur = true,
-    opacity = "1.0",
-  },
-  {
-    name = "multimedia-no-blur",
-    match = { tag = "multimedia" },
+    match = { tag = "multimedia-video" },
     no_blur = true,
     opacity = "1.0",
   },
@@ -173,43 +106,10 @@ local window_rules = {
     idle_inhibit = "fullscreen",
   },
   {
-    name = "quick-cheat-center",
-    match = { tag = "quick-cheat" },
-    center = true,
-  },
-  {
-    name = "nwg-settings-center",
-    match = { tag = "nwg-settings" },
-    center = true,
-  },
-  {
-    name = "rog-control-center",
-    match = { title = "^(ROG Control)$" },
-    center = true,
-  },
-  {
-    name = "keybindings-center",
-    match = { title = "^(Keybindings)$" },
-    center = true,
-  },
-  {
-    name = "audio-settings-center",
-    match = {
-      class = "^(pavucontrol|org.pulseaudio.pavucontrol|com.saivert.pwvucontrol)$",
-    },
-    center = true,
-  },
-  {
-    name = "ferdium-center",
-    match = { class = "^([Ff]erdium)$" },
-    center = true,
-    float = true,
-    size = "(monitor_w*0.6) (monitor_h*0.7)",
-  },
-  {
     name = "quick-cheat-float",
     match = { tag = "quick-cheat" },
     float = true,
+    center = true,
     size = "(monitor_w*0.65) (monitor_h*0.9)",
   },
   {
@@ -232,18 +132,13 @@ local window_rules = {
     center = true,
   },
   {
-    name = "zoom-onedriver-float",
-    match = { class = "([Zz]oom|onedriver|onedriver-launcher)" },
-    float = true,
-  },
-  {
     name = "calculator-float",
-    match = { class = "(org.gnome.Calculator|qalculate-gtk)" },
+    match = { class = "^(qalculate-gtk)$" },
     float = true,
   },
   {
     name = "mpv-float",
-    match = { class = "^(mpv|com.github.rafostar.Clapper)$" },
+    match = { class = "^(mpv)$" },
     float = true,
   },
   {
@@ -253,32 +148,9 @@ local window_rules = {
     center = true,
   },
   {
-    name = "codium-dialog-float",
-    match = {
-      class = "(codium|codium-url-handler|VSCodium)",
-      title = "negative:(.*codium.*|.*VSCodium.*)",
-    },
-    float = true,
-  },
-  {
-    name = "heroic-dialog-float",
-    match = {
-      class = "^(com.heroicgameslauncher.hgl)$",
-      title = "negative:(Heroic Games Launcher)",
-    },
-    float = true,
-  },
-  {
     name = "steam-dialog-float",
     match = { class = "^([Ss]team)$", title = "negative:^([Ss]team)$" },
     float = true,
-  },
-  {
-    name = "add-folder-dialog",
-    match = { title = "^(Add Folder to Workspace)$" },
-    float = true,
-    size = "(monitor_w*0.7) (monitor_h*0.6)",
-    center = true,
   },
   {
     name = "save-as-dialog",
@@ -292,13 +164,6 @@ local window_rules = {
     match = { initial_title = "(Open Files)" },
     float = true,
     size = "(monitor_w*0.7) (monitor_h*0.6)",
-  },
-  {
-    name = "sddm-background-dialog",
-    match = { title = "^(SDDM Background)$" },
-    float = true,
-    center = true,
-    size = "(monitor_w*0.16) (monitor_h*0.12)",
   },
   {
     name = "yad-dialog",
@@ -318,11 +183,6 @@ local window_rules = {
     match = { tag = "browser" },
     opacity = "0.99 0.8",
   },
-  {
-    name = "projects-opacity",
-    match = { tag = "projects" },
-    opacity = "0.9 0.8",
-  },
   { name = "im-opacity", match = { tag = "im" }, opacity = "0.94 0.86" },
   {
     name = "file-manager-opacity",
@@ -340,46 +200,15 @@ local window_rules = {
     opacity = "0.8 0.7",
   },
   {
-    name = "editor-opacity",
-    match = { class = "^(gedit|org.gnome.TextEditor|mousepad)$" },
-    opacity = "0.8 0.7",
-  },
-  {
-    name = "deluge-opacity",
-    match = { class = "^(deluge)$" },
-    opacity = "0.9 0.8",
-  },
-  {
     name = "seahorse-opacity",
     match = { class = "^(seahorse)$" },
     opacity = "0.9 0.8",
-  },
-  {
-    name = "pip-opacity",
-    match = { title = "^(Picture-in-Picture)$" },
-    opacity = "0.95 0.75",
   },
   {
     name = "games-no-blur",
     match = { tag = "games" },
     no_blur = true,
     fullscreen = 0,
-  },
-  {
-    name = "jetbrains-no-initial-focus",
-    match = { class = "^(jetbrains-*)" },
-    no_initial_focus = true,
-  },
-  {
-    name = "wind-no-initial-focus",
-    match = { title = "^(wind.*)$" },
-    no_initial_focus = true,
-  },
-  {
-    name = "Whatsapp-zapzap",
-    match = { class = "^([Ww]hatsapp-for-linux|ZapZap|com.rtosta.zapzap)$" },
-    size = "(monitor_w*0.6) (monitor_h*0.7)",
-    center = true,
   },
   {
     name = "Picture-in-Picture",
@@ -397,11 +226,6 @@ local window_rules = {
     float = true,
     center = true,
     size = "(monitor_w*0.26) (monitor_h*0.18)",
-  },
-  {
-    name = "notion-workspace",
-    match = { class = "^([Nn]otion)$" },
-    workspace = "10",
   },
   {
     name = "line-main-tag",
@@ -492,15 +316,15 @@ function M.setup()
   end
 
   for _, rule in ipairs(window_rules) do
-    wr(rule)
+    window_rule(rule)
   end
 
   for _, rule in ipairs(layer_rules) do
-    lr(rule)
+    layer_rule(rule)
   end
 
   for _, rule in ipairs(persistent_workspaces) do
-    ws(rule)
+    workspace_rule(rule)
   end
 end
 

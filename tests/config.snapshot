@@ -396,381 +396,114 @@ hl.animation({
 })
 hl.window_rule({
   match = {
-    class = "^([Ff]irefox|org.mozilla.firefox|[Ff]irefox-esr|[Ff]irefox-bin)$",
+    class = "^(zen|zen-alpha)$",
   },
   name = "tag-001-browser",
   tag = "+browser",
 })
 hl.window_rule({
   match = {
-    class = "^([Gg]oogle-chrome(-beta|-dev|-unstable)?)$",
-  },
-  name = "tag-002-browser",
-  tag = "+browser",
-})
-hl.window_rule({
-  match = {
-    class = "^(chrome-.+-Default)$",
-  },
-  name = "tag-003-browser",
-  tag = "+browser",
-})
-hl.window_rule({
-  match = {
-    class = "^([Cc]hromium)$",
-  },
-  name = "tag-004-browser",
-  tag = "+browser",
-})
-hl.window_rule({
-  match = {
-    class = "^([Mm]icrosoft-edge(-stable|-beta|-dev|-unstable))$",
-  },
-  name = "tag-005-browser",
-  tag = "+browser",
-})
-hl.window_rule({
-  match = {
-    class = "^(Brave-browser(-beta|-dev|-unstable)?)$",
-  },
-  name = "tag-006-browser",
-  tag = "+browser",
-})
-hl.window_rule({
-  match = {
-    class = "^([Tt]horium-browser|[Cc]achy-browser)$",
-  },
-  name = "tag-007-browser",
-  tag = "+browser",
-})
-hl.window_rule({
-  match = {
-    class = "^(zen-alpha|zen)$",
-  },
-  name = "tag-008-browser",
-  tag = "+browser",
-})
-hl.window_rule({
-  match = {
     title = "^(Quick Cheat Sheet)$",
   },
-  name = "tag-009-quick-cheat",
+  name = "tag-002-quick-cheat",
   tag = "+quick-cheat",
-})
-hl.window_rule({
-  match = {
-    title = "^(Quick Settings)$",
-  },
-  name = "tag-010-quick-settings",
-  tag = "+quick-settings",
 })
 hl.window_rule({
   match = {
     class = "^(nwg-displays|nwg-look)$",
   },
-  name = "tag-011-nwg-settings",
+  name = "tag-003-nwg-settings",
   tag = "+nwg-settings",
 })
 hl.window_rule({
   match = {
-    class = "^(com\\.mitchellh\\.ghostty|Alacritty|kitty)$",
+    class = "^(com\\.mitchellh\\.ghostty|kitty)$",
   },
-  name = "tag-012-terminal",
+  name = "tag-004-terminal",
   tag = "+terminal",
 })
 hl.window_rule({
   match = {
-    class = "^([Tt]hunderbird|org.mozilla.Thunderbird)$",
+    class = "^([Vv]esktop)$",
   },
-  name = "tag-013-email",
-  tag = "+email",
-})
-hl.window_rule({
-  match = {
-    class = "^(eu.betterbird.Betterbird)$",
-  },
-  name = "tag-014-email",
-  tag = "+email",
-})
-hl.window_rule({
-  match = {
-    class = "^(org.gnome.Evolution)$",
-  },
-  name = "tag-015-email",
-  tag = "+email",
-})
-hl.window_rule({
-  match = {
-    class = "^(codium|codium-url-handler|VSCodium)$",
-  },
-  name = "tag-016-projects",
-  tag = "+projects",
-})
-hl.window_rule({
-  match = {
-    class = "^(VSCode|code|code-url-handler)$",
-  },
-  name = "tag-017-projects",
-  tag = "+projects",
-})
-hl.window_rule({
-  match = {
-    class = "^(jetbrains-.+)$",
-  },
-  name = "tag-018-projects",
-  tag = "+projects",
-})
-hl.window_rule({
-  match = {
-    class = "^(dev.zed.Zed|antigravity)$",
-  },
-  name = "tag-019-projects",
-  tag = "+projects",
-})
-hl.window_rule({
-  match = {
-    class = "^(com.obsproject.Studio)$",
-  },
-  name = "tag-020-screenshare",
-  tag = "+screenshare",
-})
-hl.window_rule({
-  match = {
-    class = "^([Dd]iscord|[Ww]ebCord|[Vv]esktop)$",
-  },
-  name = "tag-021-im",
-  tag = "+im",
-})
-hl.window_rule({
-  match = {
-    class = "^([Ff]erdium)$",
-  },
-  name = "tag-022-im",
-  tag = "+im",
-})
-hl.window_rule({
-  match = {
-    class = "^([Ww]hatsapp-for-linux)$",
-  },
-  name = "tag-023-im",
-  tag = "+im",
-})
-hl.window_rule({
-  match = {
-    class = "^(org.telegram.desktop|io.github.tdesktop_x64.TDesktop)$",
-  },
-  name = "tag-024-im",
-  tag = "+im",
-})
-hl.window_rule({
-  match = {
-    class = "^(teams-for-linux)$",
-  },
-  name = "tag-025-im",
-  tag = "+im",
-})
-hl.window_rule({
-  match = {
-    class = "^(im.riot.Riot|Element)$",
-  },
-  name = "tag-026-im",
+  name = "tag-005-im",
   tag = "+im",
 })
 hl.window_rule({
   match = {
     class = "^(gamescope)$",
   },
-  name = "tag-027-games",
+  name = "tag-006-games",
   tag = "+games",
 })
 hl.window_rule({
   match = {
     class = "^(steam_app_\\d+)$",
   },
-  name = "tag-028-games",
+  name = "tag-007-games",
   tag = "+games",
 })
 hl.window_rule({
   match = {
-    class = "^([Ss]team)$",
+    class = "^([Tt]hunar)$",
   },
-  name = "tag-029-gamestore",
-  tag = "+gamestore",
-})
-hl.window_rule({
-  match = {
-    title = "^([Ll]utris)$",
-  },
-  name = "tag-030-gamestore",
-  tag = "+gamestore",
-})
-hl.window_rule({
-  match = {
-    class = "^(com.heroicgameslauncher.hgl)$",
-  },
-  name = "tag-031-gamestore",
-  tag = "+gamestore",
-})
-hl.window_rule({
-  match = {
-    class = "^([Tt]hunar|org.gnome.Nautilus|[Pp]cmmanfm-qt)$",
-  },
-  name = "tag-032-file-manager",
+  name = "tag-008-file-manager",
   tag = "+file-manager",
 })
 hl.window_rule({
   match = {
-    class = "^(app.drey.Warp)$",
+    class = "^(mpv|vlc)$",
   },
-  name = "tag-033-file-manager",
-  tag = "+file-manager",
+  name = "tag-009-multimedia-video",
+  tag = "+multimedia-video",
 })
 hl.window_rule({
   match = {
-    class = "^([Aa]udacious)$",
+    class = "^(org\\.gnome\\.[Bb]aobab|[Bb]aobab)$",
   },
-  name = "tag-034-multimedia",
-  tag = "+multimedia",
-})
-hl.window_rule({
-  match = {
-    class = "^([Mm]pv|vlc)$",
-  },
-  name = "tag-035-multimedia_video",
-  tag = "+multimedia_video",
-})
-hl.window_rule({
-  match = {
-    title = "^(ROG Control)$",
-  },
-  name = "tag-036-settings",
-  tag = "+settings",
-})
-hl.window_rule({
-  match = {
-    class = "^(wihotspot(-gui)?)$",
-  },
-  name = "tag-037-settings",
-  tag = "+settings",
-})
-hl.window_rule({
-  match = {
-    class = "^([Bb]aobab|org.gnome.[Bb]aobab)$",
-  },
-  name = "tag-038-settings",
-  tag = "+settings",
-})
-hl.window_rule({
-  match = {
-    class = "^(gnome-disks|wihotspot(-gui)?)$",
-  },
-  name = "tag-039-settings",
-  tag = "+settings",
-})
-hl.window_rule({
-  match = {
-    title = "(Kvantum Manager)",
-  },
-  name = "tag-040-settings",
-  tag = "+settings",
-})
-hl.window_rule({
-  match = {
-    class = "^(file-roller|org.gnome.FileRoller)$",
-  },
-  name = "tag-041-settings",
+  name = "tag-010-settings",
   tag = "+settings",
 })
 hl.window_rule({
   match = {
     class = "^(nm-applet|nm-connection-editor|blueman-manager)$",
   },
-  name = "tag-042-settings",
+  name = "tag-011-settings",
   tag = "+settings",
 })
 hl.window_rule({
   match = {
-    class = "^(pavucontrol|org.pulseaudio.pavucontrol|com.saivert.pwvucontrol)$",
+    class = "^(pavucontrol|org\\.pulseaudio\\.pavucontrol)$",
   },
-  name = "tag-043-settings",
+  name = "tag-012-settings",
   tag = "+settings",
 })
 hl.window_rule({
   match = {
     class = "^(qt5ct|qt6ct)$",
   },
-  name = "tag-044-settings",
+  name = "tag-013-settings",
   tag = "+settings",
 })
 hl.window_rule({
   match = {
     class = "(xdg-desktop-portal-gtk)",
   },
-  name = "tag-045-settings",
+  name = "tag-014-settings",
   tag = "+settings",
 })
 hl.window_rule({
   match = {
-    class = "^(org.kde.polkit-kde-authentication-agent-1)$",
+    class = "^(org\\.gnome\\.Loupe)$",
   },
-  name = "tag-046-settings",
-  tag = "+settings",
-})
-hl.window_rule({
-  match = {
-    class = "^([Rr]ofi)$",
-  },
-  name = "tag-047-settings",
-  tag = "+settings",
-})
-hl.window_rule({
-  match = {
-    class = "^(btrfs-assistant)$",
-  },
-  name = "tag-048-settings",
-  tag = "+settings",
-})
-hl.window_rule({
-  match = {
-    class = "^(timeshift-gtk)$",
-  },
-  name = "tag-049-settings",
-  tag = "+settings",
-})
-hl.window_rule({
-  match = {
-    class = "^(gnome-system-monitor|org.gnome.SystemMonitor|io.missioncenter.MissionCenter)$",
-  },
-  name = "tag-050-viewer",
+  name = "tag-015-viewer",
   tag = "+viewer",
 })
 hl.window_rule({
   match = {
-    class = "^(evince)$",
-  },
-  name = "tag-051-viewer",
-  tag = "+viewer",
-})
-hl.window_rule({
-  match = {
-    class = "^(eog|org.gnome.Loupe)$",
-  },
-  name = "tag-052-viewer",
-  tag = "+viewer",
-})
-hl.window_rule({
-  match = {
-    tag = "multimedia_video",
+    tag = "multimedia-video",
   },
   name = "multimedia-video-no-blur",
-  no_blur = true,
-  opacity = "1.0",
-})
-hl.window_rule({
-  match = {
-    tag = "multimedia",
-  },
-  name = "multimedia-no-blur",
   no_blur = true,
   opacity = "1.0",
 })
@@ -783,49 +516,6 @@ hl.window_rule({
 })
 hl.window_rule({
   center = true,
-  match = {
-    tag = "quick-cheat",
-  },
-  name = "quick-cheat-center",
-})
-hl.window_rule({
-  center = true,
-  match = {
-    tag = "nwg-settings",
-  },
-  name = "nwg-settings-center",
-})
-hl.window_rule({
-  center = true,
-  match = {
-    title = "^(ROG Control)$",
-  },
-  name = "rog-control-center",
-})
-hl.window_rule({
-  center = true,
-  match = {
-    title = "^(Keybindings)$",
-  },
-  name = "keybindings-center",
-})
-hl.window_rule({
-  center = true,
-  match = {
-    class = "^(pavucontrol|org.pulseaudio.pavucontrol|com.saivert.pwvucontrol)$",
-  },
-  name = "audio-settings-center",
-})
-hl.window_rule({
-  center = true,
-  float = true,
-  match = {
-    class = "^([Ff]erdium)$",
-  },
-  name = "ferdium-center",
-  size = "(monitor_w*0.6) (monitor_h*0.7)",
-})
-hl.window_rule({
   float = true,
   match = {
     tag = "quick-cheat",
@@ -861,21 +551,14 @@ hl.window_rule({
 hl.window_rule({
   float = true,
   match = {
-    class = "([Zz]oom|onedriver|onedriver-launcher)",
-  },
-  name = "zoom-onedriver-float",
-})
-hl.window_rule({
-  float = true,
-  match = {
-    class = "(org.gnome.Calculator|qalculate-gtk)",
+    class = "^(qalculate-gtk)$",
   },
   name = "calculator-float",
 })
 hl.window_rule({
   float = true,
   match = {
-    class = "^(mpv|com.github.rafostar.Clapper)$",
+    class = "^(mpv)$",
   },
   name = "mpv-float",
 })
@@ -890,35 +573,10 @@ hl.window_rule({
 hl.window_rule({
   float = true,
   match = {
-    class = "(codium|codium-url-handler|VSCodium)",
-    title = "negative:(.*codium.*|.*VSCodium.*)",
-  },
-  name = "codium-dialog-float",
-})
-hl.window_rule({
-  float = true,
-  match = {
-    class = "^(com.heroicgameslauncher.hgl)$",
-    title = "negative:(Heroic Games Launcher)",
-  },
-  name = "heroic-dialog-float",
-})
-hl.window_rule({
-  float = true,
-  match = {
     class = "^([Ss]team)$",
     title = "negative:^([Ss]team)$",
   },
   name = "steam-dialog-float",
-})
-hl.window_rule({
-  center = true,
-  float = true,
-  match = {
-    title = "^(Add Folder to Workspace)$",
-  },
-  name = "add-folder-dialog",
-  size = "(monitor_w*0.7) (monitor_h*0.6)",
 })
 hl.window_rule({
   center = true,
@@ -936,15 +594,6 @@ hl.window_rule({
   },
   name = "open-files-dialog",
   size = "(monitor_w*0.7) (monitor_h*0.6)",
-})
-hl.window_rule({
-  center = true,
-  float = true,
-  match = {
-    title = "^(SDDM Background)$",
-  },
-  name = "sddm-background-dialog",
-  size = "(monitor_w*0.16) (monitor_h*0.12)",
 })
 hl.window_rule({
   center = true,
@@ -969,13 +618,6 @@ hl.window_rule({
   },
   name = "browser-opacity",
   opacity = "0.99 0.8",
-})
-hl.window_rule({
-  match = {
-    tag = "projects",
-  },
-  name = "projects-opacity",
-  opacity = "0.9 0.8",
 })
 hl.window_rule({
   match = {
@@ -1007,31 +649,10 @@ hl.window_rule({
 })
 hl.window_rule({
   match = {
-    class = "^(gedit|org.gnome.TextEditor|mousepad)$",
-  },
-  name = "editor-opacity",
-  opacity = "0.8 0.7",
-})
-hl.window_rule({
-  match = {
-    class = "^(deluge)$",
-  },
-  name = "deluge-opacity",
-  opacity = "0.9 0.8",
-})
-hl.window_rule({
-  match = {
     class = "^(seahorse)$",
   },
   name = "seahorse-opacity",
   opacity = "0.9 0.8",
-})
-hl.window_rule({
-  match = {
-    title = "^(Picture-in-Picture)$",
-  },
-  name = "pip-opacity",
-  opacity = "0.95 0.75",
 })
 hl.window_rule({
   fullscreen = 0,
@@ -1040,28 +661,6 @@ hl.window_rule({
   },
   name = "games-no-blur",
   no_blur = true,
-})
-hl.window_rule({
-  match = {
-    class = "^(jetbrains-*)",
-  },
-  name = "jetbrains-no-initial-focus",
-  no_initial_focus = true,
-})
-hl.window_rule({
-  match = {
-    title = "^(wind.*)$",
-  },
-  name = "wind-no-initial-focus",
-  no_initial_focus = true,
-})
-hl.window_rule({
-  center = true,
-  match = {
-    class = "^([Ww]hatsapp-for-linux|ZapZap|com.rtosta.zapzap)$",
-  },
-  name = "Whatsapp-zapzap",
-  size = "(monitor_w*0.6) (monitor_h*0.7)",
 })
 hl.window_rule({
   float = true,
@@ -1084,13 +683,6 @@ hl.window_rule({
   },
   name = "Thunar-Progress-bar",
   size = "(monitor_w*0.26) (monitor_h*0.18)",
-})
-hl.window_rule({
-  match = {
-    class = "^([Nn]otion)$",
-  },
-  name = "notion-workspace",
-  workspace = "10",
 })
 hl.window_rule({
   match = {
