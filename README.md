@@ -2,7 +2,7 @@
 
 Personal Hyprland 0.55+ configuration for an Arch Linux workstation, with Vicinae menus, Noctalia colors and selectable monitor and animation profiles.
 
-[![check](https://github.com/Orbit-Lua/hypr/actions/workflows/check.yml/badge.svg)](https://github.com/Orbit-Lua/hypr/actions/workflows/check.yml)
+[![check](https://github.com/Orbit-Lua/hypr/actions/workflows/check.yml/badge.svg?branch=main)](https://github.com/Orbit-Lua/hypr/actions/workflows/check.yml)
 [![Hyprland](https://img.shields.io/badge/Hyprland-0.55%2B-58E1FF?logo=hyprland&logoColor=black)](https://hypr.land/)
 
 ## Install
