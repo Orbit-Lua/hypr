@@ -1,15 +1,16 @@
-local cli = require("hyprconf.cli")
+local ctx = require("hyprconf.context")
+local fs = require("hyprconf.util.fs")
+local hyprctl = require("hyprconf.runtime.hyprctl")
+local notify = require("hyprconf.runtime.notify")
+local shell = require("hyprconf.util.shell")
 
 ---@class Hyprconf.Commands.Session
----@field overview fun()
----@field kill_active fun()
----@field touchpad fun()
 local M = {}
 
 ---@return nil
 function M.overview()
   if
-    cli.command_exists("qs")
+    shell.command_exists("qs")
     and os.execute(
       "qs ipc --newest --any-display -c overview call overview toggle >/dev/null 2>&1"
     )
@@ -17,7 +18,7 @@ function M.overview()
     os.exit(0)
   end
 
-  cli.notify_error(
+  notify.error(
     "Overview",
     "Quickshell overview is unavailable. Check quickshell-overview.service.",
     "overview"
@@ -28,51 +29,37 @@ end
 ---@return nil
 function M.kill_active()
   ---@type Hyprconf.HyprWindow
-  local active = cli.hypr_json("activewindow") or {}
+  local active = hyprctl.json("activewindow") or {}
   local pid = tonumber(active.pid)
-  if not pid then
-    cli.notify_error(
+  -- `kill 0` and `kill -1` would signal the process group or every process.
+  if not pid or pid <= 1 then
+    notify.error(
       "Kill Active Window",
       "No active window PID found.",
       "kill-active-window"
     )
     os.exit(1)
   end
-  cli.exec("kill " .. tostring(pid))
+  shell.exec("kill " .. tostring(pid))
 end
 
 ---@return nil
 function M.touchpad()
-  local ctx = require("hyprconf.context")
-  local device = os.getenv("TOUCHPAD_DEVICE") or ctx.touchpad_device
-  if not device or device == "" then
-    cli.notify_error(
-      "Touchpad",
-      "Device name not set. Check lua/hyprconf/context.lua.",
-      "touchpad"
-    )
-    os.exit(1)
-  end
-
   local status_file = (os.getenv("XDG_RUNTIME_DIR") or "/tmp")
     .. "/touchpad.status"
   -- Hyprland starts with the touchpad enabled and the status file missing.
-  local current = cli.read_file(status_file)
+  local current = fs.read(status_file)
   local enabled = current ~= nil and current:match("^false") ~= nil
 
-  cli.write_file(status_file, enabled and "true" or "false")
-  cli.hypr_eval(
-    "hl.device({ name = "
-      .. cli.lua_string(device)
-      .. ", enabled = "
-      .. tostring(enabled)
-      .. " })"
+  fs.write(status_file, tostring(enabled))
+  hyprctl.eval(
+    string.format(
+      "hl.device({ name = %q, enabled = %s })",
+      ctx.touchpad_device,
+      tostring(enabled)
+    )
   )
-  if enabled then
-    cli.notify_success("Touchpad", "Enabled", "touchpad")
-  else
-    cli.notify_info("Touchpad", "Disabled", "touchpad")
-  end
+  notify.info("Touchpad", enabled and "Enabled" or "Disabled", "touchpad")
 end
 
 return M

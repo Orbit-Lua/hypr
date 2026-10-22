@@ -52,12 +52,8 @@ local function workspace_step(offset, move_window)
   end
 end
 
--- luacheck: push ignore
-local zoom_in =
-  [[hyprctl keyword cursor:zoom_factor "$(hyprctl getoption cursor:zoom_factor | awk 'NR==1 {factor = $2; if (factor < 1) {factor = 1}; print factor * 2.0}')"]]
-local zoom_out =
-  [[hyprctl keyword cursor:zoom_factor "$(hyprctl getoption cursor:zoom_factor | awk 'NR==1 {factor = $2; if (factor < 1) {factor = 1}; print factor / 2.0}')"]]
--- luacheck: pop
+local zoom_in = util.zoom_command("*", "2.0")
+local zoom_out = util.zoom_command("/", "2.0")
 
 ---@return nil
 local function applications()

@@ -1,64 +1,55 @@
-local cli = require("hyprconf.cli")
-local common = require("hyprconf.commands.common")
+local hyprctl = require("hyprconf.runtime.hyprctl")
+local notify = require("hyprconf.runtime.notify")
 
 ---@class Hyprconf.Commands.Layout
----@field change_blur fun()
----@field change_layout fun()
----@field game_mode fun()
 local M = {}
 
 ---@return nil
 function M.change_blur()
-  local state = cli.hypr_option("decoration:blur:passes").int
-  if state == 2 then
-    cli.hypr_config("{ decoration = { blur = { size = 2, passes = 1 } } }")
-    cli.notify_info("Window Blur", "Reduced", "window-blur")
+  if hyprctl.option("decoration:blur:passes").int == 2 then
+    hyprctl.config("{ decoration = { blur = { size = 2, passes = 1 } } }")
+    notify.info("Window Blur", "Reduced", "window-blur")
   else
-    cli.hypr_config("{ decoration = { blur = { size = 5, passes = 2 } } }")
-    cli.notify_success("Window Blur", "Normal", "window-blur")
+    hyprctl.config("{ decoration = { blur = { size = 5, passes = 2 } } }")
+    notify.info("Window Blur", "Normal", "window-blur")
   end
 end
 
+---@type table<string, [string, string]>
+local next_layout = {
+  dwindle = { "master", "Master" },
+  master = { "scrolling", "Scrolling" },
+  scrolling = { "dwindle", "Dwindle" },
+}
+
 ---@return nil
 function M.change_layout()
-  local layout = cli.hypr_option("general:layout").str or "dwindle"
-
-  if layout == "dwindle" then
-    cli.hypr_config('{ general = { layout = "master" } }')
-    cli.notify_success("Window Layout", "Master", "window-layout")
-  elseif layout == "master" then
-    cli.hypr_config('{ general = { layout = "scrolling" } }')
-    cli.notify_success("Window Layout", "Scrolling", "window-layout")
-  else
-    cli.hypr_config('{ general = { layout = "dwindle" } }')
-    cli.notify_success("Window Layout", "Dwindle", "window-layout")
-  end
+  local current = hyprctl.option("general:layout").str
+  local layout = next_layout[current or "dwindle"] or next_layout.scrolling
+  hyprctl.config('{ general = { layout = "' .. layout[1] .. '" } }')
+  notify.info("Window Layout", layout[2], "window-layout")
 end
 
 ---@return nil
 function M.game_mode()
-  local enabled = cli.hypr_option("animations:enabled").int
-  if enabled == 1 then
-    local game_mode_config = table.concat({
+  if hyprctl.option("animations:enabled").int == 1 then
+    hyprctl.config(table.concat({
       "{ animations = { enabled = false },",
       "decoration = { shadow = { enabled = false },",
       "blur = { enabled = false }, rounding = 0 },",
       "general = { gaps_in = 0, gaps_out = 0, border_size = 1 } }",
-    }, " ")
-    local opacity_rule = table.concat({
+    }, " "))
+    hyprctl.eval(table.concat({
       'hypr_game_mode_opacity = hl.window_rule({ name = "hypr-game-mode-opacity",',
       'match = { class = ".*" },',
       'opacity = "1 override 1 override 1 override" })',
-    }, " ")
-
-    cli.hypr_config(game_mode_config)
-    cli.hypr_eval(opacity_rule)
-    cli.notify_success("Game Mode", "Enabled", "game-mode")
+    }, " "))
+    notify.info("Game Mode", "Enabled", "game-mode")
   else
     os.execute("sleep 0.6")
-    cli.exec("hyprctl reload >/dev/null 2>&1 || true")
-    cli.exec_bg(common.lua_cmd("refresh"))
-    cli.notify_info("Game Mode", "Disabled", "game-mode")
+    -- The reload hook reapplies runtime effects.
+    hyprctl.reload()
+    notify.info("Game Mode", "Disabled", "game-mode")
   end
 end
 

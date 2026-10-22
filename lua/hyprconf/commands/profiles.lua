@@ -1,57 +1,21 @@
-local cli = require("hyprconf.cli")
-local common = require("hyprconf.commands.common")
+local ctx = require("hyprconf.context")
+local fs = require("hyprconf.util.fs")
+local hyprctl = require("hyprconf.runtime.hyprctl")
+local notify = require("hyprconf.runtime.notify")
 local profile = require("hyprconf.profile")
+local vicinae = require("hyprconf.runtime.vicinae")
 
 ---@class Hyprconf.Commands.Profiles
----@field profile_selector fun(category?: Hyprconf.ProfileCategory)
 local M = {}
 
----@param path string
----@return string
-local function profile_label(path)
-  local content = cli.read_file(path) or ""
-  return content:match("^%-%- profile:%s*([^\n]+)")
-    or common.without_suffix(common.basename(path), ".lua")
-end
-
----@param category Hyprconf.ProfileCategory
----@param profile_dir string
----@param active_profile string?
----@return string?
-local function current_profile_key(category, profile_dir, active_profile)
-  local state = cli.state_dir .. "/profiles/selected/" .. category
-  local selected = cli.read_file(state)
-  if selected then
-    selected = selected:match("^%s*(%S+)")
-    if
-      selected and cli.file_exists(profile_dir .. "/" .. selected .. ".lua")
-    then
-      return selected
-    end
-  end
-
-  local active = active_profile and cli.read_file(active_profile)
-  if not active then
-    return nil
-  end
-
-  for _, file in ipairs(cli.list_files(profile_dir, "*.lua")) do
-    if cli.read_file(file) == active then
-      return common.without_suffix(common.basename(file), ".lua")
-    end
-  end
-end
-
----@param category? Hyprconf.ProfileCategory
+---@param category? Hyprconf.ProfileCategory Asks for one when missing.
 ---@return nil
 function M.profile_selector(category)
-  local root = cli.config_dir .. "/profiles"
   if not category or category == "" then
-    category = cli.vicinae_select_marked(cli.list_dirs(root), {
+    category = vicinae.select(profile.categories, {
       navigation_title = "Hyprland Profiles",
       section_title = "Categories ({count})",
       placeholder = "Choose a profile category...",
-      marker = ">",
       no_quick_look = true,
     })
     if not category then
@@ -59,54 +23,36 @@ function M.profile_selector(category)
     end
   end
 
-  local profile_dir = root .. "/" .. category
-  local profiles = cli.list_files(profile_dir, "*.lua")
-  if #profiles == 0 then
-    cli.notify_error(
-      "Profile Selector",
-      "No Lua profiles found in " .. profile_dir
-    )
+  local files =
+    fs.list_files(ctx.config_dir .. "/profiles/" .. category, "*.lua")
+  if #files == 0 then
+    notify.error("Profile Selector", "No " .. category .. " profiles found.")
     return
   end
 
+  local active = profile.active_name(category)
   local labels = {}
-  local current =
-    current_profile_key(category, profile_dir, profile.active_path(category))
-  local current_label = ""
-  for index, file in ipairs(profiles) do
-    labels[index] = profile_label(file)
-    if common.without_suffix(common.basename(file), ".lua") == current then
-      current_label = labels[index]
+  local current
+  for index, file in ipairs(files) do
+    labels[index] = profile.label(file)
+    if fs.stem(file) == active then
+      current = labels[index]
     end
   end
 
   local title = category:gsub("^%l", string.upper) .. " Profile"
-  local selected = cli.vicinae_select_marked(labels, {
+  local choice = vicinae.select(labels, {
     navigation_title = title,
     section_title = "Profiles ({count})",
     placeholder = "Choose a " .. category .. " profile...",
-    current = current_label,
-    marker = ">",
+    current = current,
     no_quick_look = true,
   })
-  if not selected then
-    return
-  end
-
   for index, label in ipairs(labels) do
-    if label == selected then
-      local source = profiles[index]
-      cli.copy_file(source, profile.selected_path(category))
-      cli.write_file(
-        cli.state_dir .. "/profiles/selected/" .. category,
-        common.without_suffix(common.basename(source), ".lua") .. "\n"
-      )
-      cli.notify_success(
-        category:gsub("^%l", string.upper) .. " Profile",
-        selected .. " loaded",
-        category .. "-profile"
-      )
-      cli.exec("hyprctl reload >/dev/null 2>&1 || true")
+    if label == choice then
+      fs.write(profile.selection_file(category), fs.stem(files[index]) .. "\n")
+      notify.info(title, label .. " loaded", category .. "-profile")
+      hyprctl.reload()
       return
     end
   end

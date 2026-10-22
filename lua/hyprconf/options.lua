@@ -14,16 +14,6 @@ function M.setup()
       gaps_out = 12,
       resize_on_border = true,
       layout = "scrolling",
-      col = {
-        active_border = colors.get(
-          "primary",
-          colors.get("color12", "rgb(B39D89)")
-        ),
-        inactive_border = colors.get(
-          "surface",
-          colors.get("color10", "rgb(72695D)")
-        ),
-      },
     },
 
     decoration = {
@@ -39,8 +29,8 @@ function M.setup()
         enabled = true,
         range = 5,
         render_power = 2,
-        color = colors.get("color12", "rgb(B39D89)"),
-        color_inactive = colors.get("color10", "rgb(72695D)"),
+        color = colors.get("color12"),
+        color_inactive = colors.get("color10"),
       },
       blur = {
         enabled = true,
@@ -51,38 +41,6 @@ function M.setup()
         special = true,
         popups = true,
         vibrancy = 0.1696,
-      },
-    },
-
-    group = {
-      col = {
-        border_active = colors.get(
-          "secondary",
-          colors.get("color15", "rgb(F4EEE4)")
-        ),
-        border_inactive = colors.get(
-          "surface",
-          colors.get("color10", "rgb(72695D)")
-        ),
-        border_locked_active = colors.get("error", "rgb(f7768e)"),
-        border_locked_inactive = colors.get(
-          "surface",
-          colors.get("color10", "rgb(72695D)")
-        ),
-      },
-      groupbar = {
-        col = {
-          active = colors.get("secondary", colors.get("color0", "rgb(000000)")),
-          inactive = colors.get(
-            "surface",
-            colors.get("color10", "rgb(72695D)")
-          ),
-          locked_active = colors.get("error", "rgb(f7768e)"),
-          locked_inactive = colors.get(
-            "surface",
-            colors.get("color10", "rgb(72695D)")
-          ),
-        },
       },
     },
 

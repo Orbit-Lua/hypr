@@ -1,25 +1,56 @@
-local cli = require("hyprconf.cli")
 local colors = require("hyprconf.colors")
-local common = require("hyprconf.commands.common")
+local ctx = require("hyprconf.context")
+local fs = require("hyprconf.util.fs")
+local hyprctl = require("hyprconf.runtime.hyprctl")
+local toml = require("hyprconf.util.toml")
+local vicinae = require("hyprconf.runtime.vicinae")
+
+---@alias Hyprconf.RainbowBorderMode "disabled"|"gradient_flow"|"material_random"|"rainbow"
 
 ---@class Hyprconf.Commands.Effects
----@field rainbow_border fun()
----@field rainbow_menu fun()
 local M = {}
 
+-- Written by the rainbow menu; effects.toml sets the mode without it.
+local mode_file = ctx.state_dir .. "/effects/rainbow-border-mode"
+
+---@type [Hyprconf.RainbowBorderMode, string][]
+local modes = {
+  { "disabled", "Disabled" },
+  { "material_random", "Material Color" },
+  { "rainbow", "Original Rainbow" },
+  { "gradient_flow", "Gradient Flow" },
+}
+
+---@param value string?
+---@return Hyprconf.RainbowBorderMode?
+local function parse_mode(value)
+  local name = value and value:match("^%s*(%S+)")
+  for _, mode in ipairs(modes) do
+    if mode[1] == name then
+      return mode[1]
+    end
+  end
+end
+
+---@return Hyprconf.RainbowBorderMode
+function M.rainbow_mode()
+  return parse_mode(fs.read(mode_file))
+    or parse_mode((toml.read(ctx.config_file("effects")).rainbow or {}).default)
+    or "disabled"
+end
+
+-- Applies the current mode's gradient to the active border.
 ---@return nil
 function M.rainbow_border()
-  local mode = cli.rainbow_border_mode()
-  if mode == "disabled" then
+  local active = colors.border_gradient(M.rainbow_mode(), 10)
+  if #active == 0 then
     return
   end
-
-  local active = colors.border_gradient(mode, 10)
   for index, value in ipairs(active) do
     active[index] = string.format("%q", value)
   end
 
-  cli.hypr_config(
+  hyprctl.config(
     "{ general = { col = { active_border = { colors = { "
       .. table.concat(active, ", ")
       .. " }, angle = 270 } } } }"
@@ -28,44 +59,33 @@ end
 
 ---@return nil
 function M.rainbow_menu()
-  local labels = {
-    "Disabled",
-    "Material Color",
-    "Original Rainbow",
-    "Gradient Flow",
-  }
-  ---@type table<Hyprconf.RainbowBorderMode, string>
-  local display = {
-    disabled = "Disabled",
-    material_random = "Material Color",
-    rainbow = "Original Rainbow",
-    gradient_flow = "Gradient Flow",
-  }
-  ---@type table<string, Hyprconf.RainbowBorderMode>
-  local modes = {
-    ["Disabled"] = "disabled",
-    ["Material Color"] = "material_random",
-    ["Original Rainbow"] = "rainbow",
-    ["Gradient Flow"] = "gradient_flow",
-  }
-  local choice = cli.vicinae_select_marked(labels, {
+  local labels = {}
+  local current
+  for index, mode in ipairs(modes) do
+    labels[index] = mode[2]
+    if mode[1] == M.rainbow_mode() then
+      current = mode[2]
+    end
+  end
+
+  local choice = vicinae.select(labels, {
     navigation_title = "Rainbow Borders",
     section_title = "Modes ({count})",
     placeholder = "Choose a border mode...",
-    current = display[cli.rainbow_border_mode()],
-    marker = ">",
+    current = current,
     no_quick_look = true,
   })
-  if not choice then
-    return
-  end
-
-  cli.write_file(cli.rainbow_mode_file, modes[choice] .. "\n")
-  cli.exec_bg(common.lua_cmd("refresh"))
-  if modes[choice] ~= "disabled" then
-    cli.exec_bg(common.lua_cmd("rainbow-border"))
-  else
-    cli.exec("hyprctl reload >/dev/null 2>&1 || true")
+  for _, mode in ipairs(modes) do
+    if mode[2] == choice then
+      fs.write(mode_file, mode[1] .. "\n")
+      if mode[1] == "disabled" then
+        -- Reloading restores the theme's border.
+        hyprctl.reload()
+      else
+        M.rainbow_border()
+      end
+      return
+    end
   end
 end
 

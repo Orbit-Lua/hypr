@@ -4,21 +4,8 @@
 ---@alias Hyprconf.JsonObject table<string, Hyprconf.JsonValue>
 
 ---@class Hyprconf.Util.Json
----@field read fun(path: string): string
 ---@field decode fun(content: string): Hyprconf.JsonValue
----@field string_field fun(content: string, key: string): string?
----@field object_string_field fun(content: string, object: string, key: string): string?
----@field encode_object fun(values: table<string, string|number|boolean|nil>, order: string[], indent?: string): string
 local M = {}
-
----@param path string
----@return string
-function M.read(path)
-  local file = assert(io.open(path, "r"))
-  local content = file:read("*a")
-  file:close()
-  return content
-end
 
 ---@param content string
 ---@param pos integer
@@ -206,52 +193,6 @@ function M.decode(content)
     decode_error(content, pos, "trailing content")
   end
   return value
-end
-
----@param content string
----@param key string
----@return string?
-function M.string_field(content, key)
-  local value = M.decode(content)[key]
-  return type(value) == "string" and value or nil
-end
-
----@param content string
----@param object string
----@param key string
----@return string?
-function M.object_string_field(content, object, key)
-  local value = M.decode(content)[object]
-  if type(value) ~= "table" then
-    return nil
-  end
-
-  if key == "" then
-    return type(value) == "string" and value or nil
-  end
-
-  value = value[key]
-  return type(value) == "string" and value or nil
-end
-
----@param values table<string, string|number|boolean|nil>
----@param order string[]
----@param indent? string
----@return string
-function M.encode_object(values, order, indent)
-  indent = indent or "    "
-  local lines = { "{" }
-
-  for index, key in ipairs(order) do
-    local comma = index < #order and "," or ""
-    local value = tostring(values[key] or "")
-    value = value:gsub("\\", "\\\\"):gsub('"', '\\"')
-    lines[#lines + 1] =
-      string.format('%s"%s": "%s"%s', indent, key, value, comma)
-  end
-
-  lines[#lines + 1] = "}"
-  return table.concat(lines, "\n") .. "\n"
 end
 
 return M

@@ -30,7 +30,7 @@ path = "lua/hyprconf/options.lua"
 [[item]]
 label = "Edit Animations"
 kind = "edit"
-path = "lua/user/animations.lua"
+path = "profiles/animation"
 
 [[item]]
 label = "Edit Input Settings"

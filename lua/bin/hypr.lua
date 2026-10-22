@@ -1,12 +1,20 @@
 #!/usr/bin/env lua
 
+-- Helper CLI behind the binds and menus: hypr.lua <command> [args...]
+
 ---@type string
-local config_dir = (debug.getinfo(1, "S").source:sub(2):match("(.+)/../..$"))
-  or ((os.getenv("HOME") or "") .. "/.config/hypr")
+local config_dir = debug
+  .getinfo(1, "S").source
+  :sub(2)
+  :match("^(.-)/?lua/bin/[^/]+$") or "."
+if config_dir == "" then
+  config_dir = "."
+end
 
 package.path = table.concat({
   config_dir .. "/lua/?.lua",
   config_dir .. "/lua/?/init.lua",
+  config_dir .. "/?.lua",
   package.path,
 }, ";")
 
@@ -17,25 +25,6 @@ local menus = require("hyprconf.commands.menus")
 local profiles = require("hyprconf.commands.profiles")
 local services = require("hyprconf.commands.services")
 local session = require("hyprconf.commands.session")
-
----@alias Hyprconf.CommandName
----| "change-blur"
----| "change-layout"
----| "game-mode"
----| "key-hints"
----| "keybinds"
----| "kill-active"
----| "overview"
----| "portal-hyprland"
----| "profile-selector"
----| "quick-settings"
----| "rainbow-border"
----| "rainbow-menu"
----| "refresh"
----| "screenshot"
----| "sound"
----| "touchpad"
----| "web-search"
 
 ---@type table<string, fun(...: string)>
 local commands = {
@@ -58,29 +47,15 @@ local commands = {
   ["web-search"] = menus.web_search,
 }
 
----@return Hyprconf.CommandName[]
-local function command_names()
+local command = commands[arg[1] or ""]
+if not command then
   local names = {}
   for name in pairs(commands) do
     names[#names + 1] = name
   end
   table.sort(names)
-  return names
-end
-
----@type Hyprconf.CommandName?
-local command = arg[1]
-if not command or not commands[command] then
-  io.stderr:write(
-    "usage: hypr.lua <" .. table.concat(command_names(), "|") .. ">\n"
-  )
+  io.stderr:write("usage: hypr.lua <" .. table.concat(names, "|") .. ">\n")
   os.exit(1)
 end
 
----@type string[]
-local command_args = {}
-for index = 2, #arg do
-  command_args[#command_args + 1] = arg[index]
-end
-
-commands[command](table.unpack(command_args))
+command(table.unpack(arg, 2))

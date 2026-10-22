@@ -4,12 +4,8 @@ local util = require("hyprconf.util")
 ---@field setup fun()
 local M = {}
 
--- luacheck: push ignore
-local zoom_in =
-  [[hyprctl keyword cursor:zoom_factor "$(hyprctl getoption cursor:zoom_factor | awk 'NR==1 {factor = $2; if (factor < 1) {factor = 1}; print factor * 1.5}')"]]
-local zoom_out =
-  [[hyprctl keyword cursor:zoom_factor "$(hyprctl getoption cursor:zoom_factor | awk 'NR==1 {factor = $2; if (factor < 1) {factor = 1}; print factor / 1.5}')"]]
--- luacheck: pop
+local zoom_in = util.zoom_command("*", "1.5")
+local zoom_out = util.zoom_command("/", "1.5")
 
 ---@return nil
 function M.setup()

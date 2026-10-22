@@ -47,7 +47,6 @@ hl.monitor({
 hl.on("hyprland.start", <function>)
 hl.on("config.reloaded", <function>)
 hl.on("monitor.added", <function>)
-os.execute mkdir -p '<state>/effects'
 hl.config({
   animations = {
     enabled = true,
@@ -99,10 +98,6 @@ hl.config({
   },
   general = {
     border_size = 1,
-    col = {
-      active_border = "rgb(7aa2f7)",
-      inactive_border = "rgb(1a1b26)",
-    },
     gaps_in = 6,
     gaps_out = 12,
     layout = "scrolling",
@@ -115,22 +110,6 @@ hl.config({
     workspace_swipe_forever = true,
     workspace_swipe_invert = true,
     workspace_swipe_min_speed_to_force = 30,
-  },
-  group = {
-    col = {
-      border_active = "rgb(bb9af7)",
-      border_inactive = "rgb(1a1b26)",
-      border_locked_active = "rgb(f7768e)",
-      border_locked_inactive = "rgb(1a1b26)",
-    },
-    groupbar = {
-      col = {
-        active = "rgb(bb9af7)",
-        inactive = "rgb(1a1b26)",
-        locked_active = "rgb(f7768e)",
-        locked_inactive = "rgb(1a1b26)",
-      },
-    },
   },
   input = {
     float_switch_override_focus = false,
@@ -1252,7 +1231,7 @@ hl.config({
 })
 
 -- on hyprland.start
-hl.exec_cmd("lua <config>/lua/bin/hypr.lua rainbow-border", {})
+hl.exec_cmd("lua '<config>/lua/bin/hypr.lua' rainbow-border", {})
 
 -- on config.reloaded
 hl.exec_cmd("lua '<config>/lua/bin/hypr.lua' refresh", {})

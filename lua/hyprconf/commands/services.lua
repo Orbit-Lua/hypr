@@ -1,48 +1,46 @@
-local cli = require("hyprconf.cli")
-local common = require("hyprconf.commands.common")
+local effects = require("hyprconf.commands.effects")
+local fs = require("hyprconf.util.fs")
+local shell = require("hyprconf.util.shell")
 
 ---@class Hyprconf.Commands.Services
----@field portal_hyprland fun()
----@field refresh fun()
 local M = {}
+
+---@param paths string[]
+---@return nil
+local function start_first(paths)
+  for _, path in ipairs(paths) do
+    if fs.exists(path) then
+      shell.exec_bg(shell.quote(path))
+      return
+    end
+  end
+end
 
 ---@return nil
 function M.portal_hyprland()
-  ---@param name string
-  ---@return nil
-  local function kill(name)
-    cli.exec("pkill -x " .. cli.shell_quote(name) .. " 2>/dev/null || true")
-  end
-  ---@param paths string[]
-  ---@return nil
-  local function start(paths)
-    for _, path in ipairs(paths) do
-      if cli.file_exists(path) then
-        cli.exec_bg(cli.shell_quote(path))
-        return
-      end
-    end
-  end
-
   os.execute("sleep 1")
-  kill("xdg-desktop-portal-hyprland")
-  kill("xdg-desktop-portal-wlr")
-  kill("xdg-desktop-portal-gnome")
-  kill("xdg-desktop-portal")
+  shell.kill(
+    "xdg-desktop-portal-hyprland",
+    "xdg-desktop-portal-wlr",
+    "xdg-desktop-portal-gnome",
+    "xdg-desktop-portal"
+  )
   os.execute("sleep 1")
-  start({
+  start_first({
     "/usr/lib/xdg-desktop-portal-hyprland",
     "/usr/libexec/xdg-desktop-portal-hyprland",
   })
   os.execute("sleep 2")
-  start({ "/usr/lib/xdg-desktop-portal", "/usr/libexec/xdg-desktop-portal" })
+  start_first({
+    "/usr/lib/xdg-desktop-portal",
+    "/usr/libexec/xdg-desktop-portal",
+  })
 end
 
+-- Reapplies runtime effects that a config reload resets.
 ---@return nil
 function M.refresh()
-  if cli.rainbow_border_mode() ~= "disabled" then
-    cli.exec_bg(common.lua_cmd("rainbow-border"))
-  end
+  effects.rainbow_border()
 end
 
 return M

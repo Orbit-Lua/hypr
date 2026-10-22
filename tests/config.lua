@@ -25,18 +25,7 @@ os.getenv = function(name)
   if fixed[name] then
     return fixed[name]
   end
-  if name == "EFFECTS_DIR" or name == "RAINBOW_BORDER_MODE_FILE" then
-    return nil
-  end
   return getenv(name)
-end
-
-local open = io.open
-io.open = function(path, mode)
-  if path == root .. "/noctalia.lua" then
-    path = theme
-  end
-  return open(path, mode)
 end
 
 local function literal(text)

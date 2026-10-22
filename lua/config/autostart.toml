@@ -1,2 +1,4 @@
+# Compositor-owned work only; Nacre starts session applications.
+# Commands expand $hyprLua, $vicinae, $term and $files.
 [[command]]
-run = "lua $configDir/lua/bin/hypr.lua rainbow-border"
+run = "$hyprLua rainbow-border"

@@ -1,0 +1,5 @@
+# Profile used per category until the profile selector records a choice.
+# Values name files under profiles/<category>/ without the .lua suffix.
+[default]
+animation = "default"
+monitor = "mirrored-laptop"

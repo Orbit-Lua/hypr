@@ -1,5 +1,7 @@
 local ctx = require("hyprconf.context")
 
+-- Helpers for building the configuration inside Hyprland, where `hl` exists.
+
 ---@alias Hyprconf.Dispatcher string
 ---@alias Hyprconf.KeyChord string
 
@@ -10,60 +12,23 @@ local ctx = require("hyprconf.context")
 ---@field repeating? boolean
 
 ---@class Hyprconf.Util
----@field trim fun(value: string): string
----@field split_csv fun(value: string): string[]
----@field file_exists fun(path: string): boolean
----@field expand fun(command: string): string
----@field exec fun(command: string): Hyprconf.Dispatcher
----@field dispatch_exec fun(command: string): fun()
----@field bind fun(keys: Hyprconf.KeyChord, dispatcher: any, description?: string, opts?: Hyprconf.BindOptions): any
----@field bind_exec fun(keys: string, description: string?, command: string, opts?: Hyprconf.BindOptions): any
----@field raw_dispatch fun(name: string, arg?: string): Hyprconf.Dispatcher
 local M = {}
 
----@param value string
----@return string
-function M.trim(value)
-  return (value:gsub("^%s+", ""):gsub("%s+$", ""))
-end
+---@type table<string, string>
+local placeholders = {
+  hyprLua = ctx.hypr_lua,
+  vicinae = ctx.vicinae,
+  term = ctx.term,
+  files = ctx.files,
+}
 
----@param value string
----@return string[]
-function M.split_csv(value)
-  local fields = {}
-  for field in value:gmatch("([^,]+)") do
-    fields[#fields + 1] = M.trim(field)
-  end
-  return fields
-end
-
----@param path string
----@return boolean
-function M.file_exists(path)
-  local file = io.open(path, "r")
-  if file then
-    file:close()
-    return true
-  end
-  return false
-end
-
+-- Replaces `$name` placeholders with context values; unknown names stay.
 ---@param command string
 ---@return string
 function M.expand(command)
-  local replacements = {
-    HOME = ctx.home,
-    configDir = ctx.config_dir,
-    hyprLua = ctx.hypr_lua,
-    vicinae = ctx.vicinae,
-    term = ctx.term,
-    files = ctx.files,
-    Search_Engine = ctx.search_engine,
-  }
-
   return (
     command:gsub("%$([%w_]+)", function(name)
-      return replacements[name] or ("$" .. name)
+      return placeholders[name] or ("$" .. name)
     end)
   )
 end
@@ -113,6 +78,21 @@ function M.raw_dispatch(name, arg)
     command = command .. " " .. arg
   end
   return M.exec(command)
+end
+
+-- Shell command that scales the cursor zoom, never below 1.
+---@param operator "*"|"/"
+---@param factor string Multiplier as written in the command, such as "2.0".
+---@return string
+function M.zoom_command(operator, factor)
+  return table.concat({
+    'hyprctl keyword cursor:zoom_factor "$(hyprctl getoption cursor:zoom_factor',
+    " | awk 'NR==1 {factor = $2; if (factor < 1) {factor = 1}; print factor ",
+    operator,
+    " ",
+    factor,
+    "}')\"",
+  })
 end
 
 return M

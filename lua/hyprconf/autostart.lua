@@ -1,5 +1,6 @@
 local ctx = require("hyprconf.context")
 local toml = require("hyprconf.util.toml")
+local util = require("hyprconf.util")
 
 ---@class Hyprconf.AutostartCommand
 ---@field run string Command to run when Hyprland starts.
@@ -12,24 +13,15 @@ local toml = require("hyprconf.util.toml")
 ---@field setup fun()
 local M = {}
 
----@type string
-local autostart_config = ctx.config_dir .. "/lua/config/autostart.toml"
-
----@param command string
----@return string
-local function expand(command)
-  return command:gsub("%$configDir", ctx.config_dir)
-end
-
 ---@return string[]
 local function autostart_commands()
   local result = {}
-  local ok, data = pcall(toml.read, autostart_config)
+  local ok, data = pcall(toml.read, ctx.config_file("autostart"))
   if ok then
     ---@cast data Hyprconf.AutostartConfig
     for _, item in ipairs(data.command or {}) do
       if item.enabled ~= false and item.run then
-        result[#result + 1] = expand(item.run)
+        result[#result + 1] = util.expand(item.run)
       end
     end
   end

@@ -1,15 +1,12 @@
 local ctx = require("hyprconf.context")
-local util = require("hyprconf.util")
+local fs = require("hyprconf.util.fs")
+local toml = require("hyprconf.util.toml")
 
----@alias Hyprconf.ProfileCategory "animation"|"monitor"|string
+-- A profile is a Lua file under profiles/<category>/ whose first line may be
+-- `-- profile: <label>`. The state directory records only the selected name,
+-- so a selection always loads the deployed revision of that file.
 
----@class Hyprconf.ProfileCategoryConfig
----@field user_file string Active profile filename, under the state directory or lua/user.
----@field fallback string Default profile path.
-
----@class Hyprconf.ProfileLoadOptions
----@field fallback? string Override fallback profile path.
----@field default? fun() Callback used when no file profile exists.
+---@alias Hyprconf.ProfileCategory "animation"|"monitor"
 
 ---@class Hyprconf.AnimationCurve
 ---@field name string Curve name passed to hl.curve.
@@ -28,97 +25,54 @@ local util = require("hyprconf.util")
 ---@field animations? Hyprconf.AnimationSpec[]
 
 ---@class Hyprconf.Profile
----@field load fun(category: Hyprconf.ProfileCategory, opts?: Hyprconf.ProfileLoadOptions): boolean
----@field selected_path fun(category: Hyprconf.ProfileCategory): string
----@field active_path fun(category: Hyprconf.ProfileCategory): string?
----@field apply_animation fun(spec: Hyprconf.AnimationProfile)
 local M = {}
 
----@type table<string, Hyprconf.ProfileCategoryConfig>
-local categories = {
-  animation = {
-    user_file = "animations.lua",
-    fallback = ctx.config_dir .. "/profiles/animation/default.lua",
-  },
-  monitor = {
-    user_file = "monitors.lua",
-    fallback = ctx.config_dir .. "/profiles/monitor/default.lua",
-  },
-}
-
----@param message string
----@return nil
-local function warn(message)
-  print("[WARN] " .. message)
-end
+---@type Hyprconf.ProfileCategory[]
+M.categories = { "animation", "monitor" }
 
 ---@param category Hyprconf.ProfileCategory
----@return Hyprconf.ProfileCategoryConfig
-local function category_config(category)
-  return categories[category]
-    or {
-      user_file = category .. ".lua",
-      fallback = ctx.config_dir .. "/profiles/" .. category .. "/default.lua",
-    }
+---@param name string
+---@return string
+function M.path(category, name)
+  return ctx.config_dir .. "/profiles/" .. category .. "/" .. name .. ".lua"
 end
 
--- The profile selector writes here; the repository's lua/user copy is the
--- default until a profile is selected.
 ---@param category Hyprconf.ProfileCategory
 ---@return string
-function M.selected_path(category)
-  return ctx.state_dir .. "/profiles/" .. category_config(category).user_file
+function M.selection_file(category)
+  return ctx.state_dir .. "/profiles/selected/" .. category
 end
 
+-- The selected profile if its file still exists, else the configured default.
 ---@param category Hyprconf.ProfileCategory
----@return string?
-function M.active_path(category)
-  for _, path in ipairs({
-    M.selected_path(category),
-    ctx.config_dir .. "/lua/user/" .. category_config(category).user_file,
-  }) do
-    if util.file_exists(path) then
-      return path
-    end
+---@return string
+function M.active_name(category)
+  local selected = (fs.read(M.selection_file(category)) or ""):match("%S+")
+  if selected and fs.exists(M.path(category, selected)) then
+    return selected
   end
+  local ok, config = pcall(toml.read, ctx.config_file("profiles"))
+  return ok and (config.default or {})[category] or "default"
 end
 
 ---@param path string
----@param label string
----@return boolean
-local function load_file(path, label)
-  local ok, err = pcall(dofile, path)
-  if ok then
-    return true
-  end
-
-  warn("Unable to load " .. label .. " from " .. path .. ": " .. tostring(err))
-  return false
+---@return string
+function M.label(path)
+  return (fs.read(path) or ""):match("^%-%- profile:%s*([^\n]+)")
+    or fs.stem(path)
 end
 
 ---@param category Hyprconf.ProfileCategory
----@param opts? Hyprconf.ProfileLoadOptions
 ---@return boolean
-function M.load(category, opts)
-  opts = opts or {}
-
-  local config = category_config(category)
-  local active = M.active_path(category)
-  if active then
-    return load_file(active, "user " .. category .. " profile")
+function M.load(category)
+  local path = M.path(category, M.active_name(category))
+  local ok, err = pcall(dofile, path)
+  if not ok then
+    print(
+      "[WARN] Unable to load " .. category .. " profile " .. path .. ": " .. err
+    )
   end
-
-  local fallback = opts.fallback or config.fallback
-  if fallback and util.file_exists(fallback) then
-    return load_file(fallback, "default " .. category .. " profile")
-  end
-
-  if opts.default then
-    opts.default()
-    return true
-  end
-
-  return false
+  return ok
 end
 
 ---@param spec Hyprconf.AnimationProfile
