@@ -28,15 +28,18 @@ typecheck:
 # Every bind must match tests/keymap.snapshot. After an intended keymap change:
 #   $(LUA) tests/keymap.lua > tests/keymap.snapshot
 keymap:
-	$(LUA) tests/keymap.lua | diff -u tests/keymap.snapshot -
+	@actual=$$(mktemp); \
+	trap 'rm -f "$$actual"' EXIT; \
+	$(LUA) tests/keymap.lua >"$$actual" && diff -u tests/keymap.snapshot "$$actual"
 
 # Everything else the configuration sends to Hyprland must match
 # tests/config.snapshot. After an intended behavior change:
 #   $(LUA) tests/config.lua "$$(mktemp -d)" > tests/config.snapshot
 config:
 	@state=$$(mktemp -d); \
-	$(LUA) tests/config.lua "$$state" | diff -u tests/config.snapshot -; \
-	status=$$?; rm -rf "$$state"; exit $$status
+	trap 'rm -rf "$$state"' EXIT; \
+	$(LUA) tests/config.lua "$$state" >"$$state/actual" && \
+	  diff -u tests/config.snapshot "$$state/actual"
 
 # Parses this checkout with a throwaway home and runtime directory, so it never
 # reads or reloads the live session.

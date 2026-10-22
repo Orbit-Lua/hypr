@@ -1,4 +1,4 @@
-name: Check
+name: Hyprland configuration
 
 on:
   push:
@@ -15,16 +15,20 @@ concurrency:
 
 jobs:
   check:
-    name: Format, lint, types, snapshots and config parse
+    name: Validate Lua and compositor configuration
     runs-on: ubuntu-latest
     timeout-minutes: 20
     container: archlinux:latest
     steps:
-      - name: Install tools
+      - name: Install Lua and Hyprland validation tools
         run: pacman -Syu --noconfirm --needed diffutils git make lua stylua luacheck lua-language-server hyprland
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Check out Hyprland configuration
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       # Hyprland refuses to run as root, so check as a user owning the checkout.
-      - run: |
+      - name: Validate configuration as an unprivileged user
+        run: |
           useradd --create-home ci
           chown -R ci "$GITHUB_WORKSPACE"
           runuser -u ci -- make check
