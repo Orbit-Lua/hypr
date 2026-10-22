@@ -5,7 +5,7 @@
 ---@field tag? string Hyprland window tag matcher.
 ---@field fullscreen? boolean
 
----@class Hyprconf.WindowRule
+---@class Hyprconf.WindowRule: HL.WindowRuleSpec
 ---@field name string Rule identifier.
 ---@field match Hyprconf.WindowMatch
 ---@field tag? string Tag operation such as "+browser".
@@ -25,7 +25,7 @@
 ---@class Hyprconf.LayerMatch
 ---@field namespace? string Layer namespace regex.
 
----@class Hyprconf.LayerRule
+---@class Hyprconf.LayerRule: HL.LayerRuleSpec
 ---@field name string Rule identifier.
 ---@field match Hyprconf.LayerMatch
 ---@field blur? boolean
@@ -39,31 +39,13 @@
 ---@field setup fun()
 local M = {}
 
----@param spec Hyprconf.WindowRule
----@return any
-local function window_rule(spec)
-  return hl.window_rule(spec)
-end
-
----@param spec Hyprconf.LayerRule
----@return any
-local function layer_rule(spec)
-  return hl.layer_rule(spec)
-end
-
----@param spec HL.WorkspaceRuleSpec
----@return any
-local function workspace_rule(spec)
-  return hl.workspace_rule(spec)
-end
-
 local tag_rule_index = 0
 ---@param name string
 ---@param match Hyprconf.WindowMatch
 ---@return any
 local function tag(name, match)
   tag_rule_index = tag_rule_index + 1
-  return window_rule({
+  return hl.window_rule({
     name = string.format("tag-%03d-%s", tag_rule_index, name),
     match = match,
     tag = "+" .. name,
@@ -316,15 +298,15 @@ function M.setup()
   end
 
   for _, rule in ipairs(window_rules) do
-    window_rule(rule)
+    hl.window_rule(rule)
   end
 
   for _, rule in ipairs(layer_rules) do
-    layer_rule(rule)
+    hl.layer_rule(rule)
   end
 
   for _, rule in ipairs(persistent_workspaces) do
-    workspace_rule(rule)
+    hl.workspace_rule(rule)
   end
 end
 

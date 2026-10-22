@@ -30,7 +30,7 @@ function M.config(code)
 end
 
 ---@param command string Arguments after `hyprctl -j`.
----@return Hyprconf.JsonValue?
+---@return any
 function M.json(command)
   local ok, value = pcall(json.decode, shell.capture("hyprctl -j " .. command))
   if ok then

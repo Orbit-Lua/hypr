@@ -12,7 +12,7 @@ local raw_dispatch = util.raw_dispatch
 local min_workspace = 1
 local max_workspace = 10
 
----@param dispatchers table<string, Hyprconf.Dispatcher>
+---@param dispatchers table<string, HL.Dispatcher>
 ---@return fun()
 local function layout_bind(dispatchers)
   return function()

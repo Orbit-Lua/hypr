@@ -4,20 +4,17 @@
 ---@alias Hyprconf.JsonObject table<string, Hyprconf.JsonValue>
 
 ---@class Hyprconf.Util.Json
----@field decode fun(content: string): Hyprconf.JsonValue
+---@field decode fun(content: string): any
 local M = {}
 
 ---@param content string
 ---@param pos integer
 ---@param message string
----@return never
+---@return string
 local function decode_error(content, pos, message)
-  error(
-    string.format("invalid JSON at byte %d: %s", pos, message)
-      .. "\n"
-      .. content:sub(pos, pos + 40),
-    0
-  )
+  return string.format("invalid JSON at byte %d: %s", pos, message)
+    .. "\n"
+    .. content:sub(pos, pos + 40)
 end
 
 ---@param content string
@@ -37,7 +34,7 @@ local parse_value
 ---@return integer
 local function parse_string(content, pos)
   if content:sub(pos, pos) ~= '"' then
-    decode_error(content, pos, "expected string")
+    error(decode_error(content, pos, "expected string"), 0)
   end
 
   local result = {}
@@ -70,7 +67,7 @@ local function parse_string(content, pos)
         result[#result + 1] = "\\u" .. content:sub(pos + 2, pos + 5)
         pos = pos + 6
       else
-        decode_error(content, pos, "invalid escape")
+        error(decode_error(content, pos, "invalid escape"), 0)
       end
     else
       result[#result + 1] = char
@@ -78,7 +75,7 @@ local function parse_string(content, pos)
     end
   end
 
-  decode_error(content, pos, "unterminated string")
+  error(decode_error(content, pos, "unterminated string"), 0)
 end
 
 ---@param content string
@@ -93,17 +90,18 @@ local function parse_array(content, pos)
     return result, pos + 1
   end
 
+  -- An explicit index keeps elements after a null in place.
+  local index = 0
   while true do
-    local value
-    value, pos = parse_value(content, pos)
-    result[#result + 1] = value
+    index = index + 1
+    result[index], pos = parse_value(content, pos)
     pos = skip_space(content, pos)
 
     local char = content:sub(pos, pos)
     if char == "]" then
       return result, pos + 1
     elseif char ~= "," then
-      decode_error(content, pos, "expected ',' or ']'")
+      error(decode_error(content, pos, "expected ',' or ']'"), 0)
     end
 
     pos = skip_space(content, pos + 1)
@@ -128,7 +126,7 @@ local function parse_object(content, pos)
     pos = skip_space(content, pos)
 
     if content:sub(pos, pos) ~= ":" then
-      decode_error(content, pos, "expected ':'")
+      error(decode_error(content, pos, "expected ':'"), 0)
     end
 
     result[key], pos = parse_value(content, skip_space(content, pos + 1))
@@ -138,7 +136,7 @@ local function parse_object(content, pos)
     if char == "}" then
       return result, pos + 1
     elseif char ~= "," then
-      decode_error(content, pos, "expected ',' or '}'")
+      error(decode_error(content, pos, "expected ',' or '}'"), 0)
     end
 
     pos = skip_space(content, pos + 1)
@@ -151,10 +149,11 @@ end
 ---@return integer
 local function parse_number(content, pos)
   local value = content:match("^-?%d+%.?%d*[eE]?[+-]?%d*", pos)
-  if not value or value == "" then
-    decode_error(content, pos, "expected number")
+  local number = value and tonumber(value)
+  if not number then
+    error(decode_error(content, pos, "expected number"), 0)
   end
-  return tonumber(value), pos + #value
+  return number, pos + #value
 end
 
 ---@param content string
@@ -181,16 +180,16 @@ function parse_value(content, pos)
     return parse_number(content, pos)
   end
 
-  decode_error(content, pos, "unexpected token")
+  error(decode_error(content, pos, "unexpected token"), 0)
 end
 
 ---@param content string
----@return Hyprconf.JsonValue
+---@return any Callers declare the shape with ---@type.
 function M.decode(content)
   local value, pos = parse_value(content, 1)
   pos = skip_space(content, pos)
   if pos <= #content then
-    decode_error(content, pos, "trailing content")
+    error(decode_error(content, pos, "trailing content"), 0)
   end
   return value
 end

@@ -4,8 +4,8 @@
 ---@alias Hyprconf.TomlTable table<string, Hyprconf.TomlValue>
 
 ---@class Hyprconf.Util.Toml
----@field parse fun(content: string): Hyprconf.TomlTable
----@field read fun(path: string): Hyprconf.TomlTable
+---@field parse fun(content: string): table<string, any>
+---@field read fun(path: string): table<string, any>
 local M = {}
 
 ---@param value string
@@ -40,14 +40,22 @@ local function strip_comment(line)
   return line
 end
 
+---@type table<string, string>
+local escapes = {
+  b = "\b",
+  f = "\f",
+  n = "\n",
+  r = "\r",
+  t = "\t",
+  ['"'] = '"',
+  ["\\"] = "\\",
+}
+
+-- Decodes basic-string escapes in one pass, so `\\n` stays a backslash and n.
 ---@param value string
 ---@return string
 local function unescape(value)
-  return value
-    :gsub("\\n", "\n")
-    :gsub("\\t", "\t")
-    :gsub('\\"', '"')
-    :gsub("\\\\", "\\")
+  return (value:gsub("\\(.)", escapes))
 end
 
 ---@type fun(value: string): Hyprconf.TomlValue
@@ -163,7 +171,7 @@ local function array_section(root, name)
 end
 
 ---@param content string
----@return Hyprconf.TomlTable
+---@return table<string, any>
 function M.parse(content)
   local root = {}
   local current = root
@@ -190,7 +198,7 @@ function M.parse(content)
 end
 
 ---@param path string
----@return Hyprconf.TomlTable
+---@return table<string, any> Callers declare the shape with ---@type.
 function M.read(path)
   local file = assert(io.open(path, "r"))
   local content = file:read("*a")

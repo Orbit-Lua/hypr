@@ -2,14 +2,10 @@ local ctx = require("hyprconf.context")
 
 -- Helpers for building the configuration inside Hyprland, where `hl` exists.
 
----@alias Hyprconf.Dispatcher string
 ---@alias Hyprconf.KeyChord string
 
----@class Hyprconf.BindOptions
----@field description? string
----@field locked? boolean
----@field mouse? boolean
----@field repeating? boolean
+---@class Hyprconf.BindOptions: HL.BindOptions
+---@field mouse? boolean Not an HL.BindOptions field: `hyprctl binds` lists these binds with mouse false.
 
 ---@class Hyprconf.Util
 local M = {}
@@ -34,7 +30,7 @@ function M.expand(command)
 end
 
 ---@param command string
----@return Hyprconf.Dispatcher
+---@return HL.Dispatcher
 function M.exec(command)
   return hl.dsp.exec_raw(M.expand(command))
 end
@@ -48,7 +44,7 @@ function M.dispatch_exec(command)
 end
 
 ---@param keys Hyprconf.KeyChord
----@param dispatcher Hyprconf.Dispatcher|function
+---@param dispatcher HL.Dispatcher|function
 ---@param description? string
 ---@param opts? Hyprconf.BindOptions
 ---@return any
@@ -71,7 +67,7 @@ end
 
 ---@param name string
 ---@param arg? string
----@return Hyprconf.Dispatcher
+---@return HL.Dispatcher
 function M.raw_dispatch(name, arg)
   local command = "hyprctl dispatch " .. name
   if arg and arg ~= "" then
