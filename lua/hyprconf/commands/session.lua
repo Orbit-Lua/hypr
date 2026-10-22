@@ -56,8 +56,9 @@ function M.touchpad()
 
   local status_file = (os.getenv("XDG_RUNTIME_DIR") or "/tmp")
     .. "/touchpad.status"
+  -- Hyprland starts with the touchpad enabled and the status file missing.
   local current = cli.read_file(status_file)
-  local enabled = not (current and current:match("^true"))
+  local enabled = current ~= nil and current:match("^false") ~= nil
 
   cli.write_file(status_file, enabled and "true" or "false")
   cli.hypr_eval(
