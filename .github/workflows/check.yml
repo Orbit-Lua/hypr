@@ -1,4 +1,4 @@
-name: Hyprland configuration
+name: check
 
 on:
   push:
