@@ -11,12 +11,6 @@ end
 
 ---@param command string
 ---@return Hyprconf.CommandStatus
-function M.exec(command)
-  return os.execute(command)
-end
-
----@param command string
----@return Hyprconf.CommandStatus
 function M.exec_bg(command)
   return os.execute(command .. " >/dev/null 2>&1 &")
 end

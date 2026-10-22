@@ -33,7 +33,7 @@ local function parse_mode(value)
 end
 
 ---@return Hyprconf.RainbowBorderMode
-function M.rainbow_mode()
+local function rainbow_mode()
   return parse_mode(fs.read(mode_file))
     or parse_mode((toml.read(ctx.config_file("effects")).rainbow or {}).default)
     or "disabled"
@@ -42,7 +42,7 @@ end
 -- Applies the current mode's gradient to the active border.
 ---@return nil
 function M.rainbow_border()
-  local active = colors.border_gradient(M.rainbow_mode(), 10)
+  local active = colors.border_gradient(rainbow_mode(), 10)
   if #active == 0 then
     return
   end
@@ -59,11 +59,12 @@ end
 
 ---@return nil
 function M.rainbow_menu()
+  local active = rainbow_mode()
   local labels = {}
   local current
   for index, mode in ipairs(modes) do
     labels[index] = mode[2]
-    if mode[1] == M.rainbow_mode() then
+    if mode[1] == active then
       current = mode[2]
     end
   end

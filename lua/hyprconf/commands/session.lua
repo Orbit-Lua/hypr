@@ -40,7 +40,7 @@ function M.kill_active()
     )
     os.exit(1)
   end
-  shell.exec("kill " .. tostring(pid))
+  os.execute("kill " .. tostring(pid))
 end
 
 ---@return nil

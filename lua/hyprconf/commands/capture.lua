@@ -142,12 +142,12 @@ function M.screenshot(mode)
       os.remove(tmp)
       return
     end
-    shell.exec("wl-copy < " .. shell.quote(tmp))
+    os.execute("wl-copy < " .. shell.quote(tmp))
     if mode == "--swappy" then
       notify_saved(tmp, "Captured by Swappy.", true)
     else
       local path = screenshot_path()
-      shell.exec("mv " .. shell.quote(tmp) .. " " .. shell.quote(path))
+      os.execute("mv " .. shell.quote(tmp) .. " " .. shell.quote(path))
       notify_saved(path)
     end
     return
@@ -167,13 +167,13 @@ function M.screenshot(mode)
       size[1] or 0,
       size[2] or 0
     )
-    shell.exec("grim -g " .. shell.quote(geometry) .. " " .. shell.quote(path))
+    os.execute("grim -g " .. shell.quote(geometry) .. " " .. shell.quote(path))
     notify_saved(path, class .. " saved.")
     return
   end
 
   local path = screenshot_path()
-  shell.exec("grim - | tee " .. shell.quote(path) .. " | wl-copy")
+  os.execute("grim - | tee " .. shell.quote(path) .. " | wl-copy")
   os.execute("sleep 1")
   notify_saved(path)
 end
