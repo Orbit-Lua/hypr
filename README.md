@@ -11,7 +11,7 @@ Hyprland 0.55+ configuration in Lua for one Arch Linux workstation, with Vicinae
 
 To adopt a new revision, run `nix flake update hypr-config` in the Nacre checkout, then `nix flake update nacre` in the machine flake. To edit a local checkout live instead, set `users.users.<name>.development.hyprlandPath` to its absolute path in the machine flake; see Nacre's `docs/desktop-session.md`.
 
-Runtime commands: `lua`, `vicinae`, `noctalia`, `ghostty`, `thunar`, `grim`, `slurp`, `swappy`, `wl-copy`, `notify-send`, `pw-play` or `paplay`, and `xdg-user-dir`.
+Runtime commands: `lua`, `vicinae`, `noctalia`, `qs` (Quickshell overview), `yad`, `ghostty`, `thunar`, `grim`, `slurp`, `swappy`, `wl-copy`, `notify-send`, `pw-play` or `paplay`, and `xdg-user-dir`.
 
 ## Usage
 
