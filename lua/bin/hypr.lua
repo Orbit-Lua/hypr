@@ -2,14 +2,10 @@
 
 -- Helper CLI behind the binds and menus: hypr.lua <command> [args...]
 
+-- Invoked as <root>/lua/bin/hypr.lua, or as lua/bin/hypr.lua from the root.
+local script = debug.getinfo(1, "S").source:sub(2)
 ---@type string
-local config_dir = debug
-  .getinfo(1, "S").source
-  :sub(2)
-  :match("^(.-)/?lua/bin/[^/]+$") or "."
-if config_dir == "" then
-  config_dir = "."
-end
+local config_dir = script:match("^(.*)/lua/bin/[^/]+$") or "."
 
 package.path = table.concat({
   config_dir .. "/lua/?.lua",

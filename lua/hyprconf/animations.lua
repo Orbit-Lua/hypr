@@ -4,6 +4,8 @@ local profile = require("hyprconf.profile")
 ---@field setup fun()
 local M = {}
 
+-- Workspaces switch vertically (SUPER + J/K, three-finger swipes), so every
+-- profile gets the same vertical workspace slide after its own animations.
 local function apply_workspace_flow()
   hl.curve("workspaceFlow", {
     type = "bezier",
