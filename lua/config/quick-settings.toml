@@ -3,9 +3,14 @@ label = "--- CONFIGURATION ---"
 kind = "header"
 
 [[item]]
-label = "Edit Environment & Defaults"
+label = "Edit Apps, Paths & Devices"
 kind = "edit"
 path = "lua/hyprconf/context.lua"
+
+[[item]]
+label = "Edit Environment Variables"
+kind = "edit"
+path = "lua/hyprconf/env.lua"
 
 [[item]]
 label = "Edit Keybinds"
@@ -13,7 +18,7 @@ kind = "edit"
 path = "lua/hyprconf/binds.lua"
 
 [[item]]
-label = "Edit Autostart Apps"
+label = "Edit Autostart"
 kind = "edit"
 path = "lua/config/autostart.toml"
 
@@ -23,24 +28,19 @@ kind = "edit"
 path = "lua/hyprconf/rules.lua"
 
 [[item]]
-label = "Edit Appearance"
+label = "Edit Appearance & Input"
 kind = "edit"
 path = "lua/hyprconf/options.lua"
 
 [[item]]
-label = "Edit Animations"
+label = "Edit Animation Profiles"
 kind = "edit"
 path = "profiles/animation"
 
 [[item]]
-label = "Edit Input Settings"
+label = "Edit Default Profiles"
 kind = "edit"
-path = "lua/hyprconf/options.lua"
-
-[[item]]
-label = "Edit Laptop Settings"
-kind = "edit"
-path = "lua/hyprconf/context.lua"
+path = "lua/config/profiles.toml"
 
 [[item]]
 label = "--- UTILITIES ---"
