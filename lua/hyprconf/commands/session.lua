@@ -45,13 +45,11 @@ end
 
 ---@return nil
 function M.touchpad()
-  local status_file = (os.getenv("XDG_RUNTIME_DIR") or "/tmp")
-    .. "/touchpad.status"
-  -- Hyprland starts with the touchpad enabled and the status file missing.
-  local current = fs.read(status_file)
+  -- A missing file means enabled, as at session start.
+  local current = fs.read(ctx.touchpad_state)
   local enabled = current ~= nil and current:match("^false") ~= nil
 
-  fs.write(status_file, tostring(enabled))
+  fs.write(ctx.touchpad_state, tostring(enabled))
   hyprctl.eval(
     string.format(
       "hl.device({ name = %q, enabled = %s })",

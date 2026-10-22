@@ -1,5 +1,6 @@
 local colors = require("hyprconf.colors")
 local ctx = require("hyprconf.context")
+local fs = require("hyprconf.util.fs")
 
 ---@class Hyprconf.Options
 ---@field setup fun()
@@ -136,7 +137,12 @@ function M.setup()
     animations = { enabled = true, workspace_wraparound = false },
   })
 
-  hl.device({ name = ctx.touchpad_device, enabled = true })
+  -- Keep a toggled-off touchpad off across reloads.
+  local touchpad = fs.read(ctx.touchpad_state)
+  hl.device({
+    name = ctx.touchpad_device,
+    enabled = not (touchpad and touchpad:match("^false")),
+  })
 end
 
 return M

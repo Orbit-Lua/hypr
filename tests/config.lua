@@ -21,6 +21,7 @@ os.getenv = function(name)
     HOME = "/home/test",
     HYPR_CONFIG_DIR = root,
     HYPR_STATE_DIR = state_dir,
+    XDG_RUNTIME_DIR = state_dir,
   }
   if fixed[name] then
     return fixed[name]
