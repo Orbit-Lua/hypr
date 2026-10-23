@@ -36,7 +36,3 @@ Invoke the helper without arguments to list commands. `screenshot` saves a PNG u
 Quick-settings edits require a writable checkout. Noctalia generates `noctalia.lua`; change its theme through Noctalia.
 
 Runtime choices live in `$XDG_STATE_HOME/hypr` (default `~/.local/state/hypr`): `profiles/selected/<category>` records a profile name, and `effects/rainbow-border-mode` records the border mode. Removing a selection restores the corresponding TOML default. Touchpad state lasts for the session in `$XDG_RUNTIME_DIR/touchpad.status`. `HYPR_CONFIG_DIR` and `HYPR_STATE_DIR` override the configuration and state roots.
-
-## License
-
-No license is granted; all rights are reserved.
