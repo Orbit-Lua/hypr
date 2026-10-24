@@ -7,21 +7,39 @@ Personal Hyprland 0.55+ configuration for an Arch Linux workstation, with Vicina
 
 ## Install
 
-[Nacre](https://github.com/abnertu/nacre) deploys its pinned `hypr-config` input to `~/.config/hypr`. To adopt a revision, update `hypr-config` in Nacre, publish that change, then update `nacre` in the machine flake and deploy.
+[Nacre](https://github.com/abnertu/nacre) deploys its pinned `hypr-config` input to `~/.config/hypr`. To adopt a revision:
 
-For local development, clone this repository outside `~/.config/hypr` and set `users.users.<name>.development.hyprlandPath` to its absolute path in the machine flake. Deploy the link once; subsequent edits apply on compositor reload. See [Nacre's desktop guide](https://github.com/abnertu/nacre/blob/main/docs/desktop-session.md#live-development).
+1. Update `hypr-config` in Nacre and publish that change.
+2. Update `nacre` in the machine flake.
+3. Deploy.
 
-The helpers expect Lua, Vicinae, Noctalia, Quickshell, YAD, Ghostty, Thunar, grim, slurp, swappy, wl-copy, notify-send, xdg-user-dir and either pw-play or paplay. Nacre owns long-running session applications; this configuration autostarts only compositor-owned work.
+For local development:
+
+1. Clone this repo outside `~/.config/hypr`.
+2. In the machine flake, set `users.users.<name>.development.hyprlandPath` to the absolute path of the clone.
+3. Deploy the link once. After that, edits apply when the compositor reloads.
+
+See [Nacre's desktop guide](https://github.com/abnertu/nacre/blob/main/docs/desktop-session.md#live-development).
+
+The helpers need Lua, Vicinae, Noctalia, Quickshell, YAD, Ghostty, Thunar, grim, slurp, swappy, wl-copy, notify-send, xdg-user-dir and pw-play or paplay. Nacre owns long-running session applications. This configuration autostarts only compositor-owned work.
 
 ## Usage
 
-Hyprland loads `hyprland.lua`. Press `SUPER + /` for the cheat sheet, `SUPER + SHIFT + /` to search bindings, or `SUPER + SHIFT + E` for quick settings.
+Hyprland loads `hyprland.lua`. These bindings open the main tools:
+
+| Binding | Opens |
+| --- | --- |
+| `SUPER + /` | Cheat sheet |
+| `SUPER + SHIFT + /` | Binding search |
+| `SUPER + SHIFT + E` | Quick settings |
+
+Run the helper from a shell:
 
 ```sh
 lua ~/.config/hypr/lua/bin/hypr.lua key-hints
 ```
 
-Invoke the helper without arguments to list commands. `screenshot` saves a PNG under the XDG Pictures directory's `Screenshots` subdirectory and copies it to the clipboard. `portal-hyprland` restarts desktop portals.
+Run the helper without arguments to list its commands. `screenshot` saves a PNG under the XDG Pictures directory's `Screenshots` subdirectory and copies it to the clipboard. `portal-hyprland` restarts desktop portals.
 
 ## Configuration
 
@@ -33,6 +51,11 @@ Invoke the helper without arguments to list commands. `screenshot` saves a PNG u
 | Menus, cheat sheet, effects and defaults | `lua/config/*.toml` |
 | Animation and monitor presets | `profiles/<category>/*.lua` |
 
-Quick-settings edits require a writable checkout. Noctalia generates `noctalia.lua`; change its theme through Noctalia.
+Quick settings can save edits only in a writable checkout. Noctalia generates `noctalia.lua`. Change its theme through Noctalia.
 
-Runtime choices live in `$XDG_STATE_HOME/hypr` (default `~/.local/state/hypr`): `profiles/selected/<category>` records a profile name, and `effects/rainbow-border-mode` records the border mode. Removing a selection restores the corresponding TOML default. Touchpad state lasts for the session in `$XDG_RUNTIME_DIR/touchpad.status`. `HYPR_CONFIG_DIR` and `HYPR_STATE_DIR` override the configuration and state roots.
+Runtime choices live in `$XDG_STATE_HOME/hypr` (default `~/.local/state/hypr`):
+
+- `profiles/selected/<category>` records a profile name.
+- `effects/rainbow-border-mode` records the border mode.
+
+Remove a selection to restore its TOML default. Touchpad state lasts for the session in `$XDG_RUNTIME_DIR/touchpad.status`. `HYPR_CONFIG_DIR` and `HYPR_STATE_DIR` override the configuration and state roots.
