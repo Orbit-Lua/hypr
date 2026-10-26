@@ -7,7 +7,7 @@ local shell = require("hyprconf.util.shell")
 ---@class Hyprconf.ProcessResult
 ---@field ok boolean
 ---@field code integer
----@field signal? integer
+---@field signal? integer Signal inferred from a POSIX 128+N exit status.
 ---@field timed_out boolean
 ---@field stdout string
 ---@field stderr string
@@ -32,7 +32,12 @@ function M.run(argv, opts)
   local temporary = assert(io.popen("mktemp -d", "r"))
   local directory = assert(temporary:read("*l"))
   assert(temporary:close(), "could not create process temporary directory")
-  local files = { directory .. "/in", directory .. "/out", directory .. "/err" }
+  local files = {
+    directory .. "/in",
+    directory .. "/out",
+    directory .. "/err",
+    directory .. "/status",
+  }
   local ok, result = pcall(function()
     local input = assert(io.open(files[1], "wb"))
     assert(input:write(opts.stdin or ""))
@@ -50,7 +55,9 @@ function M.run(argv, opts)
     for index, value in ipairs(command) do
       command[index] = shell.quote(value)
     end
-    local success, reason, status = os.execute(
+    -- Lua can report errno instead of a nonzero child status. Keep the shell
+    -- successful and record the native command status independently.
+    local success, reason, shell_status = os.execute(
       table.concat(command, " ")
         .. " < "
         .. shell.quote(files[1])
@@ -58,12 +65,27 @@ function M.run(argv, opts)
         .. shell.quote(files[2])
         .. " 2> "
         .. shell.quote(files[3])
+        .. "; status=$?; printf '%s' \"$status\" > "
+        .. shell.quote(files[4])
+    )
+    assert(
+      success,
+      "native command shell failed: "
+        .. tostring(reason)
+        .. " "
+        .. tostring(shell_status)
+    )
+    local status =
+      assert(tonumber(read(files[4])), "invalid native command status")
+    assert(
+      status >= 0 and status <= 255 and status % 1 == 0,
+      "invalid native command status"
     )
     return {
-      ok = success == true,
-      code = status or (success and 0 or 1),
-      signal = reason == "signal" and status or nil,
-      timed_out = status == 124 or status == 137,
+      ok = status == 0,
+      code = status,
+      signal = status > 128 and status <= 192 and status - 128 or nil,
+      timed_out = timeout ~= false and (status == 124 or status == 137),
       stdout = read(files[2]),
       stderr = read(files[3]),
     }

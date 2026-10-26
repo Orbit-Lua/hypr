@@ -117,6 +117,24 @@ assert(result.stdout=='partial' and result.stderr=='diagnostic')
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(list((self.root / "runtime").iterdir()), [])
 
+    def test_native_exit_code_survives_lua_system_errno(self):
+        result = subprocess.run(
+            ["lua", "-", str(self.config)],
+            input="""package.path=arg[1]..'/lua/?.lua;'..package.path
+local execute=os.execute
+os.execute=function(command)
+  local ok, reason, code=execute(command)
+  if not ok then return nil, 'Function not implemented', 38 end
+  return ok, reason, code
+end
+local result=require('hyprconf.runtime.process').run({'sh','-c','printf partial; printf diagnostic >&2; exit 7'})
+assert(not result.ok and result.code==7, tostring(result.code))
+assert(result.stdout=='partial' and result.stderr=='diagnostic')
+""",
+            env=self.environment, capture_output=True, text=True, timeout=5,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+
     def test_session_failures_keep_native_diagnostics(self):
         for command, native in (("overview", "qs"), ("kill-active", "kill")):
             self.scenario = {native: {"code": 9, "stderr": "session command failed"}, "hyprctl": {"stdout": '{"pid":12345}'}}
