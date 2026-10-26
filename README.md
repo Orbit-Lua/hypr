@@ -1,72 +1,81 @@
 # Hyprland Lua configuration
 
-Personal Hyprland 0.55+ configuration for an Arch Linux workstation, with Vicinae menus, Noctalia colors and selectable monitor and animation profiles.
+Hyprland configuration with Vicinae menus, Noctalia colors, selectable profiles and checked desktop helpers.
 
-[![check](https://github.com/Orbit-Lua/hypr/actions/workflows/check.yml/badge.svg?branch=main)](https://github.com/Orbit-Lua/hypr/actions/workflows/check.yml)
-[![Hyprland](https://img.shields.io/badge/Hyprland-0.55%2B-58E1FF?logo=hyprland&logoColor=white)](https://hypr.land/)
+[![Validate Hyprland](https://github.com/Orbit-Lua/hypr/actions/workflows/check.yml/badge.svg?branch=main)](https://github.com/Orbit-Lua/hypr/actions/workflows/check.yml) [![Hyprland](https://img.shields.io/badge/Hyprland-0.55%2B-58E1FF?logo=hyprland&logoColor=white)](https://hypr.land/)
 
 ## Install
 
-[Nacre](https://github.com/abnertu/nacre) deploys its pinned `hypr-config` input to `~/.config/hypr`. To adopt a revision:
+Use Hyprland 0.55+ on Arch Linux. Install these helper dependencies separately:
 
-1. Update `hypr-config` in Nacre and publish that change.
-2. Update `nacre` in the machine flake.
-3. Deploy.
+- Lua.
+- Vicinae, Noctalia and Quickshell.
+- YAD, Ghostty and Thunar.
+- grim, slurp, swappy and wl-clipboard.
+- libnotify and xdg-user-dirs.
+- pw-play or paplay.
 
-For local development:
+[Nacre](https://github.com/abnertu/nacre) deploys its pinned `hypr-config` input to `~/.config/hypr`.
 
-1. Clone this repo outside `~/.config/hypr`.
-2. In the machine flake, set `users.users.<name>.development.hyprlandPath` to the absolute path of the clone.
-3. Deploy the link once. After that, edits apply when the compositor reloads.
+1. Update `hypr-config` in Nacre.
+2. Publish that change.
+3. Update `nacre` in the machine flake.
+4. Deploy the machine configuration.
 
-After a multi-file Git update, run `hyprctl reload`. Automatic reload can read an intermediate checkout.
-
-See [Nacre's desktop guide](https://github.com/abnertu/nacre/blob/main/docs/desktop-session.md#live-development).
-
-The helpers need coreutils, util-linux, Lua, Vicinae, Noctalia, Quickshell, YAD, Ghostty, Thunar, grim, slurp, swappy, wl-copy, notify-send, xdg-user-dir and pw-play or paplay. Nacre owns long-running session applications. This configuration autostarts only compositor-owned work.
+Nacre owns session applications. This configuration starts compositor-owned work only.
 
 ## Usage
 
-Hyprland loads `hyprland.lua`. These bindings open the main tools:
+Hyprland loads `hyprland.lua`. Use these bindings to open the main tools:
 
-| Binding | Opens |
+| Binding | Action |
 | --- | --- |
-| `SUPER + /` | Cheat sheet |
-| `SUPER + SHIFT + /` | Binding search |
-| `SUPER + SHIFT + E` | Quick settings |
+| `SUPER + /` | Open the cheat sheet |
+| `SUPER + SHIFT + /` | Search bindings |
+| `SUPER + SHIFT + E` | Open quick settings |
 
-Run the helper from a shell:
+Run a helper from a shell:
 
 ```sh
 lua ~/.config/hypr/lua/bin/hypr.lua key-hints
 ```
 
-Run the helper without arguments to list its commands. `screenshot` saves a PNG under the XDG Pictures directory's `Screenshots` subdirectory and copies it to the clipboard. `portal-hyprland` restarts desktop portals.
+Run the helper without arguments to list its commands. `screenshot` saves a PNG under the XDG Pictures directory's `Screenshots` subdirectory. It also copies the image to the clipboard. Clipboard failure keeps the saved image. `portal-hyprland` restarts the backend and broker through systemd user units.
+
+Helpers report native failures with a nonzero status. Interactive menus, notification choices and image editing can wait for user input. Other native commands have a finite timeout. Mutating helpers share a nonblocking lock. Retry a busy operation after its writer finishes.
 
 ## Configuration
 
 | Change | Source |
 | --- | --- |
-| Applications, search URL, paths, touchpad device | `lua/hyprconf/context.lua` |
+| Applications, paths, search URL and touchpad device | `lua/hyprconf/context.lua` |
 | Bindings and window rules | `lua/hyprconf/binds.lua`, `lua/hyprconf/rules.lua` |
 | Input, layout and appearance | `lua/hyprconf/options.lua` |
-| Menus, cheat sheet, effects and defaults | `lua/config/*.toml` |
+| Menus, effects and defaults | `lua/config/*.toml` |
 | Animation and monitor presets | `profiles/<category>/*.lua` |
 
-Quick settings can save edits only in a writable checkout. Noctalia generates `noctalia.lua`. Change its theme through Noctalia.
+Quick settings edits need a writable checkout. Noctalia generates `noctalia.lua` through its theme templates.
 
-Runtime choices live in `$XDG_STATE_HOME/hypr` (default `~/.local/state/hypr`):
+For live development:
+
+1. Clone this repo outside `~/.config/hypr`.
+2. Set `users.users.<name>.development.hyprlandPath` to the clone's absolute path in the machine flake.
+3. Deploy that link once.
+4. Run `hyprctl reload` after each complete update.
+
+Automatic reload can read an intermediate multi-file checkout. See [Nacre's desktop guide](https://github.com/abnertu/nacre/blob/main/docs/desktop-session.md#live-development).
+
+## State and recovery
+
+Runtime choices live in `$XDG_STATE_HOME/hypr`, or `~/.local/state/hypr` by default:
 
 - `profiles/selected/<category>` records a profile name.
 - `effects/rainbow-border-mode` records the border mode.
 
-Remove a selection to restore its TOML default. Touchpad state lasts for the session in `$XDG_RUNTIME_DIR/touchpad.status`. `HYPR_CONFIG_DIR` and `HYPR_STATE_DIR` override the configuration and state roots.
+Remove a selection to restore its TOML default. `HYPR_CONFIG_DIR` and `HYPR_STATE_DIR` override the configuration and state roots.
 
+A profile change verifies its reload before acceptance. Failure restores the previous selection and reloads it. Recovery failures report both errors.
 
-Helpers report native failures and return a nonzero status. Native commands have a finite timeout, except interactive menus and image editing. Mutating helpers share a nonblocking lock. Retry a busy operation after its current writer finishes.
+Touchpad state lasts for the session in `$XDG_RUNTIME_DIR/touchpad.status`. Changes save state after acknowledgement. Versions without native device-state reporting use the last acknowledged receipt.
 
-Profile changes verify reload success before acceptance. A failed reload restores the previous selection and reloads it. Recovery failures report both errors. Touchpad changes save state only after acknowledgement. Hyprland versions without device-state reporting use the last acknowledged session receipt.
-
-Game mode stores captured compositor values under `$XDG_RUNTIME_DIR/hypr/`. Disabling it restores those values, including originally disabled animations. Screenshot failures retain any image already published. Clipboard failure does not delete that image.
-
-Portal recovery restarts the Hyprland backend and portal broker through systemd user units. It does not start unmanaged portal processes.
+Game mode captures compositor values under `$XDG_RUNTIME_DIR/hypr/`. Disabling it restores those values, including originally disabled animations.
