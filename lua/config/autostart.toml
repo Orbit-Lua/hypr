@@ -1,4 +1,5 @@
-# Compositor-owned work only; Nacre starts session applications.
+# Compositor-owned work only; session managers or user services start applications.
+# Give each application one startup owner.
 # Commands expand $hyprLua, $vicinae, $term and $files.
 [[command]]
 run = "$hyprLua rainbow-border"

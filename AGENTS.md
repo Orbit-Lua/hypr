@@ -21,8 +21,9 @@ Preserve bindings and their actions. Keep deployed configuration read-only and r
 
 ## Runtime contracts
 
-- Nacre owns session applications. Autostart declarations hold compositor-owned work only.
-- Keep shared shell and terminal settings in Home Manager.
+- Give each application one startup owner. Session managers or user services own session applications.
+- Keep autostart declarations for compositor-owned work. Remove duplicate startup declarations when ownership moves.
+- Keep shared shell and terminal settings in the user environment configuration.
 - Keep Noctalia theme changes in its templates.
 - Write runtime files under `ctx.state_dir`, never under `ctx.config_dir`.
 - Keep helper declarations in TOML and validate them through `hyprconf.config`.

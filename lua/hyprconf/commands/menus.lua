@@ -122,8 +122,8 @@ function M.web_search()
   end
 end
 
--- Opens a configuration file in the editor. A Nix store deployment is
--- read-only, so editing needs Nacre's live development checkout.
+-- Opens a configuration file in the editor. Read-only deployments need
+-- a writable checkout for live editing.
 ---@param path string
 ---@return nil
 local function edit(path)
@@ -131,7 +131,7 @@ local function edit(path)
   if not os.execute("test -w " .. shell.quote(target)) then
     notify.error(
       "Quick Settings",
-      "The deployed configuration is read-only. Point Nacre's development.hyprlandPath at a checkout to edit it live.",
+      "The configuration is read-only. Use a writable checkout as the configuration root to edit it live.",
       "quick-settings"
     )
     return

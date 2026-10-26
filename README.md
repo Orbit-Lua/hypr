@@ -15,14 +15,9 @@ Use Hyprland 0.55+ on Arch Linux. Install these helper dependencies separately:
 - libnotify and xdg-user-dirs.
 - pw-play or paplay.
 
-[Nacre](https://github.com/abnertu/nacre) deploys its pinned `hypr-config` input to `~/.config/hypr`.
+Place this repo at `~/.config/hypr`, or link that path to a checkout.
 
-1. Update `hypr-config` in Nacre.
-2. Publish that change.
-3. Update `nacre` in the machine flake.
-4. Deploy the machine configuration.
-
-Nacre owns session applications. This configuration starts compositor-owned work only.
+Each application must have one startup owner. Start session applications through your session manager or user services. Keep `lua/config/autostart.toml` for compositor-owned work. Remove an application's other startup declarations before adding it there.
 
 ## Usage
 
@@ -58,12 +53,15 @@ Quick settings edits need a writable checkout. Noctalia generates `noctalia.lua`
 
 For live development:
 
-1. Clone this repo outside `~/.config/hypr`.
-2. Set `users.users.<name>.development.hyprlandPath` to the clone's absolute path in the machine flake.
-3. Deploy that link once.
-4. Run `hyprctl reload` after each complete update.
+Use a writable checkout as the configuration root. For managed deployments, set that root through your deployment tool.
 
-Automatic reload can read an intermediate multi-file checkout. See [Nacre's desktop guide](https://github.com/abnertu/nacre/blob/main/docs/desktop-session.md#live-development).
+Automatic reload can read an intermediate multi-file checkout. Before updating a live checkout:
+
+1. Record the current setting with `hyprctl getoption misc:disable_autoreload`.
+2. Run `hyprctl keyword misc:disable_autoreload true`.
+3. Apply the complete update.
+4. Run `hyprctl reload`.
+5. Restore the recorded setting with `hyprctl keyword misc:disable_autoreload <value>`.
 
 ## State and recovery
 
