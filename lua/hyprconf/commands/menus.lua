@@ -2,7 +2,8 @@ local ctx = require("hyprconf.context")
 local keymap = require("hyprconf.keymap")
 local notify = require("hyprconf.runtime.notify")
 local shell = require("hyprconf.util.shell")
-local toml = require("hyprconf.util.toml")
+local declarations = require("hyprconf.config")
+local process = require("hyprconf.runtime.process")
 local vicinae = require("hyprconf.runtime.vicinae")
 
 ---@class Hyprconf.KeyHintRow
@@ -28,15 +29,33 @@ local vicinae = require("hyprconf.runtime.vicinae")
 ---@class Hyprconf.Commands.Menus
 local M = {}
 
+local hints_class = "hypr-key-hints-"
+  .. (os.getenv("HYPRLAND_INSTANCE_SIGNATURE") or "default"):gsub(
+    "[^%w_-]",
+    "_"
+  )
+local function close_key_hints()
+  local result = process.run({
+    "pkill",
+    "-f",
+    "--",
+    "^yad --class=" .. hints_class .. "( |$)",
+  })
+  if result.code ~= 1 then
+    process.check(result, "close key hints")
+  end
+end
+
 ---@return nil
 function M.key_hints()
   ---@type Hyprconf.KeyHintsConfig
-  local config = toml.read(ctx.config_file("key-hints"))
-  shell.kill("yad")
+  local config = declarations.read("key-hints")
+  close_key_hints()
 
   local args = {
     "GDK_BACKEND=wayland",
     "yad",
+    "--class=" .. hints_class,
     "--center",
     "--title=" .. shell.quote("Quick Cheat Sheet"),
     "--no-buttons",
@@ -57,7 +76,7 @@ end
 
 ---@return nil
 function M.keybinds()
-  shell.kill("yad")
+  close_key_hints()
 
   local lines = {}
   for _, entry in ipairs(keymap.collect()) do
@@ -123,13 +142,14 @@ end
 ---@return nil
 function M.quick_settings()
   ---@type Hyprconf.QuickSettingsConfig
-  local config = toml.read(ctx.config_file("quick-settings"))
+  local config = declarations.read("quick-settings")
+  ---@type Hyprconf.MenuChoice[]
   local labels = {}
   ---@type table<string, Hyprconf.QuickSettingItem>
   local by_label = {}
-  for _, item in ipairs(config.item or {}) do
-    labels[#labels + 1] = item.label
-    by_label[item.label] = item
+  for index, item in ipairs(config.item or {}) do
+    labels[#labels + 1] = { id = tostring(index), label = item.label }
+    by_label[tostring(index)] = item
   end
 
   local choice = vicinae.select(labels, {

@@ -1,6 +1,5 @@
-local fs = require("hyprconf.util.fs")
 local notify = require("hyprconf.runtime.notify")
-local shell = require("hyprconf.util.shell")
+local process = require("hyprconf.runtime.process")
 
 ---@class Hyprconf.VicinaeOptions
 ---@field navigation_title? string Window navigation title.
@@ -13,6 +12,10 @@ local shell = require("hyprconf.util.shell")
 
 ---@class Hyprconf.Runtime.Vicinae
 local M = {}
+
+---@class Hyprconf.MenuChoice
+---@field id string
+---@field label string
 
 local marker = ">"
 
@@ -44,7 +47,8 @@ function M.dmenu(lines, opts)
   for _, flag in ipairs(value_flags) do
     local value = opts[flag[1]]
     if value and value ~= "" then
-      args[#args + 1] = flag[2] .. " " .. shell.quote(value)
+      args[#args + 1] = flag[2]
+      args[#args + 1] = value
     end
   end
   for _, flag in ipairs(switch_flags) do
@@ -53,38 +57,42 @@ function M.dmenu(lines, opts)
     end
   end
 
-  local input = os.tmpname()
-  local status_file = os.tmpname()
-  fs.write(input, table.concat(lines, "\n") .. "\n")
-  local output = shell.capture(
-    table.concat(args, " ")
-      .. " < "
-      .. shell.quote(input)
-      .. "; printf $? > "
-      .. shell.quote(status_file)
+  local result = process.run(
+    args,
+    { stdin = table.concat(lines, "\n") .. "\n", timeout = false }
   )
-  local status = tonumber(fs.read(status_file) or "") or 1
-  os.remove(input)
-  os.remove(status_file)
-  return output, status
+  if result.code ~= 1 or result.stderr ~= "" then
+    process.check(result, "Vicinae")
+  end
+  return result.stdout:gsub("%s+$", ""), result.code
 end
 
 -- Shows `labels` with `opts.current` marked and returns the chosen label.
----@param labels string[]
+---@param labels (string|Hyprconf.MenuChoice)[]
 ---@param opts? Hyprconf.VicinaeOptions
 ---@return string?
 function M.select(labels, opts)
   opts = opts or {}
-  local rows = {}
-  for index, label in ipairs(labels) do
-    rows[index] = label == opts.current and (marker .. " " .. label) or label
+  local rows, identities, seen = {}, {}, {}
+  for index, entry in ipairs(labels) do
+    local label = type(entry) == "table" and entry.label or entry
+    local id = type(entry) == "table" and entry.id or entry
+    assert(
+      type(label) == "string" and type(id) == "string",
+      "invalid menu choice"
+    )
+    assert(not seen[label], "duplicate menu label")
+    seen[label] = true
+    rows[index] = id == opts.current and (marker .. " " .. label) or label
+    assert(not identities[rows[index]], "ambiguous menu label")
+    identities[rows[index]] = id
   end
 
   local choice, status = M.dmenu(rows, opts)
   if status ~= 0 or choice == "" then
     return nil
   end
-  return (choice:gsub("^" .. marker .. "%s+", ""))
+  return identities[choice]
 end
 
 return M

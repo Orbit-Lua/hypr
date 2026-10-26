@@ -14,7 +14,6 @@ profile.apply_animation({
     { name = "overshot", points = { { 0.7, 0.6 }, { 0.1, 1.1 } } },
     { name = "bounce", points = { { 1.1, 1.6 }, { 0.1, 0.85 } } },
     { name = "sligshot", points = { { 1, -1 }, { 0.15, 1.25 } } },
-    { name = "nice", points = { { 0, 6.9 }, { 0.5, -4.2 } } },
   },
   animations = {
     {

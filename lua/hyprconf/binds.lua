@@ -1,5 +1,5 @@
 local ctx = require("hyprconf.context")
-local util = require("hyprconf.util")
+local util = require("hyprconf.binding")
 
 ---@class Hyprconf.Binds
 ---@field setup fun()

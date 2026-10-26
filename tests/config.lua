@@ -70,7 +70,7 @@ local function render(value, indent)
     return "<function>"
   elseif type(value) ~= "table" then
     return tostring(value)
-  elseif value.dispatcher then
+  elseif rawget(value, "dispatcher") then
     return value.dispatcher
   end
   local keys = sorted_keys(value)
@@ -113,6 +113,9 @@ local function recorder(path)
         parts[i] = render(args[i], "")
       end
       emit(path .. "(" .. table.concat(parts, ", ") .. ")")
+      if path == "hl.timer" or path == "hl.on" then
+        return recorder(path .. "_handle")
+      end
       return nil
     end,
   })

@@ -1,4 +1,5 @@
 local shell = require("hyprconf.util.shell")
+local process = require("hyprconf.runtime.process")
 
 ---@alias Hyprconf.NotifyUrgency "low"|"normal"|"critical"
 
@@ -19,28 +20,36 @@ function M.send(title, body, opts)
   opts = opts or {}
   local args = {
     "notify-send",
-    "-a Hyprland",
-    "-u " .. shell.quote(opts.urgency or "low"),
-    "-t " .. tostring(opts.timeout or 3000),
-    "-h "
-      .. shell.quote(
-        "string:x-canonical-private-synchronous:" .. (opts.tag or "hypr-notify")
-      ),
+    "-a",
+    "Hyprland",
+    "-u",
+    opts.urgency or "low",
+    "-t",
+    tostring(opts.timeout or 3000),
+    "-h",
+    "string:x-canonical-private-synchronous:" .. (opts.tag or "hypr-notify"),
   }
   if opts.actions then
     args[#args + 1] = "-e"
     for _, action in ipairs(opts.actions) do
-      args[#args + 1] = "-A " .. shell.quote(action)
+      args[#args + 1] = "-A"
+      args[#args + 1] = action
     end
   end
-  args[#args + 1] = shell.quote(title)
-  args[#args + 1] = shell.quote(body or "")
-
-  local command = table.concat(args, " ")
-  if opts.actions then
-    return shell.capture(command)
+  args[#args + 1], args[#args + 2] = title, body or ""
+  local ok, result =
+    pcall(process.run, args, { timeout = not opts.actions and 10 or false })
+  if not ok or not result.ok then
+    io.stderr:write(
+      "notification failed: "
+        .. tostring(ok and result.stderr or result)
+        .. "\n"
+    )
+    return ""
   end
-  os.execute(command .. " >/dev/null 2>&1 || true")
+  if opts.actions then
+    return (result.stdout:gsub("%s+$", ""))
+  end
   return ""
 end
 

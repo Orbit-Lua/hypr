@@ -13,7 +13,7 @@ Personal Hyprland configuration for one workstation. Preserve bindings and runti
 - Noctalia generates `noctalia.lua`. Change colors through the Noctalia templates, not in the file.
 - Tests read `tests/fixtures/noctalia.lua`, so theme updates do not change the snapshots.
 - Loading the config must not read command output through `io.popen`. `tests/config.lua` errors on it and records each `os.execute` in the snapshot.
-- Code under `lua/hyprconf/*.lua` and `util/init.lua` runs inside Hyprland with `hl`.
+- Code under `lua/hyprconf/*.lua` runs inside Hyprland with `hl`.
 - `commands/` and `runtime/` run in the helper CLI. They reach the compositor through `runtime/hyprctl`.
 - `util/shell`, `util/fs`, `util/toml` and `util/json` work in both contexts.
 - Build shell commands with `shell.quote`.
@@ -38,7 +38,7 @@ Personal Hyprland configuration for one workstation. Preserve bindings and runti
 - If a requested change alters a snapshot, regenerate it and show the diff:
   - `lua tests/keymap.lua > tests/keymap.snapshot`
   - `lua tests/config.lua "$(mktemp -d)" > tests/config.snapshot`
-- `make all` does not test menus, screenshots, portals or session behaviour. When you change them, test them by hand.
+- `make all` tests helpers with fake native programs. Verify real menus, portals and hardware only in an authorized desktop session.
 
 ## Git
 
@@ -73,3 +73,8 @@ Personal Hyprland configuration for one workstation. Preserve bindings and runti
   - Give one instruction in each sentence.
   - Write instructions in the imperative and in the active voice.
   - Use one word for one meaning, and one meaning for one word.
+
+
+## Helper declarations
+
+`hyprconf.config` validates helper declarations and profile identifiers. The TOML reader supports single-line strings, numbers, booleans, arrays, tables and array tables. It rejects multiline strings, inline tables and dates. Keep declarations within this subset. Runtime JSON parsing preserves null positions and rejects malformed input.

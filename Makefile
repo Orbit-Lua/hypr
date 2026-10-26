@@ -2,12 +2,12 @@ LUA ?= lua
 LUALS ?= $(or $(shell command -v lua-language-server),$(wildcard $(HOME)/.local/share/nvim/mason/bin/lua-language-server),lua-language-server)
 LUA_FILES := $(shell git ls-files --cached --others --exclude-standard '*.lua' | grep -vx noctalia.lua)
 
-.PHONY: all check fmt fmt-check lint typecheck keymap config test
+.PHONY: all check fmt fmt-check lint typecheck keymap config test helpers data profiles
 
 all: fmt check
 
 # What CI runs; `all` formats first instead of only checking the format.
-check: fmt-check lint typecheck keymap config test
+check: fmt-check lint typecheck keymap config test helpers data profiles
 
 fmt:
 	stylua $(LUA_FILES)
@@ -28,6 +28,8 @@ typecheck:
 # Every bind must match tests/keymap.snapshot. After an intended keymap change:
 #   $(LUA) tests/keymap.lua > tests/keymap.snapshot
 keymap:
+	$(LUA) tests/keymap_callbacks.lua
+	$(LUA) tests/hotplug.lua
 	@actual=$$(mktemp); \
 	trap 'rm -f "$$actual"' EXIT; \
 	$(LUA) tests/keymap.lua >"$$actual" && diff -u tests/keymap.snapshot "$$actual"
@@ -48,3 +50,13 @@ test:
 	env -i HOME="$$home" PATH="$$PATH" XDG_RUNTIME_DIR="$$runtime" \
 	  hyprland --verify-config --config "$(CURDIR)/hyprland.lua"; \
 	status=$$?; rm -rf "$$home" "$$runtime"; exit $$status
+
+# Native programs are replaced and all state stays under a temporary root.
+helpers:
+	python3 tests/helpers_test.py
+
+data:
+	$(LUA) tests/data.lua
+
+profiles:
+	python3 tests/profiles_test.py

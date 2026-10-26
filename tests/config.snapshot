@@ -47,6 +47,7 @@ hl.monitor({
 hl.on("hyprland.start", <function>)
 hl.on("config.reloaded", <function>)
 hl.on("monitor.added", <function>)
+hl.on("monitor.removed", <function>)
 hl.config({
   animations = {
     enabled = true,
@@ -793,6 +794,14 @@ hl.workspace_rule({
   persistent = true,
   workspace = "5",
 })
+hl.window_rule({
+  enabled = false,
+  match = {
+    class = ".*",
+  },
+  name = "hypr-game-mode-opacity",
+  opacity = "1 override 1 override 1 override",
+})
 hl.config({
   general = {
     col = {
@@ -829,4 +838,13 @@ hl.exec_cmd("lua '<config>/lua/bin/hypr.lua' rainbow-border", {})
 hl.exec_cmd("lua '<config>/lua/bin/hypr.lua' refresh", {})
 
 -- on monitor.added
-hl.exec_cmd("hyprctl reload", {})
+hl.timer(<function>, {
+  timeout = 200,
+  type = "oneshot",
+})
+hl.timer_handle.set_timeout({}, 200)
+hl.timer_handle.set_enabled({}, true)
+
+-- on monitor.removed
+hl.timer_handle.set_timeout({}, 200)
+hl.timer_handle.set_enabled({}, true)

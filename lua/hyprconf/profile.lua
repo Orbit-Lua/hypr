@@ -1,6 +1,6 @@
 local ctx = require("hyprconf.context")
 local fs = require("hyprconf.util.fs")
-local toml = require("hyprconf.util.toml")
+local declarations = require("hyprconf.config")
 
 -- A profile is a Lua file under profiles/<category>/ whose first line may be
 -- `-- profile: <label>`. The state directory records only the selected name,
@@ -26,20 +26,31 @@ local toml = require("hyprconf.util.toml")
 
 ---@class Hyprconf.Profile
 local M = {}
+---@type table<Hyprconf.ProfileCategory, string>
+M.loaded = {}
 
 ---@type Hyprconf.ProfileCategory[]
-M.categories = { "animation", "monitor" }
+M.categories = declarations.profile_categories
 
 ---@param category Hyprconf.ProfileCategory
 ---@param name string
 ---@return string
 function M.path(category, name)
+  assert(
+    category == "animation" or category == "monitor",
+    "invalid profile category"
+  )
+  assert(declarations.profile_name(name), "invalid profile name")
   return ctx.config_dir .. "/profiles/" .. category .. "/" .. name .. ".lua"
 end
 
 ---@param category Hyprconf.ProfileCategory
 ---@return string
 function M.selection_file(category)
+  assert(
+    category == "animation" or category == "monitor",
+    "invalid profile category"
+  )
   return ctx.state_dir .. "/profiles/selected/" .. category
 end
 
@@ -47,12 +58,20 @@ end
 ---@param category Hyprconf.ProfileCategory
 ---@return string
 function M.active_name(category)
-  local selected = (fs.read(M.selection_file(category)) or ""):match("%S+")
+  local defaults = declarations.read("profiles")
+  local raw = fs.read(M.selection_file(category))
+  local selected = raw and raw:match("^%s*([%w_-]+)%s*$")
   if selected and fs.exists(M.path(category, selected)) then
     return selected
   end
-  local ok, config = pcall(toml.read, ctx.config_file("profiles"))
-  return ok and (config.default or {})[category] or "default"
+  if raw then
+    print(
+      "[WARN] Saved "
+        .. category
+        .. " profile is invalid or unavailable; using the declared default"
+    )
+  end
+  return defaults.default[category]
 end
 
 ---@param path string
@@ -67,7 +86,13 @@ end
 function M.load(category)
   local path = M.path(category, M.active_name(category))
   local ok, err = pcall(dofile, path)
+  if ok then
+    M.loaded[category] = M.active_name(category)
+  end
   if not ok then
+    if category == "monitor" then
+      error(err, 0)
+    end
     print(
       "[WARN] Unable to load " .. category .. " profile " .. path .. ": " .. err
     )

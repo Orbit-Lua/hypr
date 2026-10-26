@@ -1,4 +1,4 @@
-local util = require("hyprconf.util")
+local util = require("hyprconf.binding")
 
 ---@class Hyprconf.Gestures
 ---@field setup fun()

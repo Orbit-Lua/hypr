@@ -4,6 +4,7 @@ local hyprctl = require("hyprconf.runtime.hyprctl")
 local notify = require("hyprconf.runtime.notify")
 local profile = require("hyprconf.profile")
 local vicinae = require("hyprconf.runtime.vicinae")
+local state = require("hyprconf.runtime.state")
 
 ---@class Hyprconf.Commands.Profiles
 local M = {}
@@ -23,6 +24,11 @@ function M.profile_selector(category)
     end
   end
 
+  assert(
+    category == "animation" or category == "monitor",
+    "invalid profile category"
+  )
+
   local files =
     fs.list_files(ctx.config_dir .. "/profiles/" .. category, "*.lua")
   if #files == 0 then
@@ -31,13 +37,10 @@ function M.profile_selector(category)
   end
 
   local active = profile.active_name(category)
+  ---@type Hyprconf.MenuChoice[]
   local labels = {}
-  local current
   for index, file in ipairs(files) do
-    labels[index] = profile.label(file)
-    if fs.stem(file) == active then
-      current = labels[index]
-    end
+    labels[index] = { id = fs.stem(file), label = profile.label(file) }
   end
 
   local title = category:gsub("^%l", string.upper) .. " Profile"
@@ -45,14 +48,26 @@ function M.profile_selector(category)
     navigation_title = title,
     section_title = "Profiles ({count})",
     placeholder = "Choose a " .. category .. " profile...",
-    current = current,
+    current = active,
     no_quick_look = true,
   })
-  for index, label in ipairs(labels) do
-    if label == choice then
-      fs.write(profile.selection_file(category), fs.stem(files[index]) .. "\n")
-      notify.info(title, label .. " loaded", category .. "-profile")
-      hyprctl.reload()
+  for index, item in ipairs(labels) do
+    if item.id == choice then
+      state.change(
+        profile.selection_file(category),
+        fs.stem(files[index]) .. "\n",
+        function()
+          hyprctl.reload()
+          hyprctl.eval(
+            string.format(
+              "assert(require('hyprconf.profile').loaded[%q] == %q, 'profile did not load')",
+              category,
+              profile.active_name(category)
+            )
+          )
+        end
+      )
+      notify.info(title, item.label .. " loaded", category .. "-profile")
       return
     end
   end

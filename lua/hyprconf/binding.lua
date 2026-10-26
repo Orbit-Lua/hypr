@@ -7,7 +7,7 @@ local ctx = require("hyprconf.context")
 ---@class Hyprconf.BindOptions: HL.BindOptions
 ---@field mouse? boolean Not an HL.BindOptions field: `hyprctl binds` lists these binds with mouse false.
 
----@class Hyprconf.Util
+---@class Hyprconf.Binding
 local M = {}
 
 ---@type table<string, string>

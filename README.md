@@ -19,9 +19,11 @@ For local development:
 2. In the machine flake, set `users.users.<name>.development.hyprlandPath` to the absolute path of the clone.
 3. Deploy the link once. After that, edits apply when the compositor reloads.
 
+After a multi-file Git update, run `hyprctl reload`. Automatic reload can read an intermediate checkout.
+
 See [Nacre's desktop guide](https://github.com/abnertu/nacre/blob/main/docs/desktop-session.md#live-development).
 
-The helpers need Lua, Vicinae, Noctalia, Quickshell, YAD, Ghostty, Thunar, grim, slurp, swappy, wl-copy, notify-send, xdg-user-dir and pw-play or paplay. Nacre owns long-running session applications. This configuration autostarts only compositor-owned work.
+The helpers need coreutils, util-linux, Lua, Vicinae, Noctalia, Quickshell, YAD, Ghostty, Thunar, grim, slurp, swappy, wl-copy, notify-send, xdg-user-dir and pw-play or paplay. Nacre owns long-running session applications. This configuration autostarts only compositor-owned work.
 
 ## Usage
 
@@ -59,3 +61,12 @@ Runtime choices live in `$XDG_STATE_HOME/hypr` (default `~/.local/state/hypr`):
 - `effects/rainbow-border-mode` records the border mode.
 
 Remove a selection to restore its TOML default. Touchpad state lasts for the session in `$XDG_RUNTIME_DIR/touchpad.status`. `HYPR_CONFIG_DIR` and `HYPR_STATE_DIR` override the configuration and state roots.
+
+
+Helpers report native failures and return a nonzero status. Native commands have a finite timeout, except interactive menus and image editing. Mutating helpers share a nonblocking lock. Retry a busy operation after its current writer finishes.
+
+Profile changes verify reload success before acceptance. A failed reload restores the previous selection and reloads it. Recovery failures report both errors. Touchpad changes save state only after acknowledgement. Hyprland versions without device-state reporting use the last acknowledged session receipt.
+
+Game mode stores captured compositor values under `$XDG_RUNTIME_DIR/hypr/`. Disabling it restores those values, including originally disabled animations. Screenshot failures retain any image already published. Clipboard failure does not delete that image.
+
+Portal recovery restarts the Hyprland backend and portal broker through systemd user units. It does not start unmanaged portal processes.

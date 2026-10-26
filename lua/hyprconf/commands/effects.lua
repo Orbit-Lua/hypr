@@ -2,8 +2,9 @@ local colors = require("hyprconf.colors")
 local ctx = require("hyprconf.context")
 local fs = require("hyprconf.util.fs")
 local hyprctl = require("hyprconf.runtime.hyprctl")
-local toml = require("hyprconf.util.toml")
+local declarations = require("hyprconf.config")
 local vicinae = require("hyprconf.runtime.vicinae")
+local state = require("hyprconf.runtime.state")
 
 ---@alias Hyprconf.RainbowBorderMode "disabled"|"gradient_flow"|"material_random"|"rainbow"
 
@@ -14,12 +15,7 @@ local M = {}
 local mode_file = ctx.state_dir .. "/effects/rainbow-border-mode"
 
 ---@type [Hyprconf.RainbowBorderMode, string][]
-local modes = {
-  { "disabled", "Disabled" },
-  { "material_random", "Material Color" },
-  { "rainbow", "Original Rainbow" },
-  { "gradient_flow", "Gradient Flow" },
-}
+local modes = declarations.border_modes
 
 ---@param value string?
 ---@return Hyprconf.RainbowBorderMode?
@@ -34,8 +30,15 @@ end
 
 ---@return Hyprconf.RainbowBorderMode
 local function rainbow_mode()
-  return parse_mode(fs.read(mode_file))
-    or parse_mode((toml.read(ctx.config_file("effects")).rainbow or {}).default)
+  local saved = fs.read(mode_file)
+  if saved then
+    assert(
+      saved:match("^%s*[%w_]+%s*$") and parse_mode(saved),
+      "invalid saved border mode"
+    )
+  end
+  return parse_mode(saved)
+    or parse_mode((declarations.read("effects").rainbow or {}).default)
     or "disabled"
 end
 
@@ -46,45 +49,36 @@ function M.rainbow_border()
   if #active == 0 then
     return
   end
-  for index, value in ipairs(active) do
-    active[index] = string.format("%q", value)
-  end
-
-  hyprctl.config(
-    "{ general = { col = { active_border = { colors = { "
-      .. table.concat(active, ", ")
-      .. " }, angle = 270 } } } }"
-  )
+  hyprctl.config({
+    general = { col = { active_border = { colors = active, angle = 270 } } },
+  })
 end
 
 ---@return nil
 function M.rainbow_menu()
   local active = rainbow_mode()
+  ---@type Hyprconf.MenuChoice[]
   local labels = {}
-  local current
   for index, mode in ipairs(modes) do
-    labels[index] = mode[2]
-    if mode[1] == active then
-      current = mode[2]
-    end
+    labels[index] = { id = mode[1], label = mode[2] }
   end
 
   local choice = vicinae.select(labels, {
     navigation_title = "Rainbow Borders",
     section_title = "Modes ({count})",
     placeholder = "Choose a border mode...",
-    current = current,
+    current = active,
     no_quick_look = true,
   })
   for _, mode in ipairs(modes) do
-    if mode[2] == choice then
-      fs.write(mode_file, mode[1] .. "\n")
-      if mode[1] == "disabled" then
-        -- Reloading restores the theme's border.
-        hyprctl.reload()
-      else
-        M.rainbow_border()
-      end
+    if mode[1] == choice then
+      state.change(mode_file, mode[1] .. "\n", function()
+        if rainbow_mode() == "disabled" then
+          hyprctl.reload()
+        else
+          M.rainbow_border()
+        end
+      end)
       return
     end
   end

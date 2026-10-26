@@ -38,6 +38,14 @@
 ---@class Hyprconf.Rules
 ---@field setup fun()
 local M = {}
+---@type HL.WindowRule?
+local game_rule
+
+---@param enabled boolean
+function M.set_game_mode(enabled)
+  assert(game_rule, "game mode rule is unavailable")
+  game_rule:set_enabled(enabled)
+end
 
 local tag_rule_index = 0
 ---@param name string
@@ -308,6 +316,14 @@ function M.setup()
   for _, rule in ipairs(persistent_workspaces) do
     hl.workspace_rule(rule)
   end
+  ---@type Hyprconf.WindowRule
+  local spec = {
+    name = "hypr-game-mode-opacity",
+    enabled = false,
+    match = { class = ".*" },
+    opacity = "1 override 1 override 1 override",
+  }
+  game_rule = hl.window_rule(spec)
 end
 
 return M
