@@ -19,9 +19,16 @@ class HelperTests(unittest.TestCase):
         self.addCleanup(self.temporary.cleanup)
         self.root = Path(self.temporary.name)
         self.config = self.root / "config"
+        self.copy_configuration()
+        self.install_native_fakes()
+        self.prepare_environment()
+
+    def copy_configuration(self):
         shutil.copytree(REPOSITORY / "lua", self.config / "lua")
         shutil.copytree(REPOSITORY / "profiles", self.config / "profiles")
         shutil.copyfile(REPOSITORY / "tests/fixtures/noctalia.lua", self.config / "noctalia.lua")
+
+    def install_native_fakes(self):
         self.bin = self.root / "bin"
         self.bin.mkdir()
         for name in (
@@ -39,6 +46,8 @@ class HelperTests(unittest.TestCase):
             "qs",
         ):
             (self.bin / name).symlink_to(REPOSITORY / "tests/native.py")
+
+    def prepare_environment(self):
         (self.root / "runtime").mkdir()
         self.environment = {
             "HOME": str(self.root / "home"),
