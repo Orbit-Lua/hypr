@@ -1,3 +1,4 @@
+-- Decode strict JSON and encode native replies without losing null positions.
 ---@class Hyprconf.JsonNull
 ---@alias Hyprconf.JsonScalar string|number|boolean|Hyprconf.JsonNull
 ---@alias Hyprconf.JsonValue Hyprconf.JsonScalar|Hyprconf.JsonArray|Hyprconf.JsonObject
@@ -33,6 +34,54 @@ local parse_value
 ---@param pos integer
 ---@return string
 ---@return integer
+local function parse_unicode(content, pos)
+  local hex = content:sub(pos + 2, pos + 5)
+  assert(hex:match("^%x%x%x%x$"), decode_error(content, pos, "invalid Unicode escape"))
+  local code = assert(tonumber(hex, 16))
+  pos = pos + 6
+  if code >= 0xd800 and code <= 0xdbff then
+    local low = content:sub(pos, pos + 5):match("^\\u(%x%x%x%x)$")
+    local value = low and tonumber(low, 16)
+    assert(
+      value and value >= 0xdc00 and value <= 0xdfff,
+      decode_error(content, pos, "missing low surrogate")
+    )
+    code = 0x10000 + (code - 0xd800) * 0x400 + value - 0xdc00
+    pos = pos + 6
+  else
+    assert(code < 0xdc00 or code > 0xdfff, decode_error(content, pos, "unexpected low surrogate"))
+  end
+  return utf8.char(code), pos
+end
+
+---@param content string
+---@param pos integer
+---@return string
+---@return integer
+local function parse_escape(content, pos)
+  local escaped = content:sub(pos + 1, pos + 1)
+  local replacements = {
+    ['"'] = '"',
+    ["\\"] = "\\",
+    ["/"] = "/",
+    b = "\b",
+    f = "\f",
+    n = "\n",
+    r = "\r",
+    t = "\t",
+  }
+  if replacements[escaped] then
+    return replacements[escaped], pos + 2
+  elseif escaped == "u" then
+    return parse_unicode(content, pos)
+  end
+  error(decode_error(content, pos, "invalid escape"), 0)
+end
+
+---@param content string
+---@param pos integer
+---@return string
+---@return integer
 local function parse_string(content, pos)
   if content:sub(pos, pos) ~= '"' then
     error(decode_error(content, pos, "expected string"), 0)
@@ -49,45 +98,9 @@ local function parse_string(content, pos)
     end
 
     if char == "\\" then
-      local escaped = content:sub(pos + 1, pos + 1)
-      local replacements = {
-        ['"'] = '"',
-        ["\\"] = "\\",
-        ["/"] = "/",
-        b = "\b",
-        f = "\f",
-        n = "\n",
-        r = "\r",
-        t = "\t",
-      }
-
-      if replacements[escaped] then
-        result[#result + 1] = replacements[escaped]
-        pos = pos + 2
-      elseif escaped == "u" then
-        local hex = content:sub(pos + 2, pos + 5)
-        assert(hex:match("^%x%x%x%x$"), decode_error(content, pos, "invalid Unicode escape"))
-        local code = assert(tonumber(hex, 16))
-        pos = pos + 6
-        if code >= 0xd800 and code <= 0xdbff then
-          local low = content:sub(pos, pos + 5):match("^\\u(%x%x%x%x)$")
-          local value = low and tonumber(low, 16)
-          assert(
-            value and value >= 0xdc00 and value <= 0xdfff,
-            decode_error(content, pos, "missing low surrogate")
-          )
-          code = 0x10000 + (code - 0xd800) * 0x400 + value - 0xdc00
-          pos = pos + 6
-        else
-          assert(
-            code < 0xdc00 or code > 0xdfff,
-            decode_error(content, pos, "unexpected low surrogate")
-          )
-        end
-        result[#result + 1] = utf8.char(code)
-      else
-        error(decode_error(content, pos, "invalid escape"), 0)
-      end
+      local decoded
+      decoded, pos = parse_escape(content, pos)
+      result[#result + 1] = decoded
     else
       assert(char:byte() >= 32, decode_error(content, pos, "unescaped control character"))
       result[#result + 1] = char
@@ -215,14 +228,14 @@ function parse_value(content, pos)
     return parse_object(content, pos)
   elseif char == "[" then
     return parse_array(content, pos)
-  elseif char == "t" and content:sub(pos, pos + 3) == "true" then
-    return true, pos + 4
-  elseif char == "f" and content:sub(pos, pos + 4) == "false" then
-    return false, pos + 5
-  elseif char == "n" and content:sub(pos, pos + 3) == "null" then
-    return M.null, pos + 4
   elseif char:match("[%-0-9]") then
     return parse_number(content, pos)
+  end
+
+  local literals = { t = { "true", true }, f = { "false", false }, n = { "null", M.null } }
+  local literal = literals[char]
+  if literal and content:sub(pos, pos + #literal[1] - 1) == literal[1] then
+    return literal[2], pos + #literal[1]
   end
 
   error(decode_error(content, pos, "unexpected token"), 0)
@@ -238,6 +251,39 @@ function M.decode(content)
     error(decode_error(content, pos, "trailing content"), 0)
   end
   return value
+end
+
+---@param value table
+---@return any[]
+---@return boolean
+local function table_keys(value)
+  local keys, array = {}, #value > 0
+  for key in pairs(value) do
+    keys[#keys + 1] = key
+    array = array and type(key) == "number" and key % 1 == 0 and key >= 1 and key <= #value
+  end
+  return keys, array
+end
+
+---@param value table
+---@return string
+local function encode_table(value)
+  local keys, array = table_keys(value)
+  local parts = {}
+  if array then
+    for _, item in ipairs(value) do
+      parts[#parts + 1] = M.encode(item)
+    end
+    return "[" .. table.concat(parts, ",") .. "]"
+  end
+  for _, key in ipairs(keys) do
+    assert(type(key) == "string", "JSON object keys must be strings")
+  end
+  table.sort(keys)
+  for _, key in ipairs(keys) do
+    parts[#parts + 1] = M.encode(key) .. ":" .. M.encode(value[key])
+  end
+  return "{" .. table.concat(parts, ",") .. "}"
 end
 
 ---@param value any
@@ -265,26 +311,7 @@ function M.encode(value)
       .. '"'
   end
   assert(type(value) == "table", "unsupported JSON value")
-  local keys, array = {}, #value > 0
-  for key in pairs(value) do
-    keys[#keys + 1] = key
-    array = array and type(key) == "number" and key % 1 == 0 and key >= 1 and key <= #value
-  end
-  local parts = {}
-  if array then
-    for _, item in ipairs(value) do
-      parts[#parts + 1] = M.encode(item)
-    end
-    return "[" .. table.concat(parts, ",") .. "]"
-  end
-  for _, key in ipairs(keys) do
-    assert(type(key) == "string", "JSON object keys must be strings")
-  end
-  table.sort(keys)
-  for _, key in ipairs(keys) do
-    parts[#parts + 1] = M.encode(key) .. ":" .. M.encode(value[key])
-  end
-  return "{" .. table.concat(parts, ",") .. "}"
+  return encode_table(value)
 end
 
 return M

@@ -13,7 +13,5 @@ files = {
   ["lua/hyprconf/runtime/notify.lua"] = { max_cyclomatic_complexity = 15 },
   ["lua/hyprconf/runtime/process.lua"] = { max_cyclomatic_complexity = 15 },
   ["lua/hyprconf/runtime/vicinae.lua"] = { max_cyclomatic_complexity = 12 },
-  ["lua/hyprconf/util/json.lua"] = { max_cyclomatic_complexity = 16 },
-  ["lua/hyprconf/util/toml.lua"] = { max_cyclomatic_complexity = 32 },
   ["tests/data.lua"] = { max_cyclomatic_complexity = 11 },
 }
