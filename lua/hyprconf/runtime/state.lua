@@ -1,4 +1,6 @@
+-- Stage runtime choices and restore them when application fails.
 local fs = require("hyprconf.util.fs")
+---@class Hyprconf.Runtime.State
 local M = {}
 
 ---@param path string

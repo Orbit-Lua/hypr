@@ -1,4 +1,5 @@
 -- profile: Smooth Default
+-- Declare the animation profile settings.
 -- credit https://github.com/mahaveergurjar
 
 local profile = require("hyprconf.profile")

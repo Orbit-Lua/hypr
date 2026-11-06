@@ -1,3 +1,4 @@
+-- Apply border effects and recover the previous choice after failed changes.
 local colors = require("hyprconf.colors")
 local ctx = require("hyprconf.context")
 local fs = require("hyprconf.util.fs")

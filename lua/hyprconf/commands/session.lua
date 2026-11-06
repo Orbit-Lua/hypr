@@ -1,3 +1,4 @@
+-- Apply session actions and preserve acknowledged touchpad state.
 local ctx = require("hyprconf.context")
 local fs = require("hyprconf.util.fs")
 local hyprctl = require("hyprconf.runtime.hyprctl")

@@ -1,3 +1,4 @@
+-- Declare compositor environment values in a stable order.
 ---@class Hyprconf.Env
 ---@field setup fun()
 local M = {}

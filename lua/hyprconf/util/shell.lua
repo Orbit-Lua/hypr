@@ -1,3 +1,4 @@
+-- Quote shell arguments and adapt trusted shell operations.
 ---@alias Hyprconf.CommandStatus boolean|integer|nil
 
 ---@class Hyprconf.Util.Shell

@@ -1,3 +1,4 @@
+-- Resolve shared application commands and separate configuration from runtime state.
 local shell = require("hyprconf.util.shell")
 
 ---@class Hyprconf.Context

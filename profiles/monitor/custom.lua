@@ -1,4 +1,5 @@
 -- profile: Custom
+-- Declare the monitor profile settings.
 
 -- hl.monitor({
 --   output = "eDP-1",

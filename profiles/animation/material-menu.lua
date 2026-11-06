@@ -1,4 +1,5 @@
 -- profile: Material Menu
+-- Declare the animation profile settings.
 -- credit https://github.com/end-4/dots-hyprland
 
 local profile = require("hyprconf.profile")

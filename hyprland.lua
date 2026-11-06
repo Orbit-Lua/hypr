@@ -1,3 +1,4 @@
+-- Load the compositor declarations and apply the generated theme last.
 ---@type string
 local config_dir = (debug.getinfo(1, "S").source:sub(2):match("(.+)/[^/]+$")) or "."
 

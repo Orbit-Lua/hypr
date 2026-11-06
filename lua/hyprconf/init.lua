@@ -1,3 +1,4 @@
+-- Load each compositor owner in the declared setup order.
 ---@class Hyprconf.Module
 ---@field setup fun()
 

@@ -1,3 +1,4 @@
+-- Register window, layer and workspace rules and own game-mode opacity.
 ---@class Hyprconf.WindowMatch
 ---@field class? string Window class regex.
 ---@field title? string Window title regex.
@@ -42,6 +43,7 @@ local M = {}
 local game_rule
 
 ---@param enabled boolean
+---@return nil
 function M.set_game_mode(enabled)
   assert(game_rule, "game mode rule is unavailable")
   game_rule:set_enabled(enabled)

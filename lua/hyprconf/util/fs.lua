@@ -1,3 +1,4 @@
+-- Read configuration files and write runtime state atomically.
 local shell = require("hyprconf.util.shell")
 
 ---@class Hyprconf.Util.Fs

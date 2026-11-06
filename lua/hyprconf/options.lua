@@ -1,3 +1,4 @@
+-- Declare input, layout and appearance options for the compositor.
 local colors = require("hyprconf.colors")
 local ctx = require("hyprconf.context")
 local fs = require("hyprconf.util.fs")

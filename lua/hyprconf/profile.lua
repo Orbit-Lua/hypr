@@ -1,3 +1,4 @@
+-- Resolve selected profile names and load their deployed definitions.
 local ctx = require("hyprconf.context")
 local fs = require("hyprconf.util.fs")
 local declarations = require("hyprconf.config")

@@ -1,4 +1,5 @@
 -- profile: Dynamic Slide
+-- Declare the animation profile settings.
 -- credit https://github.com/mylinuxforwork/dotfiles
 
 local profile = require("hyprconf.profile")

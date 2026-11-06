@@ -1,3 +1,4 @@
+-- Select deployed profiles and verify activation before accepting a choice.
 local ctx = require("hyprconf.context")
 local fs = require("hyprconf.util.fs")
 local hyprctl = require("hyprconf.runtime.hyprctl")

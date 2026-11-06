@@ -1,3 +1,4 @@
+-- Validate native compositor replies and apply checked Lua configuration changes.
 local json = require("hyprconf.util.json")
 local process = require("hyprconf.runtime.process")
 
@@ -171,12 +172,14 @@ end
 
 ---@param name string
 ---@param enabled boolean
+---@return nil
 function M.set_device(name, enabled)
   M.eval(string.format("hl.device({ name = %q, enabled = %s })", name, tostring(enabled)))
   M.check_errors()
 end
 
 ---@param enabled boolean
+---@return nil
 function M.game_opacity(enabled)
   M.eval("require('hyprconf.rules').set_game_mode(" .. tostring(enabled) .. ")")
   M.check_errors()

@@ -1,3 +1,4 @@
+-- Own compositor startup hooks and coalesce monitor-triggered reloads.
 local ctx = require("hyprconf.context")
 local declarations = require("hyprconf.config")
 local util = require("hyprconf.binding")
@@ -17,6 +18,7 @@ local subscriptions = {}
 ---@type HL.Timer?
 local reload_timer
 local generation = 0
+local hotplug_delay_ms = 200
 
 ---@return string[]
 local function autostart_commands()
@@ -73,9 +75,9 @@ function M.setup()
     end
     pending = true
     if not reload_timer then
-      reload_timer = hl.timer(reload, { type = "oneshot", timeout = 200 })
+      reload_timer = hl.timer(reload, { type = "oneshot", timeout = hotplug_delay_ms })
     end
-    assert(reload_timer):set_timeout(200)
+    assert(reload_timer):set_timeout(hotplug_delay_ms)
     assert(reload_timer):set_enabled(true)
   end
   subscriptions[#subscriptions + 1] = hl.on("monitor.added", hotplug)

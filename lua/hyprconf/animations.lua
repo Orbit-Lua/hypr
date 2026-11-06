@@ -1,3 +1,4 @@
+-- Load the animation profile and keep workspace transitions vertical.
 local profile = require("hyprconf.profile")
 
 ---@class Hyprconf.Animations

@@ -1,3 +1,4 @@
+-- Restart portal units in order and reapply runtime effects after reloads.
 local effects = require("hyprconf.commands.effects")
 local process = require("hyprconf.runtime.process")
 

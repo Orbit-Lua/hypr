@@ -1,4 +1,5 @@
 -- profile: Default
+-- Declare the monitor profile settings.
 
 hl.monitor({
   output = "",

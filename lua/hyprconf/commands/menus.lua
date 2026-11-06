@@ -1,3 +1,4 @@
+-- Present key hints, bindings, web search and quick settings.
 local ctx = require("hyprconf.context")
 local keymap = require("hyprconf.keymap")
 local notify = require("hyprconf.runtime.notify")
@@ -141,10 +142,10 @@ function M.quick_settings()
   ---@type Hyprconf.MenuChoice[]
   local labels = {}
   ---@type table<string, Hyprconf.QuickSettingItem>
-  local by_label = {}
+  local by_id = {}
   for index, item in ipairs(config.item or {}) do
     labels[#labels + 1] = { id = tostring(index), label = item.label }
-    by_label[tostring(index)] = item
+    by_id[tostring(index)] = item
   end
 
   local choice = vicinae.select(labels, {
@@ -153,7 +154,7 @@ function M.quick_settings()
     placeholder = "Choose a setting...",
     no_quick_look = true,
   })
-  local item = choice and by_label[choice]
+  local item = choice and by_id[choice]
   if not item then
     return
   end

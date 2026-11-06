@@ -1,4 +1,5 @@
 -- profile: Layered Wind
+-- Declare the animation profile settings.
 -- credit https://github.com/mahaveergurjar
 
 local profile = require("hyprconf.profile")

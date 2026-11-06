@@ -1,3 +1,4 @@
+-- Build compositor bindings and expand trusted application commands.
 local ctx = require("hyprconf.context")
 
 -- Helpers for building the configuration inside Hyprland, where `hl` exists.

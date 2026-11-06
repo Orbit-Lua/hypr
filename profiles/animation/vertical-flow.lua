@@ -1,4 +1,5 @@
 -- profile: Vertical Flow
+-- Declare the animation profile settings.
 -- credit https://github.com/prasanthrangan/hyprdots
 
 local profile = require("hyprconf.profile")

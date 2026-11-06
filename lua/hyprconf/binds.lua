@@ -1,3 +1,4 @@
+-- Register the frozen keyboard and mouse actions.
 local ctx = require("hyprconf.context")
 local util = require("hyprconf.binding")
 

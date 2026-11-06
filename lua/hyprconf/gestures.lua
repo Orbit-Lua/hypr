@@ -1,3 +1,4 @@
+-- Register workspace, scrolling and cursor-zoom gestures.
 local util = require("hyprconf.binding")
 
 ---@class Hyprconf.Gestures
