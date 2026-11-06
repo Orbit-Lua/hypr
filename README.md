@@ -17,7 +17,16 @@ Use Hyprland 0.55+ on Arch Linux. Install these helper dependencies separately:
 
 Place this repo at `~/.config/hypr`, or link that path to a checkout.
 
-Each application must have one startup owner. Start session applications through your session manager or user services. Keep `lua/config/autostart.toml` for compositor-owned work. Remove an application's other startup declarations before adding it there.
+## Ownership
+
+Give each application one startup owner. Remove its previous startup declaration before assigning a new owner.
+
+| Task | Owner |
+| --- | --- |
+| Session applications | Your session manager or user services |
+| Compositor startup work | `lua/config/autostart.toml` |
+| Generated theme colors | Noctalia templates |
+| Profile selections and effect choices | Helpers under the runtime state root |
 
 ## Usage
 
@@ -51,9 +60,7 @@ Helpers report native failures with a nonzero status. Interactive menus, notific
 
 Quick settings edits need a writable checkout. Noctalia generates `noctalia.lua` through its theme templates.
 
-For live development:
-
-Use a writable checkout as the configuration root. For managed deployments, set that root through your deployment tool.
+Use a writable checkout as the configuration root for live development. For managed deployments, set that root through your deployment tool.
 
 Automatic reload can read an intermediate multi-file checkout. Before updating a live checkout:
 
@@ -75,7 +82,7 @@ Runtime choices live in `$XDG_STATE_HOME/hypr`, or `~/.local/state/hypr` by defa
 
 Remove a selection to restore its TOML default. `HYPR_CONFIG_DIR` and `HYPR_STATE_DIR` override the configuration and state roots.
 
-A profile change verifies its reload before acceptance. Failure restores the previous selection and reloads it. Recovery failures report both errors.
+A profile change verifies its reload before acceptance. Failure restores the previous selection and reloads the configuration. Recovery failures report both errors.
 
 Touchpad state lasts for the session in `$XDG_RUNTIME_DIR/touchpad.status`. Changes save state after acknowledgement. Versions without native device-state reporting use the last acknowledged receipt.
 

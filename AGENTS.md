@@ -5,19 +5,36 @@ Preserve bindings and their actions. Keep deployed configuration read-only and r
 ## Git
 
 - Write commits in [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/) format.
+- Start the type, scope and description in lowercase. Keep the case of code identifiers and proper nouns.
 - For a non-trivial change, write a commit body that explains why.
 - Mark a breaking change with `!` and a `BREAKING CHANGE:` footer.
-- Author commits as the user alone, without `Co-Authored-By` or other co-author trailers.
+- Author commits as the user alone. Add no agent trailers or links, such as `Co-Authored-By` or a session URL.
 - Commit as the plan progresses.
 - Before you push, squash related commits into one commit to keep the history clean.
 - Push only after the user approves that push.
-- Version releases with [Semantic Versioning 2.0.0](https://semver.org/).
 - Keep plans, diagnostic logs and throwaway test output outside the repo.
 - Resolve the complete deployment symlink chain before updating a checkout.
 - A Nix store link can point back to a live checkout.
 - Complete refactors in an isolated worktree before updating that live tree.
 - Suspend automatic reload during a multi-file live update.
 - Reload the complete tree after the update.
+
+## Releases
+
+- Version releases with [Semantic Versioning 2.0.0](https://semver.org/).
+- Use bare version tags unless the repository already has a prefix.
+- Keep the format of an existing changelog.
+- Use [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/) for a new changelog.
+- Release in this order:
+  1. Commit the version files and changelog together, such as `chore(release): prepare 1.2.3`.
+  2. Push that commit to the default branch.
+  3. Wait for that commit's branch checks to pass.
+  4. Create an annotated tag: `git tag -a 1.2.3 -m "Release 1.2.3" <commit>`.
+  5. Push the tag alone: `git push origin 1.2.3`.
+- Use `1.2.3-rc.1` for a release candidate.
+- Let the tag workflow publish the package and create the release.
+- Push the commit and tag separately. Do not use `git push --follow-tags`.
+- Separate pushes prevent overlapping branch and tag workflows from queuing on one runner.
 
 ## Runtime contracts
 
@@ -66,7 +83,7 @@ Preserve bindings and their actions. Keep deployed configuration read-only and r
 - Test behavior rather than copied option inventories or source text.
 - Run `just all` before you finish.
 - CI runs `just check`, which preserves source formatting.
-- Use `LUA` and `LUALS` to select validation executables.
+- Use `LUA`, `LUALS` and `RUFF` to select validation executables.
 - Verify real menus, portals and hardware only in an authorized desktop session.
 - Report unavailable checks and uncovered contracts.
 
@@ -80,6 +97,15 @@ Preserve bindings and their actions. Keep deployed configuration read-only and r
 - Name each workflow, job and step by its target and its action.
 - Propagate command failures.
 - Count a missing prerequisite or skipped required coverage as a failure.
+- Run checks in branch workflows. Keep package builds, smoke tests, publication and release creation in tag workflows.
+- Start each release job by checking that its commit belongs to the default branch.
+- Match release jobs to the repository's version tag format, including release candidates.
+- Protect release tags. Allow only protected references to read release credentials.
+- Merge CI changes to the default branch before tagging. A tag workflow uses the tagged commit's configuration.
+- Run checks on `pull_request` and `push` to branches.
+- Run releases in a separate workflow on version-tag pushes, such as `[0-9]+.[0-9]+.[0-9]+` and `[0-9]+.[0-9]+.[0-9]+-*`.
+- Check out release jobs with `fetch-depth: 0` for the default-branch ancestry check.
+- Keep release secrets in an environment limited to release tags. Protect those tags with a tag ruleset.
 - After you change these rules, audit the repo against them.
 - Validate changes locally. Then verify the required CI on the pushed commit.
 - Report each uncovered contract and each unavailable check.
@@ -88,16 +114,23 @@ Preserve bindings and their actions. Keep deployed configuration read-only and r
 ## Docs
 
 - Keep each doc concise and plain. Each sentence must carry information.
+- Keep only standing rules in `AGENTS.md`. Each rule must apply to later, unrelated work.
+- Record facts about one place or failure in a code comment, test, commit body, ADR or issue.
 - Write English docs in US English, to the [ASD-STE100](https://www.asd-ste100.org/) writing rules:
   - Give one instruction in each sentence.
   - Write instructions in the imperative and in the active voice.
   - Use one word for one meaning, and one meaning for one word.
   - An instruction has 20 words or fewer. A description has 25 words or fewer.
-- Review each sentence over these limits. Split it if it holds more than one instruction or fact.
-- A list of items can stay in one sentence. Make a bullet list from more than five items.
+- Review each sentence over these limits.
+- Split a sentence if it holds more than one instruction or fact.
+- Use a numbered list for three or more instructions in a fixed order, also across sentences.
+- Write full-sentence items or sets with more than five items as bullet lists.
+- Other sets can stay in one sentence, even above the word limits.
 - Write a non-English doc in two passes:
   1. Write an English draft to these rules.
-  2. Translate the draft. Keep its sentence boundaries and one term for each concept.
-     Keep commands, paths and code unchanged. Use the natural word order of the target language.
+  2. Translate the draft:
+     1. Keep its sentence boundaries and one term for each concept.
+     2. Keep commands, paths and code unchanged.
+     3. Use the target language's natural word order.
 - Read [README.md](README.md) before you change deployment, configuration or state recovery.
 - Keep operator procedures in the README and contributor constraints here.
