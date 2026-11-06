@@ -129,9 +129,7 @@ function M.parse(content)
         if ok and type(parsed) == "number" then
           return parsed
         end
-        fail(
-          "unsupported value; use quoted strings, booleans, numbers or arrays"
-        )
+        fail("unsupported value; use quoted strings, booleans, numbers or arrays")
       end
       local function table_path(name)
         if

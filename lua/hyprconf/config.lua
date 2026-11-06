@@ -19,20 +19,14 @@ local function fields(value, schema, location)
   assert(type(value) == "table", location .. ": expected a table")
   for key, item in pairs(value) do
     assert(schema[key], location .. ": unknown field " .. tostring(key))
-    assert(
-      type(item) == schema[key],
-      location .. "." .. key .. ": expected " .. schema[key]
-    )
+    assert(type(item) == schema[key], location .. "." .. key .. ": expected " .. schema[key])
   end
 end
 
 ---@param value any
 ---@param location string
 local function nonempty(value, location)
-  assert(
-    type(value) == "string" and value ~= "",
-    location .. ": expected a nonempty string"
-  )
+  assert(type(value) == "string" and value ~= "", location .. ": expected a nonempty string")
 end
 
 ---@param value any
@@ -66,11 +60,7 @@ function M.read(name)
   local data = toml.read(ctx.config_file(name))
   fields(data, schemas[name], name)
   if name == "effects" then
-    fields(
-      data.rainbow or {},
-      { default = "string", modes = "table" },
-      "effects.rainbow"
-    )
+    fields(data.rainbow or {}, { default = "string", modes = "table" }, "effects.rainbow")
     fields(data.sounds or {}, {
       mute = "boolean",
       mute_screenshots = "boolean",
@@ -84,10 +74,7 @@ function M.read(name)
     local seen = {}
     for index, mode in pairs(modes) do
       assert(
-        type(index) == "number"
-          and index % 1 == 0
-          and index >= 1
-          and index <= #modes,
+        type(index) == "number" and index % 1 == 0 and index >= 1 and index <= #modes,
         "border modes must be an array"
       )
       assert(M.border_mode(mode), "invalid border mode")
@@ -98,23 +85,13 @@ function M.read(name)
       assert(M.profile_name(data.sounds.theme), "invalid sound theme name")
     end
   elseif name == "profiles" then
-    fields(
-      data.default,
-      { animation = "string", monitor = "string" },
-      "profiles.default"
-    )
+    fields(data.default, { animation = "string", monitor = "string" }, "profiles.default")
     for _, category in ipairs(M.profile_categories) do
-      assert(
-        M.profile_name(data.default[category]),
-        "invalid default " .. category .. " profile"
-      )
+      assert(M.profile_name(data.default[category]), "invalid default " .. category .. " profile")
     end
   else
-    local key = name == "autostart" and "command"
-      or name == "key-hints" and "row"
-      or "item"
-    local schema = name == "autostart"
-        and { run = "string", enabled = "boolean" }
+    local key = name == "autostart" and "command" or name == "key-hints" and "row" or "item"
+    local schema = name == "autostart" and { run = "string", enabled = "boolean" }
       or name == "key-hints" and {
         key = "string",
         description = "string",
@@ -131,10 +108,7 @@ function M.read(name)
     local seen = {}
     for index, row in pairs(rows) do
       assert(
-        type(index) == "number"
-          and index >= 1
-          and index <= #rows
-          and index % 1 == 0,
+        type(index) == "number" and index >= 1 and index <= #rows and index % 1 == 0,
         name .. ": expected an array"
       )
       fields(row, schema, name .. "." .. key)
@@ -152,8 +126,7 @@ function M.read(name)
         if row.kind == "edit" then
           nonempty(row.path, "quick setting path")
           assert(
-            row.path:sub(1, 1) ~= "/"
-              and not ("/" .. row.path .. "/"):find("/../", 1, true),
+            row.path:sub(1, 1) ~= "/" and not ("/" .. row.path .. "/"):find("/../", 1, true),
             "quick setting path escapes configuration"
           )
         elseif row.kind == "exec" or row.kind == "action" then

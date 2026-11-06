@@ -1,10 +1,5 @@
-local root = debug.getinfo(1, "S").source:sub(2):match("(.+)/tests/[^/]+$")
-  or "."
-package.path = root
-  .. "/lua/?.lua;"
-  .. root
-  .. "/lua/?/init.lua;"
-  .. package.path
+local root = debug.getinfo(1, "S").source:sub(2):match("(.+)/tests/[^/]+$") or "."
+package.path = root .. "/lua/?.lua;" .. root .. "/lua/?/init.lua;" .. package.path
 local events, timers, commands = {}, {}, {}
 -- luacheck: globals hl
 hl = {
@@ -36,10 +31,7 @@ events["monitor.removed"].callback()
 assert(#commands == 0, "hotplug must wait for the coalescing timer")
 timers[1].callback()
 timers[1].callback()
-assert(
-  #commands == 1 and commands[1] == "hyprctl reload",
-  "a burst must issue one reload"
-)
+assert(#commands == 1 and commands[1] == "hyprctl reload", "a burst must issue one reload")
 events["monitor.added"].callback()
 local stale_subscription = events["monitor.added"]
 autostart.setup()
@@ -48,7 +40,4 @@ assert(
   "setup must dispose old subscriptions and timers"
 )
 timers[1].callback()
-assert(
-  #commands == 1,
-  "a queued old callback must not reload a replacement configuration"
-)
+assert(#commands == 1, "a queued old callback must not reload a replacement configuration")

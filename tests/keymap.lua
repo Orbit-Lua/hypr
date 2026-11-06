@@ -1,7 +1,6 @@
 -- Prints every keybind as one line, in registration order, so a refactor can
 -- be checked against tests/keymap.snapshot.
-local root = (debug.getinfo(1, "S").source:sub(2):match("(.+)/tests/[^/]+$"))
-  or "."
+local root = (debug.getinfo(1, "S").source:sub(2):match("(.+)/tests/[^/]+$")) or "."
 package.path = table.concat({
   root .. "/lua/?.lua",
   root .. "/lua/?/init.lua",

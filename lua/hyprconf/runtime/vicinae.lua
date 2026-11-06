@@ -57,10 +57,7 @@ function M.dmenu(lines, opts)
     end
   end
 
-  local result = process.run(
-    args,
-    { stdin = table.concat(lines, "\n") .. "\n", timeout = false }
-  )
+  local result = process.run(args, { stdin = table.concat(lines, "\n") .. "\n", timeout = false })
   if result.code ~= 1 or result.stderr ~= "" then
     process.check(result, "Vicinae")
   end
@@ -77,10 +74,7 @@ function M.select(labels, opts)
   for index, entry in ipairs(labels) do
     local label = type(entry) == "table" and entry.label or entry
     local id = type(entry) == "table" and entry.id or entry
-    assert(
-      type(label) == "string" and type(id) == "string",
-      "invalid menu choice"
-    )
+    assert(type(label) == "string" and type(id) == "string", "invalid menu choice")
     assert(not seen[label], "duplicate menu label")
     seen[label] = true
     rows[index] = id == opts.current and (marker .. " " .. label) or label

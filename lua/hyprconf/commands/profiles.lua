@@ -24,13 +24,9 @@ function M.profile_selector(category)
     end
   end
 
-  assert(
-    category == "animation" or category == "monitor",
-    "invalid profile category"
-  )
+  assert(category == "animation" or category == "monitor", "invalid profile category")
 
-  local files =
-    fs.list_files(ctx.config_dir .. "/profiles/" .. category, "*.lua")
+  local files = fs.list_files(ctx.config_dir .. "/profiles/" .. category, "*.lua")
   if #files == 0 then
     notify.error("Profile Selector", "No " .. category .. " profiles found.")
     return
@@ -53,20 +49,16 @@ function M.profile_selector(category)
   })
   for index, item in ipairs(labels) do
     if item.id == choice then
-      state.change(
-        profile.selection_file(category),
-        fs.stem(files[index]) .. "\n",
-        function()
-          hyprctl.reload()
-          hyprctl.eval(
-            string.format(
-              "assert(require('hyprconf.profile').loaded[%q] == %q, 'profile did not load')",
-              category,
-              profile.active_name(category)
-            )
+      state.change(profile.selection_file(category), fs.stem(files[index]) .. "\n", function()
+        hyprctl.reload()
+        hyprctl.eval(
+          string.format(
+            "assert(require('hyprconf.profile').loaded[%q] == %q, 'profile did not load')",
+            category,
+            profile.active_name(category)
           )
-        end
-      )
+        )
+      end)
       notify.info(title, item.label .. " loaded", category .. "-profile")
       return
     end

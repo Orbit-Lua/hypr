@@ -61,9 +61,7 @@ local function contrast_text(color)
     return value <= 0.03928 and value / 12.92 or ((value + 0.055) / 1.055) ^ 2.4
   end
   local c = assert(channels(color))
-  local luminance = 0.2126 * linear(c[1])
-    + 0.7152 * linear(c[2])
-    + 0.0722 * linear(c[3])
+  local luminance = 0.2126 * linear(c[1]) + 0.7152 * linear(c[2]) + 0.0722 * linear(c[3])
   return luminance > 0.45 and "#000000" or "#ffffff"
 end
 
@@ -117,8 +115,7 @@ local palette
 local function colors()
   if not palette then
     local ok, noctalia = pcall(require, "noctalia")
-    palette =
-      derive(ok and type(noctalia) == "table" and noctalia.colors or nil)
+    palette = derive(ok and type(noctalia) == "table" and noctalia.colors or nil)
   end
   return palette
 end

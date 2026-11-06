@@ -1,15 +1,14 @@
 # pyright: standard
 """Exercise the helper CLI without connecting to a desktop session."""
 
+import fcntl
 import json
 import os
-from pathlib import Path
 import shutil
 import subprocess
 import tempfile
 import unittest
-import fcntl
-
+from pathlib import Path
 
 REPOSITORY = Path(__file__).resolve().parents[1]
 
@@ -25,7 +24,20 @@ class HelperTests(unittest.TestCase):
         shutil.copyfile(REPOSITORY / "tests/fixtures/noctalia.lua", self.config / "noctalia.lua")
         self.bin = self.root / "bin"
         self.bin.mkdir()
-        for name in ("hyprctl", "notify-send", "vicinae", "grim", "slurp", "wl-copy", "xdg-user-dir", "systemctl", "pkill", "swappy", "kill", "qs"):
+        for name in (
+            "hyprctl",
+            "notify-send",
+            "vicinae",
+            "grim",
+            "slurp",
+            "wl-copy",
+            "xdg-user-dir",
+            "systemctl",
+            "pkill",
+            "swappy",
+            "kill",
+            "qs",
+        ):
             (self.bin / name).symlink_to(REPOSITORY / "tests/native.py")
         (self.root / "runtime").mkdir()
         self.environment = {
@@ -44,6 +56,7 @@ class HelperTests(unittest.TestCase):
         (self.root / "scenario.json").write_text(json.dumps(self.scenario))
         return subprocess.run(
             ["lua", str(self.config / "lua/bin/hypr.lua"), *arguments],
+            check=False,
             cwd=self.config,
             env=self.environment,
             capture_output=True,
@@ -60,7 +73,9 @@ class HelperTests(unittest.TestCase):
         self.scenario["hyprctl"] = {"stdout": '{"str":"dwindle"}'}
         result = self.run_helper("change-layout")
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertTrue(any('["layout"]="master"' in " ".join(args) for args in self.calls("hyprctl")))
+        self.assertTrue(
+            any('["layout"]="master"' in " ".join(args) for args in self.calls("hyprctl"))
+        )
         self.assertIn("Master", self.calls("notify-send")[-1])
 
     def test_cancelled_profile_selection_does_not_write_a_selection(self):
@@ -98,7 +113,10 @@ class HelperTests(unittest.TestCase):
                 self.assertIn("synthetic config error", result.stderr)
 
     def test_compositor_error_reply_is_a_failure_even_with_successful_transport(self):
-        self.scenario["hyprctl"] = {"stdout": '{"str":"dwindle"}', "operations": {"eval": {"stdout": "semantic failure"}}}
+        self.scenario["hyprctl"] = {
+            "stdout": '{"str":"dwindle"}',
+            "operations": {"eval": {"stdout": "semantic failure"}},
+        }
         result = self.run_helper("change-layout")
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("semantic failure", result.stderr)
@@ -107,12 +125,17 @@ class HelperTests(unittest.TestCase):
     def test_process_timeout_preserves_both_partial_streams_and_cleans_temporary_files(self):
         result = subprocess.run(
             ["lua", "-", str(self.config)],
+            check=False,
             input="""package.path=arg[1]..'/lua/?.lua;'..package.path
-local result=require('hyprconf.runtime.process').run({'sh','-c','printf partial; printf diagnostic >&2; sleep 1'}, {timeout=0.1})
+local command={'sh','-c','printf partial; printf diagnostic >&2; sleep 1'}
+local result=require('hyprconf.runtime.process').run(command, {timeout=0.1})
 assert(not result.ok and result.timed_out)
 assert(result.stdout=='partial' and result.stderr=='diagnostic')
 """,
-            env=self.environment, capture_output=True, text=True, timeout=5,
+            env=self.environment,
+            capture_output=True,
+            text=True,
+            timeout=5,
         )
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(list((self.root / "runtime").iterdir()), [])
@@ -120,6 +143,7 @@ assert(result.stdout=='partial' and result.stderr=='diagnostic')
     def test_native_exit_code_survives_lua_system_errno(self):
         result = subprocess.run(
             ["lua", "-", str(self.config)],
+            check=False,
             input="""package.path=arg[1]..'/lua/?.lua;'..package.path
 local execute=os.execute
 os.execute=function(command)
@@ -127,17 +151,24 @@ os.execute=function(command)
   if not ok then return nil, 'Function not implemented', 38 end
   return ok, reason, code
 end
-local result=require('hyprconf.runtime.process').run({'sh','-c','printf partial; printf diagnostic >&2; exit 7'})
+local command={'sh','-c','printf partial; printf diagnostic >&2; exit 7'}
+local result=require('hyprconf.runtime.process').run(command)
 assert(not result.ok and result.code==7, tostring(result.code))
 assert(result.stdout=='partial' and result.stderr=='diagnostic')
 """,
-            env=self.environment, capture_output=True, text=True, timeout=5,
+            env=self.environment,
+            capture_output=True,
+            text=True,
+            timeout=5,
         )
         self.assertEqual(result.returncode, 0, result.stderr)
 
     def test_session_failures_keep_native_diagnostics(self):
         for command, native in (("overview", "qs"), ("kill-active", "kill")):
-            self.scenario = {native: {"code": 9, "stderr": "session command failed"}, "hyprctl": {"stdout": '{"pid":12345}'}}
+            self.scenario = {
+                native: {"code": 9, "stderr": "session command failed"},
+                "hyprctl": {"stdout": '{"pid":12345}'},
+            }
             result = self.run_helper(command)
             self.assertNotEqual(result.returncode, 0)
             self.assertIn("session command failed", result.stderr)
@@ -153,7 +184,9 @@ assert(result.stdout=='partial' and result.stderr=='diagnostic')
         self.scenario["vicinae"] = {"code": 1}
         result = self.run_helper("keybinds")
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertEqual(self.calls("pkill"), [["-f", "--", "^yad --class=hypr-key-hints-fixture( |$)"]])
+        self.assertEqual(
+            self.calls("pkill"), [["-f", "--", "^yad --class=hypr-key-hints-fixture( |$)"]]
+        )
 
     def screenshots(self):
         return list((self.root / "home/Pictures/Screenshots").glob("*.png"))
@@ -224,7 +257,9 @@ assert(result.stdout=='partial' and result.stderr=='diagnostic')
         selection.parent.mkdir(parents=True)
         selection.write_text("original\n")
         self.scenario["vicinae"] = {"stdout": "candidate"}
-        self.scenario["hyprctl"] = {"operations": {"reload": [{"code": 1, "stderr": "reload refused"}, {}]}}
+        self.scenario["hyprctl"] = {
+            "operations": {"reload": [{"code": 1, "stderr": "reload refused"}, {}]}
+        }
         result = self.run_helper("profile-selector", "animation")
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("previous state restored", result.stderr)
@@ -234,7 +269,9 @@ assert(result.stdout=='partial' and result.stderr=='diagnostic')
     def test_failed_profile_recovery_reports_both_failures(self):
         (self.config / "profiles/animation/candidate.lua").write_text("-- profile: candidate\n")
         self.scenario["vicinae"] = {"stdout": "candidate"}
-        self.scenario["hyprctl"] = {"operations": {"reload": {"code": 1, "stderr": "reload refused"}}}
+        self.scenario["hyprctl"] = {
+            "operations": {"reload": {"code": 1, "stderr": "reload refused"}}
+        }
         result = self.run_helper("profile-selector", "animation")
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("recovery failed", result.stderr)
@@ -251,7 +288,9 @@ assert(result.stdout=='partial' and result.stderr=='diagnostic')
         self.assertEqual(self.calls("hyprctl"), [])
 
     def test_game_mode_toggles_even_when_animations_are_already_disabled(self):
-        self.scenario["hyprctl"] = {"operations": {"getoption animations:enabled": {"stdout": '{"bool":false}'}}}
+        self.scenario["hyprctl"] = {
+            "operations": {"getoption animations:enabled": {"stdout": '{"bool":false}'}}
+        }
         first = self.run_helper("game-mode")
         self.assertEqual(first.returncode, 0, first.stderr)
         self.assertIn("Enabled", self.calls("notify-send")[-1])
@@ -261,7 +300,9 @@ assert(result.stdout=='partial' and result.stderr=='diagnostic')
         self.assertEqual(second.returncode, 0, second.stderr)
         self.assertIn("Disabled", self.calls("notify-send")[-1])
         self.assertFalse(saved.exists())
-        self.assertTrue(any('["enabled"]=false' in " ".join(args) for args in self.calls("hyprctl")))
+        self.assertTrue(
+            any('["enabled"]=false' in " ".join(args) for args in self.calls("hyprctl"))
+        )
 
     def test_invalid_declarations_and_profile_categories_fail_before_native_actions(self):
         (self.config / "lua/config/effects.toml").write_text('[sounds]\nmute="yes"\n')
@@ -278,7 +319,9 @@ assert(result.stdout=='partial' and result.stderr=='diagnostic')
         result = self.run_helper("portal-hyprland")
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("backend unavailable", result.stderr)
-        self.assertEqual(self.calls("systemctl"), [["--user", "restart", "xdg-desktop-portal-hyprland.service"]])
+        self.assertEqual(
+            self.calls("systemctl"), [["--user", "restart", "xdg-desktop-portal-hyprland.service"]]
+        )
         self.assertEqual(self.calls("pkill"), [])
 
 

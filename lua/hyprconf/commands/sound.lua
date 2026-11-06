@@ -44,11 +44,7 @@ function M.sound(kind)
   }) do
     local found = os.execute("test -d " .. shell.quote(dir))
         and shell.capture(
-          "find -L "
-            .. shell.quote(dir)
-            .. " -name "
-            .. shell.quote(pattern)
-            .. " -print -quit"
+          "find -L " .. shell.quote(dir) .. " -name " .. shell.quote(pattern) .. " -print -quit"
         )
       or ""
     if found ~= "" then

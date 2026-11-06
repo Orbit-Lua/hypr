@@ -32,9 +32,7 @@ os.execute = function(command)
   error("configuration launched a process while loading: " .. tostring(command))
 end
 io.popen = function(command)
-  error(
-    "configuration read command output while loading: " .. tostring(command)
-  )
+  error("configuration read command output while loading: " .. tostring(command))
 end
 -- luacheck: pop
 

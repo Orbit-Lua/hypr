@@ -15,12 +15,7 @@ M.null = {}
 ---@param message string
 ---@return string
 local function decode_error(content, pos, message)
-  return string.format(
-    "invalid JSON at byte %d of %d: %s",
-    pos,
-    #content,
-    message
-  )
+  return string.format("invalid JSON at byte %d of %d: %s", pos, #content, message)
 end
 
 ---@param content string
@@ -71,10 +66,7 @@ local function parse_string(content, pos)
         pos = pos + 2
       elseif escaped == "u" then
         local hex = content:sub(pos + 2, pos + 5)
-        assert(
-          hex:match("^%x%x%x%x$"),
-          decode_error(content, pos, "invalid Unicode escape")
-        )
+        assert(hex:match("^%x%x%x%x$"), decode_error(content, pos, "invalid Unicode escape"))
         local code = assert(tonumber(hex, 16))
         pos = pos + 6
         if code >= 0xd800 and code <= 0xdbff then
@@ -97,10 +89,7 @@ local function parse_string(content, pos)
         error(decode_error(content, pos, "invalid escape"), 0)
       end
     else
-      assert(
-        char:byte() >= 32,
-        decode_error(content, pos, "unescaped control character")
-      )
+      assert(char:byte() >= 32, decode_error(content, pos, "unescaped control character"))
       result[#result + 1] = char
       pos = pos + 1
     end
@@ -160,10 +149,7 @@ local function parse_object(content, pos)
       error(decode_error(content, pos, "expected ':'"), 0)
     end
 
-    assert(
-      result[key] == nil,
-      decode_error(content, pos, "duplicate object key")
-    )
+    assert(result[key] == nil, decode_error(content, pos, "duplicate object key"))
     result[key], pos = parse_value(content, skip_space(content, pos + 1))
     pos = skip_space(content, pos)
 
@@ -264,10 +250,7 @@ function M.encode(value)
     return tostring(value)
   end
   if type(value) == "number" then
-    assert(
-      value == value and value ~= math.huge and value ~= -math.huge,
-      "invalid JSON number"
-    )
+    assert(value == value and value ~= math.huge and value ~= -math.huge, "invalid JSON number")
     return tostring(value)
   end
   if type(value) == "string" then
@@ -285,11 +268,7 @@ function M.encode(value)
   local keys, array = {}, #value > 0
   for key in pairs(value) do
     keys[#keys + 1] = key
-    array = array
-      and type(key) == "number"
-      and key % 1 == 0
-      and key >= 1
-      and key <= #value
+    array = array and type(key) == "number" and key % 1 == 0 and key >= 1 and key <= #value
   end
   local parts = {}
   if array then

@@ -37,19 +37,12 @@ function M.screenshot(mode)
   local suffix
   if mode == "--area" or mode == "--swappy" then
     local selection = process.run({ "slurp" }, { timeout = false })
-    if
-      selection.code == 1
-      and selection.stdout == ""
-      and selection.stderr == ""
-    then
+    if selection.code == 1 and selection.stdout == "" and selection.stderr == "" then
       return
     end
     process.check(selection, "screen selection")
     local geometry = selection.stdout:gsub("%s+$", "")
-    assert(
-      geometry:match("^%-?%d+,%-?%d+ %d+x%d+$"),
-      "invalid screenshot selection"
-    )
+    assert(geometry:match("^%-?%d+,%-?%d+ %d+x%d+$"), "invalid screenshot selection")
     command[#command + 1], command[#command + 2] = "-g", geometry
   elseif mode == "--active" then
     ---@type Hyprconf.HyprWindow
@@ -65,23 +58,18 @@ function M.screenshot(mode)
   end
   command[#command + 1] = "-"
   local image = process.check(process.run(command), "screenshot capture").stdout
-  assert(
-    image:sub(1, #png) == png and #image > #png,
-    "screenshot capture produced no PNG image"
-  )
+  assert(image:sub(1, #png) == png and #image > #png, "screenshot capture produced no PNG image")
 
   local pictures = process
     .check(process.run({ "xdg-user-dir", "PICTURES" }), "pictures directory").stdout
     :gsub("%s+$", "")
-  local directory = (pictures ~= "" and pictures or ctx.home .. "/Pictures")
-    .. "/Screenshots"
+  local directory = (pictures ~= "" and pictures or ctx.home .. "/Pictures") .. "/Screenshots"
   fs.mkdir_p(directory)
-  local temporary = process
-    .check(
-      process.run({ "mktemp", directory .. "/.capture.XXXXXX" }),
-      "screenshot temporary file"
-    ).stdout
-    :gsub("%s+$", "")
+  local temporary_result = process.check(
+    process.run({ "mktemp", directory .. "/.capture.XXXXXX" }),
+    "screenshot temporary file"
+  )
+  local temporary = temporary_result.stdout:gsub("%s+$", "")
   local ok, err = pcall(function()
     fs.write(temporary, image)
     local target = temporary
@@ -103,36 +91,23 @@ function M.screenshot(mode)
         index = index + 1
       end
     end
-    local copied = process.run(
-      { "wl-copy", "--type", "image/png" },
-      { stdin = image }
-    )
+    local copied = process.run({ "wl-copy", "--type", "image/png" }, { stdin = image })
     if not copied.ok then
       if mode ~= "--swappy" then
-        notify.warn(
-          "Screenshot",
-          "Saved; clipboard copy failed.",
-          "shot-notify"
-        )
+        notify.warn("Screenshot", "Saved; clipboard copy failed.", "shot-notify")
       end
       process.check(copied, "screenshot clipboard copy")
     end
     pcall(sound.sound, "screenshot")
-    local action = notify.send(
-      "Screenshot",
-      mode == "--swappy" and "Captured by Swappy." or "Saved.",
-      {
+    local action =
+      notify.send("Screenshot", mode == "--swappy" and "Captured by Swappy." or "Saved.", {
         tag = "shot-notify",
         timeout = 10000,
         actions = { "action1=Open", "action2=Delete" },
-      }
-    )
+      })
     if action == "action1" then
       if mode == "--swappy" then
-        process.check(
-          process.run({ "swappy", "-f", target }, { timeout = false }),
-          "Swappy"
-        )
+        process.check(process.run({ "swappy", "-f", target }, { timeout = false }), "Swappy")
       else
         require("hyprconf.util.shell").exec_bg(
           "xdg-open " .. require("hyprconf.util.shell").quote(target)

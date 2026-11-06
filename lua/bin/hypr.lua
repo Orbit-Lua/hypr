@@ -74,8 +74,7 @@ local ok, err = pcall(function()
     for _, value in ipairs(arg) do
       invocation[#invocation + 1] = value
     end
-    local result =
-      require("hyprconf.runtime.process").run(invocation, { timeout = false })
+    local result = require("hyprconf.runtime.process").run(invocation, { timeout = false })
     if result.code == 75 then
       error("another Hyprland setting change is in progress", 0)
     end
@@ -83,9 +82,7 @@ local ok, err = pcall(function()
     io.stderr:write(result.stderr)
     os.exit(result.code)
   end
-  require("hyprconf.commands." .. command.owner)[command.action](
-    table.unpack(arg, 2)
-  )
+  require("hyprconf.commands." .. command.owner)[command.action](table.unpack(arg, 2))
 end)
 if not ok then
   io.stderr:write("hypr: " .. tostring(err) .. "\n")

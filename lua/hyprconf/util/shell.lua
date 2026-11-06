@@ -26,8 +26,7 @@ end
 ---@param command string
 ---@return boolean
 function M.command_exists(command)
-  return os.execute("command -v " .. M.quote(command) .. " >/dev/null 2>&1")
-    == true
+  return os.execute("command -v " .. M.quote(command) .. " >/dev/null 2>&1") == true
 end
 
 return M

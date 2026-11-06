@@ -32,10 +32,7 @@ end
 local function rainbow_mode()
   local saved = fs.read(mode_file)
   if saved then
-    assert(
-      saved:match("^%s*[%w_]+%s*$") and parse_mode(saved),
-      "invalid saved border mode"
-    )
+    assert(saved:match("^%s*[%w_]+%s*$") and parse_mode(saved), "invalid saved border mode")
   end
   return parse_mode(saved)
     or parse_mode((declarations.read("effects").rainbow or {}).default)

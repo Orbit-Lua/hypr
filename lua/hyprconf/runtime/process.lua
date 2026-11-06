@@ -70,17 +70,10 @@ function M.run(argv, opts)
     )
     assert(
       success,
-      "native command shell failed: "
-        .. tostring(reason)
-        .. " "
-        .. tostring(shell_status)
+      "native command shell failed: " .. tostring(reason) .. " " .. tostring(shell_status)
     )
-    local status =
-      assert(tonumber(read(files[4])), "invalid native command status")
-    assert(
-      status >= 0 and status <= 255 and status % 1 == 0,
-      "invalid native command status"
-    )
+    local status = assert(tonumber(read(files[4])), "invalid native command status")
+    assert(status >= 0 and status <= 255 and status % 1 == 0, "invalid native command status")
     return {
       ok = status == 0,
       code = status,

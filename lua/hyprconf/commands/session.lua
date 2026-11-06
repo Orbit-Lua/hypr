@@ -32,38 +32,26 @@ function M.kill_active()
   local pid = tonumber(active.pid)
   -- `kill 0` and `kill -1` would signal the process group or every process.
   if not pid or pid <= 1 or pid % 1 ~= 0 then
-    notify.error(
-      "Kill Active Window",
-      "No active window PID found.",
-      "kill-active-window"
-    )
+    notify.error("Kill Active Window", "No active window PID found.", "kill-active-window")
     os.exit(1)
   end
-  process.check(
-    process.run({ "kill", "--", tostring(pid) }),
-    "kill active window"
-  )
+  process.check(process.run({ "kill", "--", tostring(pid) }), "kill active window")
 end
 
 ---@return nil
 function M.touchpad()
   local native = hyprctl.device_enabled(ctx.touchpad_device)
   local receipt = fs.read(ctx.touchpad_state)
-  assert(
-    receipt == nil or receipt == "true" or receipt == "false",
-    "invalid touchpad state"
-  )
+  assert(receipt == nil or receipt == "true" or receipt == "false", "invalid touchpad state")
   local previous = native
   if previous == nil then
     previous = receipt ~= "false"
   end
   local enabled = not previous
   hyprctl.set_device(ctx.touchpad_device, enabled)
-  local saved, err =
-    pcall(fs.atomic_write, ctx.touchpad_state, tostring(enabled))
+  local saved, err = pcall(fs.atomic_write, ctx.touchpad_state, tostring(enabled))
   if not saved then
-    local restored, restore_error =
-      pcall(hyprctl.set_device, ctx.touchpad_device, previous)
+    local restored, restore_error = pcall(hyprctl.set_device, ctx.touchpad_device, previous)
     error(
       tostring(err)
         .. (

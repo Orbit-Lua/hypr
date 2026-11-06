@@ -51,10 +51,7 @@ end
 ---@param path string
 ---@return nil
 function M.mkdir_p(path)
-  assert(
-    os.execute("mkdir -p " .. shell.quote(path)),
-    "could not create directory: " .. path
-  )
+  assert(os.execute("mkdir -p " .. shell.quote(path)), "could not create directory: " .. path)
 end
 
 ---@param path string
@@ -99,10 +96,8 @@ function M.list_files(dir, pattern)
     }),
     "list profile files"
   )
-  local sorted = process.check(
-    process.run({ "sort", "-V" }, { stdin = found.stdout }),
-    "sort profile files"
-  )
+  local sorted =
+    process.check(process.run({ "sort", "-V" }, { stdin = found.stdout }), "sort profile files")
   local files = {}
   for path in sorted.stdout:gmatch("[^\n]+") do
     files[#files + 1] = path

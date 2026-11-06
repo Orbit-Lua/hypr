@@ -1,10 +1,10 @@
 """Parse each shipped profile with the native compositor, without a session."""
 
-from pathlib import Path
 import os
 import shutil
 import subprocess
 import tempfile
+from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -30,13 +30,20 @@ with tempfile.TemporaryDirectory(prefix="hypr-profiles-") as directory:
             )
             result = subprocess.run(
                 ["hyprland", "--verify-config", "--config", str(wrapper)],
+                check=False,
                 env={
-                    "HOME": str(sandbox), "PATH": os.environ["PATH"],
-                    "XDG_RUNTIME_DIR": str(runtime), "HYPR_CONFIG_DIR": str(config),
+                    "HOME": str(sandbox),
+                    "PATH": os.environ["PATH"],
+                    "XDG_RUNTIME_DIR": str(runtime),
+                    "HYPR_CONFIG_DIR": str(config),
                     "HYPR_STATE_DIR": str(state),
                 },
-                capture_output=True, text=True, timeout=30,
+                capture_output=True,
+                text=True,
+                timeout=30,
             )
             if result.returncode:
-                raise AssertionError(f"{category}/{profile.name}:\n{result.stdout}\n{result.stderr}")
+                raise AssertionError(
+                    f"{category}/{profile.name}:\n{result.stdout}\n{result.stderr}"
+                )
     print("All shipped profiles passed native configuration parsing")

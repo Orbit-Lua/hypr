@@ -30,10 +30,7 @@ local vicinae = require("hyprconf.runtime.vicinae")
 local M = {}
 
 local hints_class = "hypr-key-hints-"
-  .. (os.getenv("HYPRLAND_INSTANCE_SIGNATURE") or "default"):gsub(
-    "[^%w_-]",
-    "_"
-  )
+  .. (os.getenv("HYPRLAND_INSTANCE_SIGNATURE") or "default"):gsub("[^%w_-]", "_")
 local function close_key_hints()
   local result = process.run({
     "pkill",
@@ -81,8 +78,7 @@ function M.keybinds()
   local lines = {}
   for _, entry in ipairs(keymap.collect()) do
     if entry.description then
-      lines[#lines + 1] =
-        string.format("%-32s %s", entry.keys, entry.description)
+      lines[#lines + 1] = string.format("%-32s %s", entry.keys, entry.description)
     end
   end
 
@@ -116,9 +112,7 @@ function M.web_search()
     no_quick_look = true,
   })
   if status == 0 and query ~= "" then
-    shell.exec_bg(
-      "xdg-open " .. shell.quote(ctx.search_engine .. urlencode(query))
-    )
+    shell.exec_bg("xdg-open " .. shell.quote(ctx.search_engine .. urlencode(query)))
   end
 end
 
@@ -131,7 +125,8 @@ local function edit(path)
   if not os.execute("test -w " .. shell.quote(target)) then
     notify.error(
       "Quick Settings",
-      "The configuration is read-only. Use a writable checkout as the configuration root to edit it live.",
+      "The configuration is read-only. "
+        .. "Use a writable checkout as the configuration root to edit it live.",
       "quick-settings"
     )
     return

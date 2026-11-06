@@ -14,8 +14,7 @@ local M = {}
 ---@return string
 function M.serialize(value)
   if type(value) ~= "table" then
-    return type(value) == "string" and string.format("%q", value)
-      or tostring(value)
+    return type(value) == "string" and string.format("%q", value) or tostring(value)
   end
   if value.dispatcher then
     return value.dispatcher

@@ -36,10 +36,7 @@ M.categories = declarations.profile_categories
 ---@param name string
 ---@return string
 function M.path(category, name)
-  assert(
-    category == "animation" or category == "monitor",
-    "invalid profile category"
-  )
+  assert(category == "animation" or category == "monitor", "invalid profile category")
   assert(declarations.profile_name(name), "invalid profile name")
   return ctx.config_dir .. "/profiles/" .. category .. "/" .. name .. ".lua"
 end
@@ -47,10 +44,7 @@ end
 ---@param category Hyprconf.ProfileCategory
 ---@return string
 function M.selection_file(category)
-  assert(
-    category == "animation" or category == "monitor",
-    "invalid profile category"
-  )
+  assert(category == "animation" or category == "monitor", "invalid profile category")
   return ctx.state_dir .. "/profiles/selected/" .. category
 end
 
@@ -77,8 +71,7 @@ end
 ---@param path string
 ---@return string
 function M.label(path)
-  return (fs.read(path) or ""):match("^%-%- profile:%s*([^\n]+)")
-    or fs.stem(path)
+  return (fs.read(path) or ""):match("^%-%- profile:%s*([^\n]+)") or fs.stem(path)
 end
 
 ---@param category Hyprconf.ProfileCategory
@@ -93,9 +86,7 @@ function M.load(category)
     if category == "monitor" then
       error(err, 0)
     end
-    print(
-      "[WARN] Unable to load " .. category .. " profile " .. path .. ": " .. err
-    )
+    print("[WARN] Unable to load " .. category .. " profile " .. path .. ": " .. err)
   end
   return ok
 end

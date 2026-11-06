@@ -38,8 +38,7 @@ M.files = "thunar"
 M.editor = os.getenv("EDITOR") or "nvim"
 M.search_engine = "https://www.google.com/search?q="
 M.touchpad_device = "asue1209:00-04f3:319f-touchpad"
-M.touchpad_state = (os.getenv("XDG_RUNTIME_DIR") or "/tmp")
-  .. "/touchpad.status"
+M.touchpad_state = (os.getenv("XDG_RUNTIME_DIR") or "/tmp") .. "/touchpad.status"
 
 ---@param name string File name under lua/config without the .toml suffix.
 ---@return string

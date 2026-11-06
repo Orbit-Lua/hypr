@@ -47,10 +47,8 @@ local game_options = {
 
 ---@return string
 local function game_path()
-  local signature = assert(
-    os.getenv("HYPRLAND_INSTANCE_SIGNATURE"),
-    "Hyprland session identity is unavailable"
-  )
+  local signature =
+    assert(os.getenv("HYPRLAND_INSTANCE_SIGNATURE"), "Hyprland session identity is unavailable")
   assert(signature:match("^[%w_.-]+$"), "invalid Hyprland session identity")
   return (os.getenv("XDG_RUNTIME_DIR") or ctx.state_dir)
     .. "/hypr/game-mode-"
@@ -90,8 +88,7 @@ local function original_options(contents)
       assert(type(value) == "boolean", "invalid saved game mode boolean")
     else
       assert(
-        type(value) == "number"
-          or (type(value) == "string" and value:match("^[%d%s.%-]+$")),
+        type(value) == "number" or (type(value) == "string" and value:match("^[%d%s.%-]+$")),
         "invalid saved game mode number"
       )
     end
@@ -131,10 +128,7 @@ function M.game_mode()
           original[name] = option.int == 1
         end
       else
-        original[name] = option.custom
-          or option.str
-          or option.int
-          or option.float
+        original[name] = option.custom or option.str or option.int or option.float
         assert(original[name] ~= nil, "game mode option is unavailable")
       end
     end

@@ -37,14 +37,9 @@ function M.send(title, body, opts)
     end
   end
   args[#args + 1], args[#args + 2] = title, body or ""
-  local ok, result =
-    pcall(process.run, args, { timeout = not opts.actions and 10 or false })
+  local ok, result = pcall(process.run, args, { timeout = not opts.actions and 10 or false })
   if not ok or not result.ok then
-    io.stderr:write(
-      "notification failed: "
-        .. tostring(ok and result.stderr or result)
-        .. "\n"
-    )
+    io.stderr:write("notification failed: " .. tostring(ok and result.stderr or result) .. "\n")
     return ""
   end
   if opts.actions then

@@ -16,8 +16,7 @@ local max_workspace = 10
 ---@return fun()
 local function layout_bind(dispatchers)
   return function()
-    local workspace = hl.get_active_special_workspace()
-      or hl.get_active_workspace()
+    local workspace = hl.get_active_special_workspace() or hl.get_active_workspace()
     if not workspace then
       return
     end
@@ -57,11 +56,7 @@ local zoom_out = util.zoom_command("/", "2.0")
 
 ---@return nil
 local function applications()
-  bind_exec(
-    mod .. " + D",
-    "application launcher",
-    "$vicinae 'vicinae://toggle'"
-  )
+  bind_exec(mod .. " + D", "application launcher", "$vicinae 'vicinae://toggle'")
   bind_exec(mod .. " + B", "open default browser", [[xdg-open "https://"]])
   bind_exec(mod .. " + A", "desktop overview", "$hyprLua overview")
   bind_exec(mod .. " + Return", "open terminal", "$term")
@@ -79,11 +74,7 @@ local function applications()
     "window switcher",
     "$vicinae 'vicinae://launch/wm/switch-windows?toggle=true'"
   )
-  bind_exec(
-    mod .. " + F",
-    "file search",
-    "$vicinae 'vicinae://launch/files/search?toggle=true'"
-  )
+  bind_exec(mod .. " + F", "file search", "$vicinae 'vicinae://launch/files/search?toggle=true'")
   bind_exec(
     mod .. " + period",
     "emoji picker",
@@ -104,35 +95,19 @@ local function applications()
     "toggle active window opacity"
   )
   bind_exec(mod .. " + SHIFT + slash", "search keybinds", "$hyprLua keybinds")
-  bind_exec(
-    mod .. " + SHIFT + A",
-    "profile selector",
-    "$hyprLua profile-selector"
-  )
+  bind_exec(mod .. " + SHIFT + A", "profile selector", "$hyprLua profile-selector")
 end
 
 ---@return nil
 local function windows()
   bind(mod .. " + SHIFT + F", hl.dsp.window.fullscreen(), "fullscreen")
   bind(mod .. " + CTRL + F", raw_dispatch("fullscreen", "1"), "maximize window")
-  bind(
-    mod .. " + SPACE",
-    hl.dsp.window.float({ action = "toggle" }),
-    "toggle floating"
-  )
-  bind(
-    mod .. " + ALT + SPACE",
-    raw_dispatch("workspaceopt", "allfloat"),
-    "float all windows"
-  )
+  bind(mod .. " + SPACE", hl.dsp.window.float({ action = "toggle" }), "toggle floating")
+  bind(mod .. " + ALT + SPACE", raw_dispatch("workspaceopt", "allfloat"), "float all windows")
   bind("CTRL + ALT + Delete", hl.dsp.exit(), "exit hyprland")
   bind(mod .. " + Q", hl.dsp.window.close(), "close window")
   bind_exec(mod .. " + SHIFT + Q", "kill process", "$hyprLua kill-active")
-  bind_exec(
-    "CTRL + ALT + L",
-    "session menu",
-    "noctalia msg panel-toggle session"
-  )
+  bind_exec("CTRL + ALT + L", "session menu", "noctalia msg panel-toggle session")
 
   bind("ALT + tab", hl.dsp.window.cycle_next(), "cycle next window")
   bind("ALT + tab", hl.dsp.window.bring_to_top(), "bring active to top")
@@ -164,74 +139,22 @@ local function windows()
     "resize down",
     { repeating = true }
   )
-  bind(
-    mod .. " + CTRL + left",
-    hl.dsp.window.move({ direction = "left" }),
-    "move left"
-  )
-  bind(
-    mod .. " + CTRL + right",
-    hl.dsp.window.move({ direction = "right" }),
-    "move right"
-  )
-  bind(
-    mod .. " + CTRL + up",
-    hl.dsp.window.move({ direction = "up" }),
-    "move up"
-  )
-  bind(
-    mod .. " + CTRL + down",
-    hl.dsp.window.move({ direction = "down" }),
-    "move down"
-  )
-  bind(
-    mod .. " + ALT + left",
-    hl.dsp.window.swap({ direction = "left" }),
-    "swap left"
-  )
-  bind(
-    mod .. " + ALT + right",
-    hl.dsp.window.swap({ direction = "right" }),
-    "swap right"
-  )
-  bind(
-    mod .. " + ALT + up",
-    hl.dsp.window.swap({ direction = "up" }),
-    "swap up"
-  )
-  bind(
-    mod .. " + ALT + down",
-    hl.dsp.window.swap({ direction = "down" }),
-    "swap down"
-  )
+  bind(mod .. " + CTRL + left", hl.dsp.window.move({ direction = "left" }), "move left")
+  bind(mod .. " + CTRL + right", hl.dsp.window.move({ direction = "right" }), "move right")
+  bind(mod .. " + CTRL + up", hl.dsp.window.move({ direction = "up" }), "move up")
+  bind(mod .. " + CTRL + down", hl.dsp.window.move({ direction = "down" }), "move down")
+  bind(mod .. " + ALT + left", hl.dsp.window.swap({ direction = "left" }), "swap left")
+  bind(mod .. " + ALT + right", hl.dsp.window.swap({ direction = "right" }), "swap right")
+  bind(mod .. " + ALT + up", hl.dsp.window.swap({ direction = "up" }), "swap up")
+  bind(mod .. " + ALT + down", hl.dsp.window.swap({ direction = "down" }), "swap down")
 
   bind(mod .. " + G", hl.dsp.group.toggle(), "toggle group")
   bind(mod .. " + Tab", raw_dispatch("changegroupactive", "f"), "next in group")
-  bind(
-    mod .. " + CTRL + tab",
-    raw_dispatch("changegroupactive"),
-    "change group active"
-  )
-  bind(
-    mod .. " + SHIFT + Tab",
-    raw_dispatch("changegroupactive", "b"),
-    "prev in group"
-  )
-  bind(
-    mod .. " + CTRL + K",
-    hl.dsp.group.move_window("l"),
-    "move into group left"
-  )
-  bind(
-    mod .. " + CTRL + L",
-    hl.dsp.group.move_window("r"),
-    "move into group right"
-  )
-  bind(
-    mod .. " + CTRL + H",
-    raw_dispatch("moveoutofgroup"),
-    "move out of group"
-  )
+  bind(mod .. " + CTRL + tab", raw_dispatch("changegroupactive"), "change group active")
+  bind(mod .. " + SHIFT + Tab", raw_dispatch("changegroupactive", "b"), "prev in group")
+  bind(mod .. " + CTRL + K", hl.dsp.group.move_window("l"), "move into group left")
+  bind(mod .. " + CTRL + L", hl.dsp.group.move_window("r"), "move into group right")
+  bind(mod .. " + CTRL + H", raw_dispatch("moveoutofgroup"), "move out of group")
 end
 
 ---@return nil
@@ -330,24 +253,12 @@ end
 local function workspaces()
   bind(mod .. " + J", workspace_step(1), "next workspace")
   bind(mod .. " + K", workspace_step(-1), "previous workspace")
-  bind(
-    mod .. " + SHIFT + J",
-    workspace_step(1, true),
-    "move window to next workspace"
-  )
-  bind(
-    mod .. " + SHIFT + K",
-    workspace_step(-1, true),
-    "move window to previous workspace"
-  )
+  bind(mod .. " + SHIFT + J", workspace_step(1, true), "move window to next workspace")
+  bind(mod .. " + SHIFT + K", workspace_step(-1, true), "move window to previous workspace")
 
   for i = 1, 10 do
     local keycode = 9 + i
-    bind(
-      mod .. " + code:" .. keycode,
-      hl.dsp.focus({ workspace = i }),
-      "workspace " .. i
-    )
+    bind(mod .. " + code:" .. keycode, hl.dsp.focus({ workspace = i }), "workspace " .. i)
     bind(
       mod .. " + SHIFT + code:" .. keycode,
       hl.dsp.window.move({ workspace = i }),
@@ -383,28 +294,14 @@ local function workspaces()
   bind(mod .. " + mouse_down", workspace_step(1), "next workspace")
   bind(mod .. " + mouse_up", workspace_step(-1), "previous workspace")
 
-  bind(
-    mod .. " + SHIFT + U",
-    hl.dsp.window.move({ workspace = "special" }),
-    "move to special"
-  )
+  bind(mod .. " + SHIFT + U", hl.dsp.window.move({ workspace = "special" }), "move to special")
   bind(mod .. " + U", hl.dsp.workspace.toggle_special(), "toggle special")
 end
 
 ---@return nil
 local function devices()
-  bind(
-    mod .. " + mouse:272",
-    hl.dsp.window.drag(),
-    "move window",
-    { mouse = true }
-  )
-  bind(
-    mod .. " + mouse:273",
-    hl.dsp.window.resize(),
-    "resize window",
-    { mouse = true }
-  )
+  bind(mod .. " + mouse:272", hl.dsp.window.drag(), "move window", { mouse = true })
+  bind(mod .. " + mouse:273", hl.dsp.window.resize(), "resize window", { mouse = true })
   bind_exec(mod .. " + ALT + mouse_down", "zoom in", zoom_in)
   bind_exec(mod .. " + ALT + mouse_up", "zoom out", zoom_out)
 
@@ -420,76 +317,21 @@ local function devices()
     "noctalia msg volume-up",
     { locked = true, repeating = true }
   )
-  bind_exec(
-    "XF86AudioMicMute",
-    "toggle mic mute",
-    "noctalia msg mic-mute",
-    { locked = true }
-  )
-  bind_exec(
-    "XF86AudioMute",
-    "toggle mute",
-    "noctalia msg volume-mute",
-    { locked = true }
-  )
+  bind_exec("XF86AudioMicMute", "toggle mic mute", "noctalia msg mic-mute", { locked = true })
+  bind_exec("XF86AudioMute", "toggle mute", "noctalia msg volume-mute", { locked = true })
   bind_exec("XF86Sleep", "sleep", "systemctl suspend", { locked = true })
-  bind_exec(
-    "XF86AudioPause",
-    "pause",
-    "noctalia msg media pause",
-    { locked = true }
-  )
-  bind_exec(
-    "XF86AudioPlay",
-    "play",
-    "noctalia msg media play",
-    { locked = true }
-  )
-  bind_exec(
-    "XF86AudioNext",
-    "next track",
-    "noctalia msg media next",
-    { locked = true }
-  )
-  bind_exec(
-    "XF86AudioPrev",
-    "prev track",
-    "noctalia msg media previous",
-    { locked = true }
-  )
-  bind_exec(
-    "XF86AudioStop",
-    "stop",
-    "noctalia msg media stop",
-    { locked = true }
-  )
+  bind_exec("XF86AudioPause", "pause", "noctalia msg media pause", { locked = true })
+  bind_exec("XF86AudioPlay", "play", "noctalia msg media play", { locked = true })
+  bind_exec("XF86AudioNext", "next track", "noctalia msg media next", { locked = true })
+  bind_exec("XF86AudioPrev", "prev track", "noctalia msg media previous", { locked = true })
+  bind_exec("XF86AudioStop", "stop", "noctalia msg media stop", { locked = true })
 
   bind_exec(mod .. " + Print", "screenshot now", "$hyprLua screenshot --now")
-  bind_exec(
-    mod .. " + SHIFT + Print",
-    "screenshot area",
-    "$hyprLua screenshot --area"
-  )
-  bind_exec(
-    mod .. " + CTRL + Print",
-    "screenshot in 5s",
-    "$hyprLua screenshot --in5"
-  )
-  bind_exec(
-    mod .. " + CTRL + SHIFT + Print",
-    "screenshot in 10s",
-    "$hyprLua screenshot --in10"
-  )
-  bind_exec(
-    "ALT + Print",
-    "screenshot active window",
-    "$hyprLua screenshot --active"
-  )
-  bind_exec(
-    mod .. " + SHIFT + S",
-    "screenshot (swappy)",
-    "$hyprLua screenshot --swappy"
-  )
+  bind_exec(mod .. " + SHIFT + Print", "screenshot area", "$hyprLua screenshot --area")
+  bind_exec(mod .. " + CTRL + Print", "screenshot in 5s", "$hyprLua screenshot --in5")
+  bind_exec(mod .. " + CTRL + SHIFT + Print", "screenshot in 10s", "$hyprLua screenshot --in10")
+  bind_exec("ALT + Print", "screenshot active window", "$hyprLua screenshot --active")
+  bind_exec(mod .. " + SHIFT + S", "screenshot (swappy)", "$hyprLua screenshot --swappy")
   bind_exec(
     "XF86MonBrightnessUp",
     "brightness up",

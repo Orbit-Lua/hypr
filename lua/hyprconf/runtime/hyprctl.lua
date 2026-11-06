@@ -26,10 +26,7 @@ local function literal(value)
     return string.format("%q", value)
   end
   if type(value) == "number" then
-    assert(
-      value == value and math.abs(value) ~= math.huge,
-      "invalid config number"
-    )
+    assert(value == value and math.abs(value) ~= math.huge, "invalid config number")
     return tostring(value)
   end
   if type(value) == "boolean" then
@@ -52,8 +49,7 @@ end
 ---@param code string Lua evaluated inside Hyprland.
 ---@return nil
 function M.eval(code)
-  local result =
-    process.check(process.run({ "hyprctl", "eval", code }), "hyprctl eval")
+  local result = process.check(process.run({ "hyprctl", "eval", code }), "hyprctl eval")
   assert(
     result.stdout:match("^%s*ok%s*$"),
     "hyprctl eval failed: " .. result.stdout:gsub("%s+$", "")
@@ -71,10 +67,7 @@ end
 ---@param ... string
 ---@return any
 function M.json(command, ...)
-  local result = process.check(
-    process.run({ "hyprctl", "-j", command, ... }),
-    "hyprctl query"
-  )
+  local result = process.check(process.run({ "hyprctl", "-j", command, ... }), "hyprctl query")
   local ok, value = pcall(json.decode, result.stdout)
   assert(ok, "hyprctl returned malformed JSON")
   return value
@@ -101,10 +94,7 @@ end
 ---@return Hyprconf.HyprWindow
 function M.active_window()
   local value = M.json("activewindow")
-  assert(
-    type(value) == "table" and value ~= json.null,
-    "hyprctl returned an invalid window"
-  )
+  assert(type(value) == "table" and value ~= json.null, "hyprctl returned an invalid window")
   for _, field in ipairs({ "at", "size" }) do
     if value[field] ~= nil then
       assert(
@@ -150,8 +140,7 @@ function M.check_errors()
   end
   assert(
     #messages == 0,
-    "Hyprland rejected the reloaded configuration: "
-      .. table.concat(messages, "\n")
+    "Hyprland rejected the reloaded configuration: " .. table.concat(messages, "\n")
   )
 end
 
@@ -183,13 +172,7 @@ end
 ---@param name string
 ---@param enabled boolean
 function M.set_device(name, enabled)
-  M.eval(
-    string.format(
-      "hl.device({ name = %q, enabled = %s })",
-      name,
-      tostring(enabled)
-    )
-  )
+  M.eval(string.format("hl.device({ name = %q, enabled = %s })", name, tostring(enabled)))
   M.check_errors()
 end
 
