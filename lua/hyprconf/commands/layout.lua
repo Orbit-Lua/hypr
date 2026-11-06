@@ -1,3 +1,4 @@
+-- Toggle layout options and preserve the original game-mode state.
 local hyprctl = require("hyprconf.runtime.hyprctl")
 local notify = require("hyprconf.runtime.notify")
 
@@ -110,30 +111,37 @@ function M.reapply_game_mode()
   hyprctl.game_opacity(true)
 end
 
+---@param name string
+---@param default boolean|number
+---@return boolean|number|string
+local function current_game_option(name, default)
+  local option = hyprctl.option(name)
+  if type(default) == "boolean" then
+    if type(option.bool) == "boolean" then
+      return option.bool
+    end
+    assert(option.int == 0 or option.int == 1, "invalid game mode option")
+    return option.int == 1
+  end
+  local value = option.custom or option.str or option.int or option.float
+  assert(value ~= nil, "game mode option is unavailable")
+  return value
+end
+
+---@return table<string, boolean|number|string>
+local function capture_game_options()
+  local original = {}
+  for name, default in pairs(game_options) do
+    original[name] = current_game_option(name, default)
+  end
+  return original_options(json.encode(original))
+end
+
 ---@return nil
 function M.game_mode()
   local path = game_path()
   local contents = fs.read(path)
-  local original = {}
-  if contents then
-    original = original_options(contents)
-  else
-    for name, default in pairs(game_options) do
-      local option = hyprctl.option(name)
-      if type(default) == "boolean" then
-        if type(option.bool) == "boolean" then
-          original[name] = option.bool
-        else
-          assert(option.int == 0 or option.int == 1, "invalid game mode option")
-          original[name] = option.int == 1
-        end
-      else
-        original[name] = option.custom or option.str or option.int or option.float
-        assert(original[name] ~= nil, "game mode option is unavailable")
-      end
-    end
-    original_options(json.encode(original))
-  end
+  local original = contents and original_options(contents) or capture_game_options()
   state.change(path, not contents and json.encode(original) or nil, function()
     local enabled = fs.exists(path)
     apply_options(enabled and game_options or original)

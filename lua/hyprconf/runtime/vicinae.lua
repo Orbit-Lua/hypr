@@ -1,3 +1,4 @@
+-- Adapt Vicinae menus to stable choice identities and checked native status.
 local notify = require("hyprconf.runtime.notify")
 local process = require("hyprconf.runtime.process")
 
@@ -64,12 +65,11 @@ function M.dmenu(lines, opts)
   return result.stdout:gsub("%s+$", ""), result.code
 end
 
--- Shows `labels` with `opts.current` marked and returns the chosen label.
 ---@param labels (string|Hyprconf.MenuChoice)[]
----@param opts? Hyprconf.VicinaeOptions
----@return string?
-function M.select(labels, opts)
-  opts = opts or {}
+---@param current string?
+---@return string[]
+---@return table<string, string>
+local function menu_rows(labels, current)
   local rows, identities, seen = {}, {}, {}
   for index, entry in ipairs(labels) do
     local label = type(entry) == "table" and entry.label or entry
@@ -77,10 +77,21 @@ function M.select(labels, opts)
     assert(type(label) == "string" and type(id) == "string", "invalid menu choice")
     assert(not seen[label], "duplicate menu label")
     seen[label] = true
-    rows[index] = id == opts.current and (marker .. " " .. label) or label
+    rows[index] = id == current and (marker .. " " .. label) or label
     assert(not identities[rows[index]], "ambiguous menu label")
     identities[rows[index]] = id
   end
+
+  return rows, identities
+end
+
+-- Show the current identity and resolve the selected row to its stable identity.
+---@param labels (string|Hyprconf.MenuChoice)[]
+---@param opts? Hyprconf.VicinaeOptions
+---@return string?
+function M.select(labels, opts)
+  opts = opts or {}
+  local rows, identities = menu_rows(labels, opts.current)
 
   local choice, status = M.dmenu(rows, opts)
   if status ~= 0 or choice == "" then

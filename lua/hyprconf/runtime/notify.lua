@@ -1,3 +1,4 @@
+-- Send optional desktop feedback without failing a completed operation.
 local shell = require("hyprconf.util.shell")
 local process = require("hyprconf.runtime.process")
 
@@ -13,11 +14,10 @@ local process = require("hyprconf.runtime.process")
 local M = {}
 
 ---@param title string
----@param body? string
----@param opts? Hyprconf.NotifyOptions
----@return string action Chosen action id, or "" without actions.
-function M.send(title, body, opts)
-  opts = opts or {}
+---@param body string?
+---@param opts Hyprconf.NotifyOptions
+---@return string[]
+local function notification_arguments(title, body, opts)
   local args = {
     "notify-send",
     "-a",
@@ -37,6 +37,16 @@ function M.send(title, body, opts)
     end
   end
   args[#args + 1], args[#args + 2] = title, body or ""
+  return args
+end
+
+---@param title string
+---@param body? string
+---@param opts? Hyprconf.NotifyOptions
+---@return string action Chosen action id, or "" without actions.
+function M.send(title, body, opts)
+  opts = opts or {}
+  local args = notification_arguments(title, body, opts)
   local ok, result = pcall(process.run, args, { timeout = not opts.actions and 10 or false })
   if not ok or not result.ok then
     io.stderr:write("notification failed: " .. tostring(ok and result.stderr or result) .. "\n")
