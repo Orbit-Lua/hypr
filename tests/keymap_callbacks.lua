@@ -1,3 +1,4 @@
+-- Probe binding callbacks against active and missing workspace state.
 local root = debug.getinfo(1, "S").source:sub(2):match("(.+)/tests/[^/]+$") or "."
 package.path = root .. "/lua/?.lua;" .. root .. "/lua/?/init.lua;" .. package.path
 

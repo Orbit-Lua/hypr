@@ -1,3 +1,4 @@
+-- Keep monitor reloads coalesced and discard callbacks from replaced configurations.
 local root = debug.getinfo(1, "S").source:sub(2):match("(.+)/tests/[^/]+$") or "."
 package.path = root .. "/lua/?.lua;" .. root .. "/lua/?/init.lua;" .. package.path
 local events, timers, commands = {}, {}, {}
