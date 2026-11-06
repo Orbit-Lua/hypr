@@ -57,11 +57,14 @@ Use a writable checkout as the configuration root. For managed deployments, set 
 
 Automatic reload can read an intermediate multi-file checkout. Before updating a live checkout:
 
-1. Record the current setting with `hyprctl getoption misc:disable_autoreload`.
-2. Run `hyprctl keyword misc:disable_autoreload true`.
-3. Apply the complete update.
+1. Record the current boolean with `hyprctl -j getoption misc:disable_autoreload`.
+2. Run `hyprctl eval 'hl.config({ misc = { disable_autoreload = true } })'`.
+3. Require an `ok` reply before applying the complete update.
 4. Run `hyprctl reload`.
-5. Restore the recorded setting with `hyprctl keyword misc:disable_autoreload <value>`.
+5. Run `hyprctl -j configerrors` and check for nonblank entries.
+6. Restore the recorded value with `hyprctl eval 'hl.config({ misc = { disable_autoreload = <value> } })'`.
+
+Use a Lua boolean literal, `true` or `false`, for `<value>`. Convert an `int` reply of 0 or 1 to `false` or `true`. An empty or blank diagnostic entry means no configuration error. Require an `ok` reply when restoring the setting.
 
 ## State and recovery
 
