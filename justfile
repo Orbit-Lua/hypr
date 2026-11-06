@@ -1,21 +1,28 @@
 set shell := ["bash", "-euo", "pipefail", "-c"]
 
 lua := env("LUA", "lua")
+ruff := env("RUFF", "ruff")
 
 # Format Lua, then run every validation check.
 all: fmt check
 
 # Run the same checks as CI without changing formatting.
-check: fmt-check lint typecheck keymap config test helpers data profiles
+check: fmt-check lint py-lint typecheck keymap config test helpers data profiles
 
-# Rewrite Lua formatting.
+# Rewrite Lua and Python formatting.
 fmt: (_lua-check "stylua")
+    {{ quote(ruff) }} format tests
 
 # Check Lua formatting.
 fmt-check: (_lua-check "stylua" "--check")
 
 # Check Lua style and undefined names.
 lint: (_lua-check "luacheck")
+
+# Check Python test style, complexity and formatting.
+py-lint:
+    {{ quote(ruff) }} check tests
+    {{ quote(ruff) }} format --check tests
 
 # Check annotations against Hyprland's installed stubs.
 typecheck:
