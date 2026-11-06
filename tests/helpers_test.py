@@ -4,6 +4,7 @@
 import fcntl
 import json
 import os
+import re
 import shutil
 import subprocess
 import tempfile
@@ -86,6 +87,52 @@ class HelperTests(unittest.TestCase):
             any('["layout"]="master"' in " ".join(args) for args in self.calls("hyprctl"))
         )
         self.assertIn("Master", self.calls("notify-send")[-1])
+
+    def test_generated_zoom_command_applies_lua_config_with_the_existing_scale(self):
+        for operator, current, multiplier, expected in (
+            ("*", 2, "2.0", 4),
+            ("/", 2, "2.0", 1),
+            ("/", 0.5, "2.0", 0.5),
+            ("*", 2, "1.5", 3),
+        ):
+            with self.subTest(operator=operator, current=current, multiplier=multiplier):
+                self.scenario["hyprctl"] = {
+                    "operations": {
+                        "getoption cursor:zoom_factor": {"stdout": json.dumps({"float": current})},
+                        "keyword": {
+                            "code": 1,
+                            "stderr": "keyword can't work with non-legacy parsers",
+                        },
+                    }
+                }
+                (self.root / "scenario.json").write_text(json.dumps(self.scenario))
+                generated = subprocess.run(
+                    ["lua", "-", str(self.config), operator, multiplier],
+                    input="""package.path=arg[1]..'/lua/?.lua;'..package.path
+print(require('hyprconf.binding').zoom_command(arg[2], arg[3]))
+""",
+                    check=False,
+                    env=self.environment,
+                    capture_output=True,
+                    text=True,
+                    timeout=5,
+                )
+                self.assertEqual(generated.returncode, 0, generated.stderr)
+                result = subprocess.run(
+                    ["sh", "-c", generated.stdout.strip()],
+                    check=False,
+                    env=self.environment,
+                    capture_output=True,
+                    text=True,
+                    timeout=15,
+                )
+                self.assertEqual(result.returncode, 0, result.stderr)
+                evaluations = [args[1] for args in self.calls("hyprctl") if args[0] == "eval"]
+                self.assertTrue(evaluations, "zoom never reached Lua configuration")
+                value = re.search(r'\["zoom_factor"\]=([0-9.eE+-]+)', evaluations[-1])
+                self.assertIsNotNone(value)
+                self.assertEqual(float(value.group(1)), expected)
+                self.assertEqual(self.calls("hyprctl")[-1], ["-j", "configerrors"])
 
     def test_cancelled_profile_selection_does_not_write_a_selection(self):
         self.scenario["vicinae"] = {"code": 1}

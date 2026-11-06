@@ -16,6 +16,29 @@ function M.change_blur()
   end
 end
 
+---@param operator "*"|"/"
+---@param factor string
+---@return nil
+function M.zoom(operator, factor)
+  assert(operator == "*" or operator == "/", "invalid zoom operator")
+  local multiplier = assert(tonumber(factor), "invalid zoom multiplier")
+  assert(multiplier > 0 and multiplier < math.huge, "invalid zoom multiplier")
+  local option = hyprctl.option("cursor:zoom_factor")
+  local current = option.float or option.int
+  assert(
+    type(current) == "number" and current == current and math.abs(current) ~= math.huge,
+    "invalid current zoom factor"
+  )
+  -- Keep the existing clamp before scaling, including division below 1.
+  local value = math.max(1, current)
+  if operator == "*" then
+    value = value * multiplier
+  else
+    value = value / multiplier
+  end
+  hyprctl.config({ cursor = { zoom_factor = value } })
+end
+
 ---@type table<string, [string, string]>
 local next_layout = {
   dwindle = { "master", "Master" },

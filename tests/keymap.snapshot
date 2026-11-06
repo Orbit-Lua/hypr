@@ -112,8 +112,8 @@ SUPER + SHIFT + U	move to special	dsp.window.move{{workspace="special"}}	{}
 SUPER + U	toggle special	dsp.workspace.toggle_special{}	{}
 SUPER + mouse:272	move window	dsp.window.drag{}	{mouse=true}
 SUPER + mouse:273	resize window	dsp.window.resize{}	{mouse=true}
-SUPER + ALT + mouse_down	zoom in	dsp.exec_raw{"hyprctl keyword cursor:zoom_factor \"$(hyprctl getoption cursor:zoom_factor | awk 'NR==1 {factor = $2; if (factor < 1) {factor = 1}; print factor * 2.0}')\""}	{}
-SUPER + ALT + mouse_up	zoom out	dsp.exec_raw{"hyprctl keyword cursor:zoom_factor \"$(hyprctl getoption cursor:zoom_factor | awk 'NR==1 {factor = $2; if (factor < 1) {factor = 1}; print factor / 2.0}')\""}	{}
+SUPER + ALT + mouse_down	zoom in	dsp.exec_raw{"lua '/config/hypr/lua/bin/hypr.lua' zoom '*' '2.0'"}	{}
+SUPER + ALT + mouse_up	zoom out	dsp.exec_raw{"lua '/config/hypr/lua/bin/hypr.lua' zoom '/' '2.0'"}	{}
 XF86AudioLowerVolume	volume down	dsp.exec_raw{"noctalia msg volume-down"}	{locked=true,repeating=true}
 XF86AudioRaiseVolume	volume up	dsp.exec_raw{"noctalia msg volume-up"}	{locked=true,repeating=true}
 XF86AudioMicMute	toggle mic mute	dsp.exec_raw{"noctalia msg mic-mute"}	{locked=true}

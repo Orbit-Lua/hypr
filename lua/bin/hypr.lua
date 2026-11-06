@@ -16,6 +16,7 @@ package.path = table.concat({
 
 ---@type table<string, {owner: string, action: string, lock?: boolean}>
 local commands = {
+  ["zoom"] = { owner = "layout", action = "zoom", lock = true },
   ["change-blur"] = { owner = "layout", action = "change_blur", lock = true },
   ["change-layout"] = {
     owner = "layout",

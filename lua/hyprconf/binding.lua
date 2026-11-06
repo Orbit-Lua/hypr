@@ -1,5 +1,6 @@
 -- Build compositor bindings and expand trusted application commands.
 local ctx = require("hyprconf.context")
+local shell = require("hyprconf.util.shell")
 
 -- Helpers for building the configuration inside Hyprland, where `hl` exists.
 
@@ -77,19 +78,12 @@ function M.raw_dispatch(name, arg)
   return M.exec(command)
 end
 
--- Shell command that scales the cursor zoom, never below 1.
+-- Preserve scaling in the checked helper; Lua configurations reject keyword writes.
 ---@param operator "*"|"/"
 ---@param factor string Multiplier as written in the command, such as "2.0".
 ---@return string
 function M.zoom_command(operator, factor)
-  return table.concat({
-    'hyprctl keyword cursor:zoom_factor "$(hyprctl getoption cursor:zoom_factor',
-    " | awk 'NR==1 {factor = $2; if (factor < 1) {factor = 1}; print factor ",
-    operator,
-    " ",
-    factor,
-    "}')\"",
-  })
+  return ctx.hypr_lua .. " zoom " .. shell.quote(operator) .. " " .. shell.quote(factor)
 end
 
 return M
