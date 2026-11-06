@@ -9,7 +9,6 @@ files = {
   ["lua/hyprconf/commands/layout.lua"] = { max_cyclomatic_complexity = 13 },
   ["lua/hyprconf/commands/screenshot.lua"] = { max_cyclomatic_complexity = 24 },
   ["lua/hyprconf/commands/sound.lua"] = { max_cyclomatic_complexity = 15 },
-  ["lua/hyprconf/config.lua"] = { max_cyclomatic_complexity = 35 },
   ["lua/hyprconf/runtime/notify.lua"] = { max_cyclomatic_complexity = 15 },
   ["lua/hyprconf/runtime/process.lua"] = { max_cyclomatic_complexity = 15 },
   ["lua/hyprconf/runtime/vicinae.lua"] = { max_cyclomatic_complexity = 12 },
